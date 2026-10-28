@@ -1,0 +1,6 @@
+{
+  "name": "Soranix.to - Galaxy Anime Platform",
+  "description": "Deep Space and Galaxy-themed anime streaming platform with twinkling starfield, authentication modal, video player, and modular dashboard.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

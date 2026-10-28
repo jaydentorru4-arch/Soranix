@@ -1,0 +1,3733 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Soranix.to - Galaxy Anime Platform & Profile Hub</title>
+  <meta name="description" content="Deep Space and Galaxy-themed anime platform with dark glassmorphism, persistent authentication, real-time username uniqueness, zeroed starting stats, and watch-time leveling rewards." />
+  <meta property="og:title" content="Soranix.to - Galaxy Anime Platform & Profile Hub" />
+  <meta property="og:description" content="Deep Space and Galaxy-themed anime platform with dark glassmorphism, persistent authentication, real-time username uniqueness, zeroed starting stats, and watch-time leveling rewards." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <!-- Google Fonts: Plus Jakarta Sans & Space Grotesk -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            void: '#07050e',
+            spaceDark: '#0d0a1a',
+            glassBg: 'rgba(13, 10, 26, 0.78)',
+            glassCard: 'rgba(19, 14, 38, 0.65)',
+            glassBorder: 'rgba(255, 255, 255, 0.12)',
+            cosmicViolet: '#A855F7',
+            neonPink: '#EC4899',
+            electricCyan: '#06B6D4',
+            solarGold: '#F59E0B',
+            emeraldGreen: '#10B981',
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+            display: ['"Space Grotesk"', 'sans-serif'],
+          },
+          animation: {
+            'spin-slow': 'spin 18s linear infinite',
+            'pulse-glow': 'pulseGlow 3.5s ease-in-out infinite',
+            'float-blob1': 'drift1 20s ease-in-out infinite alternate',
+            'float-blob2': 'drift2 25s ease-in-out infinite alternate',
+            'float-emblem': 'floatEmblem 4s ease-in-out infinite',
+          },
+          keyframes: {
+            pulseGlow: {
+              '0%, 100%': { opacity: '0.45', transform: 'scale(1)' },
+              '50%': { opacity: '0.85', transform: 'scale(1.06)' },
+            },
+            drift1: {
+              '0%': { transform: 'translate(0px, 0px) scale(1)' },
+              '50%': { transform: 'translate(60px, 40px) scale(1.15)' },
+              '100%': { transform: 'translate(-40px, 60px) scale(0.95)' },
+            },
+            drift2: {
+              '0%': { transform: 'translate(0px, 0px) scale(1.1)' },
+              '50%': { transform: 'translate(-50px, -40px) scale(0.9)' },
+              '100%': { transform: 'translate(50px, -30px) scale(1.2)' },
+            },
+            floatEmblem: {
+              '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
+              '50%': { transform: 'translateY(-12px) rotate(3deg)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- FontAwesome 6 Icons CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <style>
+    :root {
+      --accent-color: #A855F7;
+      --accent-glow: rgba(168, 85, 247, 0.45);
+      --accent-glow-strong: rgba(168, 85, 247, 0.8);
+      --accent-rgb: 168, 85, 247;
+      --glass-border: rgba(255, 255, 255, 0.12);
+    }
+
+    [data-theme="pink"] {
+      --accent-color: #EC4899;
+      --accent-glow: rgba(236, 72, 153, 0.45);
+      --accent-glow-strong: rgba(236, 72, 153, 0.8);
+      --accent-rgb: 236, 72, 153;
+    }
+
+    [data-theme="cyan"] {
+      --accent-color: #06B6D4;
+      --accent-glow: rgba(6, 182, 212, 0.45);
+      --accent-glow-strong: rgba(6, 182, 212, 0.8);
+      --accent-rgb: 6, 182, 212;
+    }
+
+    [data-theme="gold"] {
+      --accent-color: #F59E0B;
+      --accent-glow: rgba(245, 158, 11, 0.45);
+      --accent-glow-strong: rgba(245, 158, 11, 0.8);
+      --accent-rgb: 245, 158, 11;
+    }
+
+    [data-theme="emerald"] {
+      --accent-color: #10B981;
+      --accent-glow: rgba(16, 185, 129, 0.45);
+      --accent-glow-strong: rgba(16, 185, 129, 0.8);
+      --accent-rgb: 16, 185, 129;
+    }
+
+    body {
+      background-color: #07050e;
+      color: #F3F4F6;
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    .font-display {
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .bg-accent { background-color: var(--accent-color); }
+    .text-accent { color: var(--accent-color); }
+    .border-accent { border-color: var(--accent-color); }
+    .shadow-accent-glow { box-shadow: 0 0 30px var(--accent-glow); }
+    .shadow-accent-strong { box-shadow: 0 0 50px var(--accent-glow-strong); }
+
+    .glow-title {
+      text-shadow: 0 0 25px var(--accent-glow), 0 0 50px var(--accent-glow-strong);
+    }
+
+    .glass-panel {
+      background: rgba(13, 10, 26, 0.78);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+    }
+
+    .glass-card {
+      background: rgba(19, 14, 38, 0.65);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .glass-card:hover {
+      border-color: rgba(var(--accent-rgb), 0.45);
+      box-shadow: 0 0 25px var(--accent-glow);
+    }
+
+    /* Avatar Decoration Frames */
+    .pfp-frame-container {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .frame-standard {
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: 1.5rem;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    }
+
+    .frame-cyberpunk {
+      border: 3px solid #06B6D4;
+      border-radius: 1.5rem;
+      box-shadow: 0 0 25px #06B6D4, inset 0 0 15px #EC4899;
+      position: relative;
+    }
+    .frame-cyberpunk::before {
+      content: '';
+      position: absolute;
+      inset: -6px;
+      border: 1px dashed #EC4899;
+      border-radius: 1.75rem;
+      animation: spin 16s linear infinite;
+      pointer-events: none;
+    }
+
+    .frame-galaxy {
+      border: 3px solid #A855F7;
+      border-radius: 9999px;
+      box-shadow: 0 0 30px #A855F7, 0 0 60px rgba(168, 85, 247, 0.5);
+      position: relative;
+    }
+    .frame-galaxy::after {
+      content: '';
+      position: absolute;
+      inset: -8px;
+      border: 2px solid transparent;
+      border-top-color: #22D3EE;
+      border-bottom-color: #EC4899;
+      border-radius: 9999px;
+      animation: spin 6s linear infinite;
+      pointer-events: none;
+    }
+
+    .frame-flame {
+      border: 3px solid #F59E0B;
+      border-radius: 1.5rem;
+      box-shadow: 0 0 30px #F59E0B, 0 0 50px #EF4444;
+      position: relative;
+      animation: flamePulse 2.5s ease-in-out infinite alternate;
+    }
+    @keyframes flamePulse {
+      0% { box-shadow: 0 0 20px #F59E0B, 0 0 35px #EF4444; }
+      100% { box-shadow: 0 0 35px #F59E0B, 0 0 60px #EF4444; }
+    }
+
+    .frame-crown {
+      border: 3px solid #FBBF24;
+      border-radius: 1.5rem;
+      box-shadow: 0 0 35px rgba(251, 191, 36, 0.7);
+      position: relative;
+    }
+    .frame-crown::before {
+      content: '\f521';
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      position: absolute;
+      top: -18px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #FBBF24;
+      font-size: 1.35rem;
+      text-shadow: 0 0 15px #FBBF24;
+      z-index: 20;
+    }
+
+    .frame-void {
+      border: 3px solid #8B5CF6;
+      border-radius: 9999px;
+      box-shadow: 0 0 30px #8B5CF6, inset 0 0 20px #4C1D95;
+      animation: pulseGlow 3s ease-in-out infinite;
+    }
+
+    /* Layout modes */
+    .view-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.25rem;
+    }
+    .view-list-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(7, 5, 14, 0.95);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(var(--accent-rgb), 0.35);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--accent-color);
+    }
+  </style>
+</head>
+<body class="relative min-h-screen bg-void text-slate-100 flex flex-col antialiased selection:bg-purple-900 selection:text-white">
+
+  <!-- ========================================== -->
+  <!-- BACKGROUND LAYER: Canvas + Glowing Blobs   -->
+  <!-- ========================================== -->
+  <canvas id="galaxy-canvas" class="fixed inset-0 w-full h-full pointer-events-none z-0"></canvas>
+
+  <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+    <div id="blob-primary" class="absolute -top-32 -left-32 w-[34rem] h-[34rem] rounded-full bg-purple-600/15 blur-[120px] animate-float-blob1 transition-colors duration-700"></div>
+    <div id="blob-secondary" class="absolute top-1/3 -right-32 w-[36rem] h-[36rem] rounded-full bg-pink-600/12 blur-[140px] animate-float-blob2 transition-colors duration-700"></div>
+    <div id="blob-tertiary" class="absolute -bottom-32 left-1/4 w-[30rem] h-[30rem] rounded-full bg-cyan-600/10 blur-[130px] transition-colors duration-700"></div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2.5 pointer-events-none"></div>
+
+  <!-- ========================================================== -->
+  <!-- VIEW 1: ANIMATED SPLASH / MAIN MENU SCREEN (STEP 1)        -->
+  <!-- ========================================================== -->
+  <div id="view-splash" class="relative z-20 min-h-screen w-full flex flex-col items-center justify-center p-6 text-center select-none transition-all duration-500">
+    
+    <!-- Top System Indicator -->
+    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.04] border border-white/10 text-xs font-semibold text-slate-300 mb-8 backdrop-blur-md">
+      <span class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]"></span>
+      <span>Soranix Persistent Gateway v3.0 &bull; Auto-Login Active</span>
+    </div>
+
+    <!-- Floating Cosmic Emblem with Atom Icon -->
+    <div class="relative mb-6 animate-float-emblem">
+      <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl bg-gradient-to-tr from-purple-800 via-purple-600 to-indigo-600 flex items-center justify-center text-white shadow-accent-strong border border-white/20 relative group">
+        <i class="fa-solid fa-atom text-5xl sm:text-6xl text-purple-100 animate-spin-slow"></i>
+        <div class="absolute -inset-3 rounded-3xl border border-dashed border-purple-400/40 pointer-events-none"></div>
+      </div>
+    </div>
+
+    <!-- Bold Title & Glowing Neon Text Shadows -->
+    <h1 class="font-display font-black text-4xl sm:text-6xl lg:text-7xl tracking-wider text-white mb-2 uppercase">
+      SORANIX<span class="text-accent glow-title transition-colors duration-300">.TO</span>
+    </h1>
+    
+    <!-- Subtitle -->
+    <p class="font-display text-xs sm:text-sm md:text-base font-semibold tracking-widest text-purple-200/80 uppercase mb-8 max-w-lg">
+      The Ultimate Galaxy of Anime
+    </p>
+
+    <!-- Theme Customization Buttons on Main Menu -->
+    <div class="glass-panel rounded-2xl px-5 py-3 mb-8 flex flex-wrap items-center justify-center gap-2.5 max-w-md">
+      <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mr-1">Theme Glow:</span>
+      <button onclick="setCosmicTheme('violet')" class="px-2.5 py-1 rounded-xl bg-purple-950/60 border border-purple-500/40 hover:scale-105 active:scale-95 text-xs text-purple-200 flex items-center gap-1.5 cursor-pointer transition-all">
+        <span class="w-2.5 h-2.5 rounded-full bg-purple-500 shadow-[0_0_6px_#a855f7]"></span> Violet
+      </button>
+      <button onclick="setCosmicTheme('pink')" class="px-2.5 py-1 rounded-xl bg-pink-950/60 border border-pink-500/40 hover:scale-105 active:scale-95 text-xs text-pink-200 flex items-center gap-1.5 cursor-pointer transition-all">
+        <span class="w-2.5 h-2.5 rounded-full bg-pink-500 shadow-[0_0_6px_#ec4899]"></span> Pink
+      </button>
+      <button onclick="setCosmicTheme('cyan')" class="px-2.5 py-1 rounded-xl bg-cyan-950/60 border border-cyan-500/40 hover:scale-105 active:scale-95 text-xs text-cyan-200 flex items-center gap-1.5 cursor-pointer transition-all">
+        <span class="w-2.5 h-2.5 rounded-full bg-cyan-500 shadow-[0_0_6px_#06b6d4]"></span> Cyan
+      </button>
+      <button onclick="setCosmicTheme('gold')" class="px-2.5 py-1 rounded-xl bg-amber-950/60 border border-amber-500/40 hover:scale-105 active:scale-95 text-xs text-amber-200 flex items-center gap-1.5 cursor-pointer transition-all">
+        <span class="w-2.5 h-2.5 rounded-full bg-amber-500 shadow-[0_0_6px_#f59e0b]"></span> Gold
+      </button>
+      <button onclick="setCosmicTheme('emerald')" class="px-2.5 py-1 rounded-xl bg-emerald-950/60 border border-emerald-500/40 hover:scale-105 active:scale-95 text-xs text-emerald-200 flex items-center gap-1.5 cursor-pointer transition-all">
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_6px_#10b981]"></span> Emerald
+      </button>
+    </div>
+
+    <!-- Main Navigation & Auth Actions -->
+    <div class="flex flex-col sm:flex-row items-center gap-3 w-full max-w-md">
+      
+      <!-- Primary ENTER Button -->
+      <button 
+        id="btn-enter-soranix"
+        onclick="enterDashboard('home')" 
+        class="w-full sm:flex-1 py-3.5 px-6 rounded-2xl text-sm font-extrabold uppercase tracking-wider text-white bg-gradient-to-r from-purple-600 via-fuchsia-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 shadow-accent-strong hover:scale-105 active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-2 group"
+      >
+        <span>Enter Soranix</span>
+        <i class="fa-solid fa-arrow-right text-xs group-hover:translate-x-1 transition-transform"></i>
+      </button>
+
+      <!-- Sign In Button -->
+      <button 
+        onclick="openAuthModal('login')" 
+        class="w-full sm:w-auto py-3.5 px-5 rounded-2xl text-xs font-bold text-slate-200 bg-white/5 hover:bg-white/10 border border-white/10 hover:text-white transition-all cursor-pointer flex items-center justify-center gap-2"
+      >
+        <i class="fa-solid fa-lock text-accent"></i>
+        <span>Log In</span>
+      </button>
+
+      <!-- Sign Up Button -->
+      <button 
+        onclick="openAuthModal('signup')" 
+        class="w-full sm:w-auto py-3.5 px-5 rounded-2xl text-xs font-bold text-slate-200 bg-white/5 hover:bg-white/10 border border-white/10 hover:text-white transition-all cursor-pointer flex items-center justify-center gap-2"
+      >
+        <i class="fa-solid fa-user-plus text-neonPink"></i>
+        <span>Sign Up</span>
+      </button>
+
+    </div>
+
+    <!-- Sign In With Google Directly on Main Menu -->
+    <div class="mt-4 w-full max-w-md">
+      <button 
+        type="button" 
+        onclick="triggerFirebaseGoogleLogin()" 
+        class="w-full flex items-center justify-center gap-3 py-3 px-4 text-xs font-semibold text-slate-200 bg-[#0d0a1a]/90 border border-white/10 rounded-2xl hover:bg-white/10 hover:border-purple-500/50 transition-all cursor-pointer shadow-md"
+      >
+        <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
+        </svg>
+        <span>Sign in with Google</span>
+      </button>
+    </div>
+
+    <!-- Guest Entry Option -->
+    <div class="mt-4">
+      <button 
+        onclick="continueAsGuest()" 
+        class="text-xs text-slate-400 hover:text-white transition-colors cursor-pointer flex items-center gap-1.5 mx-auto"
+      >
+        <span>Continue as Guest Explorer (0 Coins &bull; Level 1)</span>
+        <i class="fa-solid fa-chevron-right text-[10px]"></i>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- ========================================================== -->
+  <!-- VIEW 2: MAIN DASHBOARD & PROFILE APPLICATION               -->
+  <!-- ========================================================== -->
+  <div id="view-dashboard" class="relative z-10 min-h-screen w-full flex hidden flex-col md:flex-row">
+    
+    <!-- -------------------------------------------------------- -->
+    <!-- 1. LEFT SIDEBAR WITH GEAR / PROFILE POP-DOWN MENU        -->
+    <!-- -------------------------------------------------------- -->
+    <aside class="w-full md:w-20 lg:w-24 md:min-h-screen glass-panel border-r border-glassBorder flex md:flex-col items-center justify-between p-3 md:py-6 shrink-0 z-30 sticky top-0 md:h-screen">
+      
+      <!-- Top Logo Button -->
+      <div class="flex items-center gap-2">
+        <button 
+          onclick="returnToSplash()" 
+          class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-purple-800 to-indigo-600 flex items-center justify-center text-white shadow-[0_0_20px_var(--accent-glow)] hover:scale-105 active:scale-95 transition-all cursor-pointer group"
+          title="Return to Main Menu"
+        >
+          <i class="fa-solid fa-atom text-xl text-purple-200 group-hover:rotate-180 transition-transform duration-700"></i>
+        </button>
+      </div>
+
+      <!-- Middle Navigation Icons -->
+      <nav class="flex md:flex-col items-center gap-2 sm:gap-3">
+        
+        <!-- Tab 1: Dashboard Home -->
+        <button 
+          id="nav-tab-btn-home"
+          onclick="switchDashboardTab('home')" 
+          class="sidebar-tab-btn w-11 h-11 rounded-2xl flex items-center justify-center text-white bg-purple-600 shadow-sm transition-all cursor-pointer"
+          title="Dashboard Home"
+        >
+          <i class="fa-solid fa-house text-base"></i>
+        </button>
+
+        <!-- Tab 2: Profile Button (Shows All Profile Management!) -->
+        <button 
+          id="nav-tab-btn-profile"
+          onclick="switchDashboardTab('profile')" 
+          class="sidebar-tab-btn w-11 h-11 rounded-2xl flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all cursor-pointer relative"
+          title="My Profile (Profile Management Hub)"
+        >
+          <i class="fa-solid fa-user-astronaut text-base"></i>
+        </button>
+
+        <!-- Tab 3: Friends & Transmissions -->
+        <button 
+          id="nav-tab-btn-friends"
+          onclick="switchDashboardTab('friends')" 
+          class="sidebar-tab-btn w-11 h-11 rounded-2xl flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all cursor-pointer relative"
+          title="Friends & Transmissions"
+        >
+          <i class="fa-solid fa-user-group text-base text-purple-400"></i>
+          <span id="sidebar-friends-badge" class="hidden absolute -top-1 -right-1 min-w-[16px] h-4 px-1 rounded-full bg-purple-600 text-[9px] font-bold text-white flex items-center justify-center shadow-accent-glow">0</span>
+        </button>
+
+        <!-- Tab 4: Favorites -->
+        <button 
+          id="nav-tab-btn-favorites"
+          onclick="switchDashboardTab('favorites')" 
+          class="sidebar-tab-btn w-11 h-11 rounded-2xl flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all cursor-pointer relative"
+          title="Favourited Anime"
+        >
+          <i class="fa-solid fa-heart text-base text-pink-400"></i>
+          <span id="sidebar-fav-badge" class="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-pink-500 text-[9px] font-bold text-white flex items-center justify-center">0</span>
+        </button>
+
+        <!-- Tab 5: Daily Rewards -->
+        <button 
+          id="nav-tab-btn-rewards"
+          onclick="switchDashboardTab('rewards')" 
+          class="sidebar-tab-btn w-11 h-11 rounded-2xl flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all cursor-pointer relative"
+          title="Daily Login Rewards"
+        >
+          <i class="fa-solid fa-calendar-check text-base text-amber-400"></i>
+          <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_6px_#f59e0b] animate-ping"></span>
+        </button>
+
+        <!-- Tab 6: Cosmic Shop -->
+        <button 
+          id="nav-tab-btn-shop"
+          onclick="switchDashboardTab('shop')" 
+          class="sidebar-tab-btn w-11 h-11 rounded-2xl flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all cursor-pointer"
+          title="Cosmic Shop"
+        >
+          <i class="fa-solid fa-store text-base text-cyan-400"></i>
+        </button>
+
+        <!-- Quick Toggle Global Chat Drawer -->
+        <button 
+          id="nav-tab-btn-globalchat"
+          onclick="toggleGlobalChatPanel()" 
+          class="sidebar-tab-btn w-11 h-11 rounded-2xl flex items-center justify-center text-slate-400 hover:text-electricCyan hover:bg-white/10 transition-all cursor-pointer relative"
+          title="Toggle Cosmic Global Chat"
+        >
+          <i class="fa-solid fa-comments text-base text-electricCyan"></i>
+          <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-electricCyan shadow-[0_0_6px_#06b6d4]"></span>
+        </button>
+
+      </nav>
+
+      <!-- Bottom Section: Gear Button & Pop-Down Flyout Menu -->
+      <div class="relative">
+        
+        <!-- Gear / Profile Trigger Button -->
+        <button 
+          id="gear-btn"
+          onclick="toggleGearMenu(event)" 
+          class="w-12 h-12 rounded-2xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 hover:border-purple-400/50 flex items-center justify-center text-slate-300 hover:text-white transition-all cursor-pointer group"
+          title="Profile & Settings Menu"
+        >
+          <div class="relative">
+            <div id="gear-btn-avatar-box" class="w-7 h-7 rounded-lg bg-gradient-to-tr from-purple-800 to-indigo-600 flex items-center justify-center text-white text-[10px] font-bold overflow-hidden">
+              <span id="gear-btn-s">S</span>
+              <img id="gear-btn-img" class="w-full h-full object-cover hidden" alt="Avatar" />
+            </div>
+            <div class="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full bg-black border border-purple-400 text-[8px] flex items-center justify-center text-purple-300 group-hover:rotate-90 transition-transform">
+              <i class="fa-solid fa-gear"></i>
+            </div>
+          </div>
+        </button>
+
+        <!-- POP-DOWN / FLYOUT GEAR MENU (#gear-dropdown) -->
+        <div 
+          id="gear-dropdown" 
+          class="hidden absolute bottom-14 left-0 md:bottom-2 md:left-16 w-72 glass-card rounded-3xl p-4 shadow-2xl border border-glassBorder z-50 transition-all duration-200"
+        >
+          <!-- User Mini-Profile Header -->
+          <div class="flex items-center gap-3 pb-3 border-b border-glassBorder mb-3">
+            <div id="flyout-frame-wrapper" class="pfp-frame-container frame-galaxy p-0.5 shrink-0">
+              <div id="flyout-avatar-box" class="w-11 h-11 rounded-xl bg-gradient-to-tr from-purple-800 to-indigo-600 flex items-center justify-center text-white font-display font-black text-sm overflow-hidden">
+                <span id="flyout-s-badge">S</span>
+                <img id="flyout-avatar-img" class="w-full h-full object-cover hidden" alt="Avatar" />
+              </div>
+            </div>
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center gap-1.5">
+                <h4 id="flyout-username" class="text-xs font-bold text-white truncate">Guest Explorer</h4>
+                <span class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_6px_#34d399] shrink-0"></span>
+              </div>
+              <span id="flyout-rank" class="text-[10px] text-accent font-semibold block truncate">Level 1 Novice Voyager</span>
+            </div>
+          </div>
+
+          <!-- Navigation Links -->
+          <div class="space-y-1 text-xs">
+            
+            <button 
+              onclick="switchDashboardTab('profile'); toggleGearMenu();" 
+              class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-200 hover:text-white hover:bg-purple-600/30 hover:border-purple-500/30 border border-transparent transition-all cursor-pointer text-left"
+            >
+              <i class="fa-solid fa-user-astronaut text-accent w-4 text-center"></i>
+              <span class="font-semibold">My Profile</span>
+              <span class="ml-auto text-[10px] px-2 py-0.5 rounded-full bg-purple-950/80 text-purple-300 font-mono">Hub</span>
+            </button>
+
+            <button 
+              onclick="switchDashboardTab('friends'); toggleGearMenu();" 
+              class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-200 hover:text-white hover:bg-white/5 transition-all cursor-pointer text-left"
+            >
+              <i class="fa-solid fa-user-group text-purple-400 w-4 text-center"></i>
+              <span>Friends &amp; Transmissions</span>
+              <span id="flyout-friends-badge" class="ml-auto text-[10px] px-2 py-0.5 rounded-full bg-purple-950/80 text-purple-300 font-mono">0</span>
+            </button>
+
+            <button 
+              onclick="switchDashboardTab('favorites'); toggleGearMenu();" 
+              class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-200 hover:text-white hover:bg-white/5 transition-all cursor-pointer text-left"
+            >
+              <i class="fa-solid fa-heart text-neonPink w-4 text-center"></i>
+              <span>Favourited Anime</span>
+              <span id="flyout-fav-badge" class="ml-auto text-[10px] px-2 py-0.5 rounded-full bg-pink-950/80 text-pink-300 font-mono">0</span>
+            </button>
+
+            <button 
+              onclick="switchDashboardTab('rewards'); toggleGearMenu();" 
+              class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-200 hover:text-white hover:bg-white/5 transition-all cursor-pointer text-left"
+            >
+              <i class="fa-solid fa-sparkles text-solarGold w-4 text-center"></i>
+              <span>Daily Rewards</span>
+              <span class="ml-auto w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_6px_#f59e0b]"></span>
+            </button>
+
+            <button 
+              onclick="switchDashboardTab('shop'); toggleGearMenu();" 
+              class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-200 hover:text-white hover:bg-white/5 transition-all cursor-pointer text-left"
+            >
+              <i class="fa-solid fa-store text-electricCyan w-4 text-center"></i>
+              <span>Cosmic Shop</span>
+            </button>
+
+            <button 
+              onclick="toggleGlobalChatPanel(); toggleGearMenu();" 
+              class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-200 hover:text-white hover:bg-white/5 transition-all cursor-pointer text-left"
+            >
+              <i class="fa-solid fa-comments text-electricCyan w-4 text-center"></i>
+              <span>Cosmic Global Chat</span>
+            </button>
+
+            <button 
+              onclick="openEditProfileModal(); toggleGearMenu();" 
+              class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-200 hover:text-white hover:bg-white/5 transition-all cursor-pointer text-left"
+            >
+              <i class="fa-solid fa-sliders text-accent w-4 text-center"></i>
+              <span>Customize Profile</span>
+            </button>
+
+            <div class="h-px bg-white/10 my-1"></div>
+
+            <button 
+              onclick="returnToSplash(); toggleGearMenu();" 
+              class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/5 transition-all cursor-pointer text-left"
+            >
+              <i class="fa-solid fa-arrow-left text-slate-400 w-4 text-center"></i>
+              <span>Main Menu</span>
+            </button>
+
+            <button 
+              onclick="handleLogout(); toggleGearMenu();" 
+              class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-red-300 hover:text-red-200 hover:bg-red-500/10 transition-all cursor-pointer text-left"
+            >
+              <i id="flyout-auth-icon" class="fa-solid fa-arrow-right-from-bracket text-red-400 w-4 text-center"></i>
+              <span id="flyout-auth-label">Log Out / Switch Account</span>
+            </button>
+
+          </div>
+        </div>
+
+      </div>
+
+    </aside>
+
+    <!-- -------------------------------------------------------- -->
+    <!-- 2. MAIN DASHBOARD CONTENT AREA                           -->
+    <!-- -------------------------------------------------------- -->
+    <div class="flex-1 flex flex-col min-h-screen overflow-y-auto">
+      
+      <!-- Top Bar Header -->
+      <header class="w-full h-16 border-b border-glassBorder glass-panel sticky top-0 z-20 px-4 sm:px-8 flex items-center justify-between">
+        
+        <!-- Left: Title & Active Breadcrumb -->
+        <div class="flex items-center gap-3">
+          <div class="font-display font-extrabold text-sm sm:text-base tracking-wider text-white">
+            SORANIX<span class="text-accent transition-colors duration-300">.DASH</span>
+          </div>
+          <span class="text-slate-600">/</span>
+          <span id="header-breadcrumb" class="text-xs font-bold uppercase tracking-wider text-accent font-mono">
+            DASHBOARD HOME
+          </span>
+        </div>
+
+        <!-- Right: Currency Counters, Level & User Status -->
+        <div class="flex items-center gap-2 sm:gap-3.5">
+          
+          <!-- Stardust Coins Pill -->
+          <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-950/40 border border-amber-500/30 text-xs font-semibold text-amber-300 shadow-sm">
+            <i class="fa-solid fa-sparkles text-[10px]"></i>
+            <span id="header-stardust">0 Stardust</span>
+          </div>
+
+          <!-- Login Streak Pill -->
+          <div class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-orange-950/40 border border-orange-500/30 text-xs font-semibold text-orange-300 shadow-sm">
+            <i class="fa-solid fa-fire text-[10px]"></i>
+            <span id="header-streak">Streak: 0 Days</span>
+          </div>
+
+          <!-- User Level Pill -->
+          <div class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-purple-950/60 border border-purple-500/40 text-xs font-bold text-accent shadow-sm">
+            <i class="fa-solid fa-shield-halved text-[10px]"></i>
+            <span id="header-level">Lv 1</span>
+          </div>
+
+          <!-- User Mode Badge -->
+          <div id="header-user-status" class="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/[0.04] border border-white/10 text-xs font-semibold text-slate-300">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]"></span>
+            <span id="header-user-display" class="max-w-[120px] truncate">Guest Explorer</span>
+          </div>
+
+          <!-- Account-Only Notification Bell & Pop-Down Tray (Strictly Hidden for Guests) -->
+          <div id="header-notification-container" class="relative hidden">
+            <button 
+              id="header-notification-bell" 
+              onclick="toggleNotificationDropdown(event)" 
+              class="w-9 h-9 rounded-xl bg-white/[0.04] hover:bg-white/[0.09] border border-white/10 hover:border-purple-400/50 text-slate-300 hover:text-white flex items-center justify-center transition-all cursor-pointer relative"
+              title="Notifications"
+            >
+              <i class="fa-solid fa-bell text-sm"></i>
+              <span id="header-unread-badge" class="hidden absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-purple-600 border border-purple-400 text-[10px] font-bold text-white flex items-center justify-center shadow-accent-glow animate-pulse">0</span>
+            </button>
+
+            <!-- Notifications Dropdown Tray -->
+            <div 
+              id="notification-dropdown" 
+              class="hidden absolute right-0 top-12 w-80 sm:w-96 glass-card rounded-3xl p-4 shadow-2xl border border-glassBorder z-50 transition-all duration-200"
+            >
+              <div class="flex items-center justify-between pb-3 border-b border-glassBorder mb-3">
+                <div class="flex items-center gap-2">
+                  <i class="fa-solid fa-bell text-accent text-sm"></i>
+                  <h4 class="text-xs font-bold text-white">Cosmic Notifications</h4>
+                  <span id="notif-count-badge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-950/80 text-purple-300 border border-purple-500/30">0 New</span>
+                </div>
+                <button 
+                  onclick="markAllNotificationsRead()" 
+                  class="text-[11px] font-semibold text-purple-300 hover:text-white transition-colors cursor-pointer"
+                >
+                  Mark all as read
+                </button>
+              </div>
+
+              <!-- Notification items container -->
+              <div id="notification-items-list" class="space-y-2 max-h-80 overflow-y-auto pr-1"></div>
+
+              <!-- Empty state -->
+              <div id="notification-empty-state" class="py-8 text-center text-slate-400 space-y-1">
+                <i class="fa-solid fa-circle-check text-2xl text-purple-400/40 mb-1 block"></i>
+                <p class="text-xs font-semibold text-slate-300">All caught up, Voyager!</p>
+                <p class="text-[11px] text-slate-500">No unread alerts or transmission requests.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Global Chat Toggle Header Button -->
+          <button 
+            id="header-chat-btn" 
+            onclick="toggleGlobalChatPanel()" 
+            class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-electricCyan/10 hover:bg-electricCyan/20 border border-electricCyan/30 text-xs font-semibold text-cyan-300 hover:text-white transition-all cursor-pointer"
+            title="Toggle Cosmic Global Chat"
+          >
+            <i class="fa-solid fa-comments text-xs"></i>
+            <span class="hidden sm:inline">Chat</span>
+            <span id="header-chat-unread-dot" class="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_6px_#06b6d4]"></span>
+          </button>
+
+          <!-- Return to Main Menu Button -->
+          <button 
+            onclick="returnToSplash()" 
+            class="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-slate-300 hover:text-white transition-all cursor-pointer"
+            title="Return to Main Menu"
+          >
+            <i class="fa-solid fa-house text-accent text-xs"></i>
+            <span>Menu</span>
+          </button>
+
+        </div>
+      </header>
+
+      <!-- ====================================================== -->
+      <!-- VIEW 2 - TAB 1: DASHBOARD HOME (Clean Plain Dashboard) -->
+      <!-- ====================================================== -->
+      <section id="tab-view-home" class="p-4 sm:p-8 space-y-6 max-w-6xl w-full mx-auto">
+        
+        <!-- 1. Guest Mode Plain Dashboard (No extra clutter or widgets until account is created) -->
+        <div id="home-guest-view" class="space-y-6">
+          <div class="flex items-center justify-between pb-4 border-b border-glassBorder">
+            <div>
+              <h2 class="text-2xl font-display font-extrabold text-white">Dashboard</h2>
+              <p class="text-xs text-slate-400">Welcome to Soranix.to &bull; Guest Mode</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="openAuthModal('login')" class="px-3.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-slate-200 transition-all cursor-pointer">
+                Log In
+              </button>
+              <button onclick="openAuthModal('signup')" class="px-3.5 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-xs font-bold text-white shadow-accent-glow transition-all cursor-pointer">
+                Sign Up
+              </button>
+            </div>
+          </div>
+
+          <!-- Plain Dashboard Blank Container -->
+          <div class="glass-panel rounded-3xl p-12 text-center border border-dashed border-white/10 flex flex-col items-center justify-center space-y-4">
+            <div class="w-14 h-14 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-center text-slate-400 text-2xl">
+              <i class="fa-solid fa-layer-group"></i>
+            </div>
+            <div class="space-y-1">
+              <h3 class="text-base font-bold text-white">Plain Dashboard (Clean State)</h3>
+              <p class="text-xs text-slate-400 max-w-md mx-auto">
+                No anime cards or widgets added yet. Create an account or sign in to unlock your profile, watch anime, and start earning Stardust Coins.
+              </p>
+            </div>
+            <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+              <button onclick="openAuthModal('signup')" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-xs font-bold text-white shadow-accent-strong cursor-pointer transition-all flex items-center gap-2">
+                <i class="fa-solid fa-user-plus"></i>
+                <span>Create Account to Unlock</span>
+              </button>
+              <button onclick="triggerFirebaseGoogleLogin()" class="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-slate-200 cursor-pointer transition-all flex items-center gap-2">
+                <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24">
+                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
+                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
+                </svg>
+                <span>Sign in with Google</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Account Mode Plain Dashboard (Clean State, Watch Anime action) -->
+        <div id="home-account-view" class="space-y-6 hidden">
+          <div class="flex items-center justify-between pb-4 border-b border-glassBorder">
+            <div>
+              <h2 class="text-2xl font-display font-extrabold text-white">Dashboard</h2>
+              <p class="text-xs text-slate-400">Welcome back, <span id="home-account-username" class="text-accent font-bold">Explorer</span></p>
+            </div>
+            <button 
+              id="btn-stream-action"
+              onclick="toggleAnimeWatchSession()"
+              class="px-4 py-2 rounded-xl text-xs font-bold text-white bg-purple-600 hover:bg-purple-500 shadow-accent-glow flex items-center gap-2 cursor-pointer transition-all"
+            >
+              <i id="btn-stream-action-icon" class="fa-solid fa-play"></i>
+              <span id="btn-stream-action-text">Watch Anime</span>
+            </button>
+          </div>
+
+          <!-- Active Anime Stream Bar (Only active when watching anime) -->
+          <div id="active-anime-stream-banner" class="glass-panel rounded-2xl p-5 border border-purple-500/30 hidden">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-purple-950/80 border border-purple-500/40 flex items-center justify-center text-accent text-lg shrink-0">
+                  <i class="fa-solid fa-film animate-pulse"></i>
+                </div>
+                <div>
+                  <div class="flex items-center gap-2">
+                    <h4 class="text-sm font-bold text-white">Streaming Anime</h4>
+                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-950 text-emerald-400 border border-emerald-500/40">Watching Live</span>
+                  </div>
+                  <p class="text-xs text-slate-400">
+                    Earning <span class="text-amber-300 font-semibold">+50 Stardust</span> &amp; <span class="text-purple-300 font-semibold">+50 XP</span> per 5 mins of anime watched.
+                  </p>
+                </div>
+              </div>
+              <div class="flex items-center gap-4 w-full sm:w-auto">
+                <div class="text-right">
+                  <div class="text-xs font-mono font-bold text-purple-300">
+                    <span id="stream-cycle-seconds">0s</span> / 300s (<span id="stream-cycle-percent">0%</span>)
+                  </div>
+                  <div class="w-36 h-2 rounded-full bg-white/10 overflow-hidden mt-1">
+                    <div id="stream-progress-bar" class="h-full bg-purple-500 rounded-full transition-all duration-300" style="width: 0%;"></div>
+                  </div>
+                </div>
+                <button onclick="toggleAnimeWatchSession()" class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-xs font-semibold text-slate-300 cursor-pointer">
+                  Pause
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Plain Dashboard Blank Container for Future Anime Grids -->
+          <div class="glass-panel rounded-3xl p-12 text-center border border-dashed border-white/10 flex flex-col items-center justify-center space-y-3">
+            <div class="w-14 h-14 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-center text-slate-400 text-2xl">
+              <i class="fa-solid fa-layer-group"></i>
+            </div>
+            <h3 class="text-base font-bold text-white">Plain Dashboard (Clean State)</h3>
+            <p class="text-xs text-slate-400 max-w-md mx-auto">
+              Anime video player and media cards are kept unpopulated for modular addition. Click <strong>"Watch Anime"</strong> above to start streaming and earning watch-time Stardust &amp; XP.
+            </p>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ====================================================== -->
+      <!-- VIEW 2 - TAB 2: MY PROFILE (SHOWS ALL PROFILE STUFF!)  -->
+      <!-- ====================================================== -->
+      <section id="tab-view-profile" class="p-4 sm:p-8 space-y-6 max-w-6xl w-full mx-auto hidden">
+        
+        <!-- Locked Gate when user is in Guest Mode ("u dont have access to profile or rewards or levels unless u signup or login") -->
+        <div id="profile-guest-locked" class="glass-panel rounded-3xl p-8 sm:p-14 text-center border border-dashed border-purple-500/30 flex flex-col items-center justify-center space-y-4">
+          <div class="w-16 h-16 rounded-3xl bg-purple-950/60 border border-purple-500/40 flex items-center justify-center text-purple-300 text-3xl shadow-accent-glow">
+            <i class="fa-solid fa-lock"></i>
+          </div>
+          <div class="space-y-1.5">
+            <h3 class="font-display font-extrabold text-2xl text-white">Profile Hub Locked</h3>
+            <p class="text-xs sm:text-sm text-slate-400 max-w-md mx-auto">
+              You do not have access to profile management, custom avatar frames, statistics, or customization without an account. Sign in or create an account to unlock your profile.
+            </p>
+          </div>
+          <div class="flex flex-wrap items-center justify-center gap-3 pt-3">
+            <button onclick="openAuthModal('signup')" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-xs font-bold text-white shadow-accent-strong cursor-pointer transition-all flex items-center gap-2">
+              <i class="fa-solid fa-user-plus"></i>
+              <span>Create Account</span>
+            </button>
+            <button onclick="openAuthModal('login')" class="px-5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-slate-200 cursor-pointer transition-all flex items-center gap-2">
+              <i class="fa-solid fa-lock"></i>
+              <span>Log In</span>
+            </button>
+            <button onclick="triggerFirebaseGoogleLogin()" class="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-slate-200 cursor-pointer transition-all flex items-center gap-2">
+              <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
+              </svg>
+              <span>Sign in with Google</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Full Viewable Profile Content (Only shown when user is logged in) -->
+        <div id="profile-unlocked-content" class="space-y-6 hidden">
+          
+          <!-- 1. FULL-WIDTH PROFILE HEADER BANNER -->
+          <div class="relative w-full rounded-3xl overflow-hidden glass-panel border border-glassBorder shadow-2xl">
+          
+          <!-- Banner Image Element with Dark Gradient Scrim -->
+          <div class="relative h-56 sm:h-72 w-full bg-[#0d0a1a] overflow-hidden group">
+            <img 
+              id="profile-banner-img" 
+              src="https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=1600&q=80" 
+              alt="Cosmic Banner" 
+              class="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-[#07050e] via-[#07050e]/50 to-transparent"></div>
+
+            <!-- Quick Upload Banner Button on Hover -->
+            <label 
+              for="direct-banner-upload" 
+              class="absolute top-4 right-4 px-3.5 py-2 rounded-xl bg-black/60 hover:bg-black/80 backdrop-blur-md border border-white/20 text-xs font-semibold text-white flex items-center gap-2 cursor-pointer transition-all opacity-80 hover:opacity-100 shadow-lg"
+            >
+              <i class="fa-solid fa-camera text-accent"></i>
+              <span class="hidden sm:inline">Change Banner</span>
+            </label>
+            <input type="file" id="direct-banner-upload" accept="image/*" class="hidden" onchange="handleDirectBannerUpload(event)" />
+          </div>
+
+          <!-- User Info & Avatar Overlap Zone -->
+          <div class="relative px-6 sm:px-10 pb-8 pt-0 -mt-16 sm:-mt-20 flex flex-col md:flex-row items-center md:items-end justify-between gap-6 text-center md:text-left">
+            
+            <!-- Left: Avatar & User Identity -->
+            <div class="flex flex-col sm:flex-row items-center gap-6">
+              
+              <!-- Avatar Container with Equipped Frame -->
+              <div class="relative">
+                <div id="pfp-frame-wrapper" class="pfp-frame-container frame-galaxy p-1.5 transition-all duration-300">
+                  
+                  <!-- Avatar Display Box: Letter "S" badge or uploaded image -->
+                  <div id="avatar-image-box" class="w-28 h-28 sm:w-32 sm:h-32 rounded-2xl sm:rounded-3xl bg-gradient-to-tr from-purple-800 via-purple-600 to-indigo-600 flex items-center justify-center text-white overflow-hidden shadow-2xl relative">
+                    
+                    <!-- Default letter "S" badge -->
+                    <div id="default-s-badge" class="flex flex-col items-center justify-center select-none">
+                      <span class="font-display font-black text-5xl sm:text-6xl text-white tracking-wider drop-shadow-[0_0_15px_rgba(255,255,255,0.7)]">S</span>
+                      <span class="text-[9px] font-bold uppercase tracking-widest text-purple-200 mt-0.5">Soranix</span>
+                    </div>
+
+                    <!-- Uploaded Custom Avatar Image -->
+                    <img id="custom-avatar-img" class="w-full h-full object-cover hidden" alt="Profile Picture" />
+                  </div>
+
+                </div>
+
+                <!-- Quick Photo Upload Overlay Camera Icon -->
+                <label 
+                  for="direct-avatar-upload" 
+                  class="absolute bottom-1 right-1 w-9 h-9 rounded-full bg-purple-900/90 border-2 border-purple-400 text-white flex items-center justify-center text-xs shadow-lg hover:scale-110 active:scale-95 transition-all cursor-pointer z-30"
+                  title="Upload Local Device Photo"
+                >
+                  <i class="fa-solid fa-camera"></i>
+                </label>
+                <input type="file" id="direct-avatar-upload" accept="image/*" class="hidden" onchange="handleDirectAvatarUpload(event)" />
+              </div>
+
+              <!-- Name, Rank & Bio -->
+              <div class="space-y-1.5">
+                <div class="flex flex-wrap items-center justify-center md:justify-start gap-2.5">
+                  <h2 id="profile-display-name" class="font-display text-2xl sm:text-3xl font-extrabold text-white tracking-wide">
+                    Guest Explorer
+                  </h2>
+                  <span id="profile-rank-badge" class="px-2.5 py-0.5 rounded-full text-[11px] font-bold text-accent bg-purple-950/60 border border-purple-500/30 flex items-center gap-1.5">
+                    <i class="fa-solid fa-shield-halved text-[10px]"></i>
+                    <span id="profile-title-text">Level 1 Novice Voyager</span>
+                  </span>
+                </div>
+
+                <p id="profile-bio-display" class="text-xs sm:text-sm text-slate-300 max-w-xl leading-relaxed">
+                  Stargazing across infinite nebulae, collecting rare cyber soundtracks, and cataloging forgotten anime classics.
+                </p>
+
+                <!-- Level & XP Progress Bar (Zeroed initial state for new users) -->
+                <div class="pt-2 max-w-md w-full">
+                  <div class="flex items-center justify-between text-[11px] font-semibold text-slate-400 mb-1">
+                    <span>XP Progress to Level <span id="xp-target-level">2</span></span>
+                    <span class="font-mono text-purple-300" id="xp-text-display">0 / 100 XP (0%)</span>
+                  </div>
+                  <div class="w-full h-2 rounded-full bg-white/10 overflow-hidden p-0.5">
+                    <div id="xp-progress-bar" class="h-full bg-gradient-to-r from-purple-600 via-fuchsia-500 to-indigo-500 rounded-full shadow-[0_0_12px_var(--accent-glow)] transition-all duration-300" style="width: 0%;"></div>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+
+            <!-- Right: Primary "Edit Profile" Glowing Button -->
+            <div class="shrink-0 flex items-center gap-3">
+              <button 
+                id="btn-open-edit-profile"
+                onclick="openEditProfileModal()" 
+                class="px-6 py-3 rounded-2xl text-xs sm:text-sm font-bold uppercase tracking-wider text-white bg-gradient-to-r from-purple-600 via-fuchsia-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 shadow-accent-strong hover:scale-105 active:scale-95 transition-all cursor-pointer flex items-center gap-2.5"
+              >
+                <i class="fa-solid fa-pen-to-square text-sm"></i>
+                <span>Edit Profile</span>
+              </button>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- 2. STATS COUNTER GRID (Starts with Level 1 and 0 stats for new accounts) -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5">
+          
+          <!-- Level (Starts at Level 1) -->
+          <div class="glass-card rounded-2xl p-4 text-center flex flex-col items-center justify-center">
+            <div class="w-9 h-9 rounded-xl bg-purple-950/60 border border-purple-500/30 flex items-center justify-center text-accent text-sm mb-1.5">
+              <i class="fa-solid fa-shield-halved"></i>
+            </div>
+            <span id="stats-level-count" class="font-display font-extrabold text-2xl text-white tabular-nums">1</span>
+            <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mt-0.5">Level</span>
+          </div>
+
+          <!-- Anime Watched (Starts at 0) -->
+          <div class="glass-card rounded-2xl p-4 text-center flex flex-col items-center justify-center">
+            <div class="w-9 h-9 rounded-xl bg-purple-950/50 border border-purple-500/30 flex items-center justify-center text-accent text-sm mb-1.5">
+              <i class="fa-solid fa-tv"></i>
+            </div>
+            <span id="stats-anime-count" class="font-display font-extrabold text-2xl text-white tabular-nums">0</span>
+            <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mt-0.5">Anime Watched</span>
+          </div>
+
+          <!-- Episodes Watched (Starts at 0) -->
+          <div class="glass-card rounded-2xl p-4 text-center flex flex-col items-center justify-center">
+            <div class="w-9 h-9 rounded-xl bg-cyan-950/50 border border-cyan-500/30 flex items-center justify-center text-electricCyan text-sm mb-1.5">
+              <i class="fa-solid fa-film"></i>
+            </div>
+            <span id="stats-episodes-count" class="font-display font-extrabold text-2xl text-white tabular-nums">0</span>
+            <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mt-0.5">Episodes Watched</span>
+          </div>
+
+          <!-- Friends Count (Starts at 0) -->
+          <div class="glass-card rounded-2xl p-4 text-center flex flex-col items-center justify-center">
+            <div class="w-9 h-9 rounded-xl bg-purple-950/50 border border-purple-500/30 flex items-center justify-center text-purple-300 text-sm mb-1.5">
+              <i class="fa-solid fa-user-group"></i>
+            </div>
+            <span id="stats-friends-count" class="font-display font-extrabold text-2xl text-white tabular-nums">0</span>
+            <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mt-0.5">Cosmic Friends</span>
+          </div>
+
+          <!-- Favourites (Starts at 0) -->
+          <div class="glass-card rounded-2xl p-4 text-center flex flex-col items-center justify-center">
+            <div class="w-9 h-9 rounded-xl bg-pink-950/50 border border-pink-500/30 flex items-center justify-center text-neonPink text-sm mb-1.5">
+              <i class="fa-solid fa-heart"></i>
+            </div>
+            <span id="stats-fav-count" class="font-display font-extrabold text-2xl text-white tabular-nums">0</span>
+            <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mt-0.5">Favourites</span>
+          </div>
+
+          <!-- Stardust Coins (Starts at 0) -->
+          <div class="glass-card rounded-2xl p-4 text-center flex flex-col items-center justify-center">
+            <div class="w-9 h-9 rounded-xl bg-amber-950/50 border border-amber-500/30 flex items-center justify-center text-solarGold text-sm mb-1.5">
+              <i class="fa-solid fa-sparkles"></i>
+            </div>
+            <span id="stats-stardust-count" class="font-display font-extrabold text-2xl text-amber-300 tabular-nums">0</span>
+            <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mt-0.5">Stardust Coins</span>
+          </div>
+
+        </div>
+
+        <!-- 3. CONTENT TABS & LAYOUT SWITCHER -->
+        <div class="glass-card rounded-3xl p-6 sm:p-8 space-y-6">
+          
+          <!-- Tab Header Bar with Layout Toggle -->
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-glassBorder pb-4">
+            
+            <!-- Navigation Tabs -->
+            <div class="flex items-center gap-2 p-1 bg-white/[0.03] border border-white/5 rounded-2xl">
+              <button 
+                id="tab-btn-history"
+                onclick="switchContentTab('history')" 
+                class="px-4 py-2 rounded-xl text-xs font-bold transition-all bg-purple-600 text-white shadow-sm cursor-pointer"
+              >
+                <i class="fa-solid fa-clock-rotate-left mr-1.5"></i> Recently Watched
+              </button>
+              <button 
+                id="tab-btn-favourites"
+                onclick="switchContentTab('favourites')" 
+                class="px-4 py-2 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-white cursor-pointer"
+              >
+                <i class="fa-solid fa-heart mr-1.5 text-pink-400"></i> Favourited Anime (<span id="profile-fav-tab-count">0</span>)
+              </button>
+            </div>
+
+            <!-- View Layout Toggle: 3D Glass Cards vs Compact List -->
+            <div class="flex items-center gap-2 text-xs font-semibold text-slate-400">
+              <span>Display Mode:</span>
+              <div class="flex items-center p-1 bg-white/[0.03] border border-white/5 rounded-xl">
+                <button 
+                  id="layout-btn-cards"
+                  onclick="setLayoutMode('cards')" 
+                  class="px-2.5 py-1 rounded-lg text-white bg-white/10 transition-colors cursor-pointer"
+                  title="3D Glass Cards View"
+                >
+                  <i class="fa-solid fa-border-all"></i>
+                </button>
+                <button 
+                  id="layout-btn-list"
+                  onclick="setLayoutMode('list')" 
+                  class="px-2.5 py-1 rounded-lg text-slate-400 hover:text-white transition-colors cursor-pointer"
+                  title="Compact List View"
+                >
+                  <i class="fa-solid fa-list"></i>
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Tab Content Area -->
+          <div id="content-container">
+            
+            <!-- History Tab Content -->
+            <div id="content-tab-history" class="view-cards-grid transition-all duration-300">
+              <div class="glass-panel rounded-2xl p-6 text-center border border-dashed border-white/10 col-span-full py-10">
+                <i class="fa-solid fa-clock-rotate-left text-3xl text-purple-400/40 mb-2"></i>
+                <h4 class="text-sm font-bold text-slate-300">No Watch History Recorded Yet</h4>
+                <p class="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
+                  Stream your favorite anime series to log watch history and earn automatic watch-time Stardust &amp; XP.
+                </p>
+              </div>
+            </div>
+
+            <!-- Favourites Tab Content (Hidden by default) -->
+            <div id="content-tab-favourites" class="view-cards-grid hidden transition-all duration-300">
+              <div class="glass-panel rounded-2xl p-6 text-center border border-dashed border-white/10 col-span-full py-10">
+                <i class="fa-regular fa-heart text-3xl text-pink-400/40 mb-2"></i>
+                <h4 class="text-sm font-bold text-slate-300">No Favourited Anime Yet</h4>
+                <p class="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
+                  Bookmark titles across the galaxy to organize your personal cosmic watchlist.
+                </p>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        </div>
+
+      </section>
+
+      <!-- ====================================================== -->
+      <!-- VIEW 2 - TAB 3: FRIENDS & TRANSMISSIONS                -->
+      <!-- ====================================================== -->
+      <section id="tab-view-friends" class="p-4 sm:p-8 space-y-6 max-w-6xl w-full mx-auto hidden">
+        
+        <!-- Guest Mode Locked State -->
+        <div id="friends-guest-locked" class="glass-panel rounded-3xl p-8 sm:p-14 text-center border border-dashed border-purple-500/30 flex flex-col items-center justify-center space-y-4">
+          <div class="w-16 h-16 rounded-3xl bg-purple-950/60 border border-purple-500/40 flex items-center justify-center text-purple-300 text-3xl shadow-accent-glow">
+            <i class="fa-solid fa-user-lock"></i>
+          </div>
+          <div class="space-y-1.5">
+            <h3 class="font-display font-extrabold text-2xl text-white">Friend System &amp; Transmissions Locked</h3>
+            <p class="text-xs sm:text-sm text-slate-400 max-w-md mx-auto">
+              You do not have access to cosmic friends, incoming requests, or direct messaging without an account. Sign in or create an account to start building your crew.
+            </p>
+          </div>
+          <div class="flex flex-wrap items-center justify-center gap-3 pt-3">
+            <button onclick="openAuthModal('signup')" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-xs font-bold text-white shadow-accent-strong cursor-pointer transition-all flex items-center gap-2">
+              <i class="fa-solid fa-user-plus"></i>
+              <span>Create Account</span>
+            </button>
+            <button onclick="openAuthModal('login')" class="px-5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-slate-200 cursor-pointer transition-all flex items-center gap-2">
+              <i class="fa-solid fa-lock"></i>
+              <span>Log In</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Authenticated Friends Hub Content -->
+        <div id="friends-unlocked-content" class="space-y-6 hidden">
+          
+          <!-- Top Bar Header with Count Badges -->
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-glassBorder">
+            <div>
+              <h2 class="text-2xl font-display font-extrabold text-white flex items-center gap-2.5">
+                <span>Friends &amp; Transmissions</span>
+                <span id="friends-count-pill" class="text-xs px-2.5 py-0.5 rounded-full bg-purple-950/80 text-purple-300 border border-purple-500/40 font-mono">0 Friends</span>
+              </h2>
+              <p class="text-xs text-slate-400">Discover fellow anime voyagers, send transmissions, and watch together</p>
+            </div>
+            
+            <div class="flex items-center gap-2">
+              <button 
+                onclick="toggleGlobalChatPanel()" 
+                class="px-4 py-2 rounded-xl text-xs font-semibold text-white bg-white/5 hover:bg-white/10 border border-white/10 flex items-center gap-2 cursor-pointer transition-all"
+              >
+                <i class="fa-solid fa-comments text-electricCyan"></i>
+                <span>Open Global Chat</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Add Friend Input Bar -->
+          <div class="glass-card rounded-2xl p-5 border border-purple-500/20">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-300 mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-user-plus text-accent"></i>
+              <span>Add Cosmic Friend</span>
+            </h4>
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+              <div class="relative flex-1">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+                  <i class="fa-solid fa-at text-xs"></i>
+                </span>
+                <input 
+                  id="input-friend-search" 
+                  type="text" 
+                  maxlength="20"
+                  placeholder="Enter exact registered username (e.g. AstralScout)..." 
+                  class="w-full pl-9 pr-4 py-2.5 text-xs bg-[#07050e]/90 border border-purple-500/30 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400 transition-all"
+                  onkeydown="if(event.key === 'Enter') handleSendFriendRequest();"
+                />
+              </div>
+              <button 
+                onclick="handleSendFriendRequest()" 
+                class="px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 shadow-accent-glow transition-all cursor-pointer flex items-center justify-center gap-2 shrink-0"
+              >
+                <i class="fa-solid fa-paper-plane text-xs"></i>
+                <span>Send Request</span>
+              </button>
+            </div>
+            <p id="friend-search-feedback" class="text-xs mt-2 hidden"></p>
+          </div>
+
+          <!-- Sub-Navigation Tabs: My Friends, Incoming Requests, Outgoing Requests -->
+          <div class="flex items-center gap-2 p-1 bg-white/[0.03] border border-white/5 rounded-2xl">
+            <button 
+              id="subtab-btn-friends-list"
+              onclick="switchFriendsSubTab('list')" 
+              class="px-4 py-2 rounded-xl text-xs font-bold transition-all bg-purple-600 text-white shadow-sm cursor-pointer flex items-center gap-2"
+            >
+              <i class="fa-solid fa-users"></i>
+              <span>My Friends (<span id="subtab-friends-count">0</span>)</span>
+            </button>
+            <button 
+              id="subtab-btn-friends-incoming"
+              onclick="switchFriendsSubTab('incoming')" 
+              class="px-4 py-2 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-white cursor-pointer flex items-center gap-2"
+            >
+              <i class="fa-solid fa-inbox"></i>
+              <span>Incoming Requests (<span id="subtab-incoming-count">0</span>)</span>
+            </button>
+            <button 
+              id="subtab-btn-friends-outgoing"
+              onclick="switchFriendsSubTab('outgoing')" 
+              class="px-4 py-2 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-white cursor-pointer flex items-center gap-2"
+            >
+              <i class="fa-solid fa-clock"></i>
+              <span>Outgoing (<span id="subtab-outgoing-count">0</span>)</span>
+            </button>
+          </div>
+
+          <!-- Sub-Tab 1: Friends List Grid -->
+          <div id="friends-subtab-list" class="space-y-4">
+            <div id="friends-grid-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+            <!-- Empty Friends State -->
+            <div id="friends-empty-state" class="glass-panel rounded-3xl p-12 text-center border border-dashed border-white/10 hidden">
+              <div class="w-14 h-14 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-center text-slate-400 text-2xl mx-auto mb-3">
+                <i class="fa-solid fa-user-astronaut"></i>
+              </div>
+              <h3 class="text-base font-bold text-white">No Cosmic Friends Yet</h3>
+              <p class="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
+                Search for a registered username above or click on voyagers in Global Chat to send friend requests!
+              </p>
+            </div>
+          </div>
+
+          <!-- Sub-Tab 2: Incoming Requests -->
+          <div id="friends-subtab-incoming" class="space-y-3 hidden">
+            <div id="incoming-requests-container" class="space-y-3"></div>
+            <!-- Empty Incoming State -->
+            <div id="incoming-empty-state" class="glass-panel rounded-2xl p-8 text-center border border-dashed border-white/10 hidden">
+              <i class="fa-solid fa-envelope-open text-2xl text-slate-500 mb-2 block"></i>
+              <p class="text-xs text-slate-400">No incoming friend requests pending at this time.</p>
+            </div>
+          </div>
+
+          <!-- Sub-Tab 3: Outgoing Requests -->
+          <div id="friends-subtab-outgoing" class="space-y-3 hidden">
+            <div id="outgoing-requests-container" class="space-y-3"></div>
+            <!-- Empty Outgoing State -->
+            <div id="outgoing-empty-state" class="glass-panel rounded-2xl p-8 text-center border border-dashed border-white/10 hidden">
+              <i class="fa-solid fa-paper-plane text-2xl text-slate-500 mb-2 block"></i>
+              <p class="text-xs text-slate-400">No pending outgoing friend requests.</p>
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- ====================================================== -->
+      <!-- VIEW 2 - TAB 4: FAVORITES VIEW                         -->
+      <!-- ====================================================== -->
+      <section id="tab-view-favorites" class="p-4 sm:p-8 space-y-6 max-w-6xl w-full mx-auto hidden">
+        <div class="flex items-center justify-between pb-4 border-b border-glassBorder">
+          <div>
+            <h2 class="text-2xl font-display font-extrabold text-white">Favourited Anime (<span id="view-fav-count">0</span>)</h2>
+            <p class="text-xs text-slate-400">Your curated collection of galaxy-class series</p>
+          </div>
+          <button onclick="switchDashboardTab('profile')" class="text-xs font-bold text-accent hover:underline">
+            View in Profile &rarr;
+          </button>
+        </div>
+        
+        <div class="glass-panel rounded-3xl p-12 text-center border border-dashed border-white/10">
+          <i class="fa-regular fa-heart text-4xl text-pink-400/40 mb-3"></i>
+          <h3 class="text-base font-bold text-white">Your Favourites Vault is Empty</h3>
+          <p class="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
+            You currently have 0 favourited series. As anime cards are added to the modular dashboard, you can click the heart icon to save them here.
+          </p>
+        </div>
+      </section>
+
+      <!-- ====================================================== -->
+      <!-- VIEW 2 - TAB 4: DAILY REWARDS TRACK                    -->
+      <!-- ====================================================== -->
+      <section id="tab-view-rewards" class="p-4 sm:p-8 space-y-6 max-w-6xl w-full mx-auto hidden">
+        <div class="glass-panel rounded-3xl p-6 sm:p-8 border border-glassBorder">
+          <div class="flex items-center justify-between flex-wrap gap-4 mb-6">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 rounded-2xl bg-amber-950/60 border border-amber-500/40 flex items-center justify-center text-solarGold text-xl">
+                <i class="fa-solid fa-calendar-check"></i>
+              </div>
+              <div>
+                <h2 class="text-xl font-display font-bold text-white">7-Day Login Streak Track</h2>
+                <p class="text-xs text-slate-400">Claim your consecutive daily Stardust bonuses &bull; Starts at Day 1</p>
+              </div>
+            </div>
+            <!-- Live Active Streak Badge -->
+            <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-950/40 border border-amber-500/30 text-xs font-bold text-amber-300">
+              <i class="fa-solid fa-fire text-amber-400"></i>
+              <span id="rewards-streak-display">Active Streak: 0 Days</span>
+            </div>
+          </div>
+
+          <!-- Dynamic Daily Rewards Track Container -->
+          <div id="daily-rewards-container"></div>
+        </div>
+      </section>
+
+      <!-- ====================================================== -->
+      <!-- VIEW 2 - TAB 5: COSMIC SHOP                            -->
+      <!-- ====================================================== -->
+      <section id="tab-view-shop" class="p-4 sm:p-8 space-y-6 max-w-6xl w-full mx-auto hidden">
+        <div class="flex items-center justify-between pb-4 border-b border-glassBorder">
+          <div>
+            <h2 class="text-2xl font-display font-extrabold text-white">Cosmic Shop</h2>
+            <p class="text-xs text-slate-400">Unlock decorative avatar frames, colors, and VIP badges</p>
+          </div>
+          <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-950/40 border border-amber-500/30 text-xs font-bold text-amber-300">
+            <i class="fa-solid fa-sparkles"></i>
+            <span id="shop-stardust-display">0 Stardust Available</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div class="glass-card rounded-2xl p-5 flex flex-col justify-between space-y-4">
+            <div class="w-12 h-12 rounded-xl border-2 border-cyan-400 shadow-[0_0_15px_#06b6d4] flex items-center justify-center text-cyan-300">
+              <i class="fa-solid fa-bolt"></i>
+            </div>
+            <div>
+              <h4 class="text-sm font-bold text-white">Cyberpunk Neon Frame</h4>
+              <p class="text-xs text-slate-400 mt-0.5">High-contrast cyan &amp; magenta spinning dashed aura.</p>
+            </div>
+            <button onclick="openEditProfileModal()" class="w-full py-2 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-bold text-white transition-colors cursor-pointer">
+              Equip in Profile
+            </button>
+          </div>
+
+          <div class="glass-card rounded-2xl p-5 flex flex-col justify-between space-y-4">
+            <div class="w-12 h-12 rounded-xl border-2 border-yellow-400 shadow-[0_0_15px_#facc15] flex items-center justify-center text-yellow-300">
+              <i class="fa-solid fa-crown"></i>
+            </div>
+            <div>
+              <h4 class="text-sm font-bold text-white">Golden Crown Frame</h4>
+              <p class="text-xs text-slate-400 mt-0.5">Regal golden crown crest for elite anime voyagers.</p>
+            </div>
+            <button onclick="openEditProfileModal()" class="w-full py-2 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-bold text-white transition-colors cursor-pointer">
+              Equip in Profile
+            </button>
+          </div>
+
+          <div class="glass-card rounded-2xl p-5 flex flex-col justify-between space-y-4">
+            <div class="w-12 h-12 rounded-xl border-2 border-purple-400 shadow-[0_0_15px_#a855f7] flex items-center justify-center text-purple-300">
+              <i class="fa-solid fa-atom"></i>
+            </div>
+            <div>
+              <h4 class="text-sm font-bold text-white">Void Halo Frame</h4>
+              <p class="text-xs text-slate-400 mt-0.5">Pulsing deep ultraviolet ring forged in event horizons.</p>
+            </div>
+            <button onclick="openEditProfileModal()" class="w-full py-2 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-bold text-white transition-colors cursor-pointer">
+              Equip in Profile
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Bottom Footer -->
+      <footer class="mt-auto w-full py-6 px-4 sm:px-8 border-t border-glassBorder glass-panel flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-atom text-accent"></i>
+          <span>&copy; 2026 Soranix.to &bull; The Ultimate Galaxy of Anime</span>
+        </div>
+        <div class="flex items-center gap-4">
+          <button onclick="openBugReportModal()" class="text-slate-400 hover:text-white transition-colors cursor-pointer flex items-center gap-1.5">
+            <i class="fa-solid fa-triangle-exclamation text-amber-400"></i>
+            <span>Report Issue</span>
+          </button>
+          <span class="text-slate-600">&bull;</span>
+          <button onclick="returnToSplash()" class="text-slate-400 hover:text-white transition-colors cursor-pointer">
+            Main Menu
+          </button>
+        </div>
+      </footer>
+
+    </div>
+
+  </div>
+
+  <!-- ========================================================== -->
+  <!-- DRAWER 1: GLASSMORPHIC GLOBAL CHAT PANEL                   -->
+  <!-- ========================================================== -->
+  <div 
+    id="global-chat-panel" 
+    class="fixed top-0 right-0 h-full w-full sm:w-[420px] z-50 glass-card border-l border-glassBorder shadow-2xl flex flex-col transition-transform duration-300 translate-x-full"
+    style="background: rgba(10, 7, 22, 0.95); backdrop-filter: blur(28px);"
+  >
+    <!-- Chat Header -->
+    <div class="p-4 border-b border-glassBorder flex items-center justify-between shrink-0">
+      <div class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-xl bg-electricCyan/10 border border-electricCyan/30 flex items-center justify-center text-electricCyan text-sm">
+          <i class="fa-solid fa-comments"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h3 class="text-sm font-bold text-white font-display">Cosmic Global Chat</h3>
+            <span class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_6px_#34d399]"></span>
+          </div>
+          <p class="text-[10px] text-slate-400">
+            <span id="global-chat-online-count" class="text-emerald-400 font-semibold">142 Voyagers</span> &bull; Live Community Feed
+          </p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-1.5">
+        <!-- Quick hide chat preference toggle button -->
+        <button 
+          id="btn-global-chat-pref-hide"
+          onclick="toggleGlobalChatVisibilitySetting()" 
+          class="p-2 text-slate-400 hover:text-amber-400 hover:bg-white/5 rounded-xl transition-all cursor-pointer text-xs"
+          title="Toggle Show/Hide Global Chat Setting"
+        >
+          <i class="fa-solid fa-eye-slash"></i>
+        </button>
+        <!-- Close / Minimize panel button -->
+        <button 
+          onclick="closeGlobalChatPanel()" 
+          class="p-2 text-slate-400 hover:text-white hover:bg-white/5 rounded-xl transition-all cursor-pointer text-xs"
+          title="Close Chat Drawer"
+        >
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Spoiler Tag Tip & Guidelines Pill -->
+    <div class="px-4 py-1.5 bg-purple-950/40 border-b border-white/5 flex items-center justify-between text-[10px] text-purple-300">
+      <span>Tip: Spoilers &rarr; <code class="bg-black/50 px-1 py-0.5 rounded font-mono">&gt;! spoiler !&lt;</code></span>
+      <span class="text-slate-500">Click avatar/name to inspect</span>
+    </div>
+
+    <!-- Messages Container -->
+    <div id="global-chat-messages" class="flex-1 overflow-y-auto p-4 space-y-3.5 text-xs">
+      <!-- Dynamic messages injected here -->
+    </div>
+
+    <!-- Chat Footer Input Area -->
+    <div class="p-3 border-t border-glassBorder bg-black/40 shrink-0">
+      
+      <!-- Guest Notice (Guests can observe but cannot send messages) -->
+      <div id="global-chat-guest-prompt" class="p-3 rounded-2xl bg-purple-950/60 border border-purple-500/30 text-center space-y-2 hidden">
+        <p class="text-xs text-purple-200">Guests can read transmissions. Sign in or create an account to broadcast messages in global chat!</p>
+        <div class="flex items-center justify-center gap-2">
+          <button onclick="openAuthModal('login')" class="px-3.5 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-xs font-bold text-white shadow-sm cursor-pointer">
+            Sign In
+          </button>
+          <button onclick="openAuthModal('signup')" class="px-3.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-semibold text-white cursor-pointer">
+            Create Account
+          </button>
+        </div>
+      </div>
+
+      <!-- Authenticated User Input Controls -->
+      <div id="global-chat-auth-controls" class="space-y-2">
+        <!-- Quick Anime Emojis/Stickers Bar -->
+        <div class="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
+          <button onclick="insertGlobalEmoji('🔥')" class="px-1.5 py-0.5 rounded-md hover:bg-white/10 transition-colors cursor-pointer">🔥</button>
+          <button onclick="insertGlobalEmoji('✨')" class="px-1.5 py-0.5 rounded-md hover:bg-white/10 transition-colors cursor-pointer">✨</button>
+          <button onclick="insertGlobalEmoji('🌸')" class="px-1.5 py-0.5 rounded-md hover:bg-white/10 transition-colors cursor-pointer">🌸</button>
+          <button onclick="insertGlobalEmoji('⭐')" class="px-1.5 py-0.5 rounded-md hover:bg-white/10 transition-colors cursor-pointer">⭐</button>
+          <button onclick="insertGlobalEmoji('🍙')" class="px-1.5 py-0.5 rounded-md hover:bg-white/10 transition-colors cursor-pointer">🍙</button>
+          <button onclick="insertGlobalEmoji('⚔️')" class="px-1.5 py-0.5 rounded-md hover:bg-white/10 transition-colors cursor-pointer">⚔️</button>
+          <button onclick="insertGlobalEmoji('🍿')" class="px-1.5 py-0.5 rounded-md hover:bg-white/10 transition-colors cursor-pointer">🍿</button>
+          <button onclick="insertGlobalEmoji('>!  !<')" class="ml-auto text-[10px] px-2 py-0.5 rounded bg-white/10 hover:bg-purple-600 text-purple-200 transition-colors cursor-pointer font-mono" title="Insert Spoiler Tag">Spoiler</button>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <input 
+            id="global-chat-input" 
+            type="text" 
+            maxlength="280"
+            placeholder="Transmit message to all voyagers..." 
+            class="flex-1 bg-[#07050e] border border-purple-500/30 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400 transition-all"
+            onkeydown="if(event.key === 'Enter') sendGlobalChatMessage();"
+          />
+          <button 
+            onclick="sendGlobalChatMessage()" 
+            class="w-10 h-10 rounded-xl bg-purple-600 hover:bg-purple-500 text-white flex items-center justify-center transition-all shadow-accent-glow cursor-pointer shrink-0"
+            title="Send Message"
+          >
+            <i class="fa-solid fa-paper-plane text-xs"></i>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================================== -->
+  <!-- DRAWER 2: GLASSMORPHIC DIRECT MESSAGE (DM) CHAT DRAWER     -->
+  <!-- ========================================================== -->
+  <div 
+    id="dm-chat-drawer" 
+    class="fixed top-0 right-0 h-full w-full sm:w-[420px] z-50 glass-card border-l border-glassBorder shadow-2xl flex flex-col transition-transform duration-300 translate-x-full"
+    style="background: rgba(10, 7, 22, 0.96); backdrop-filter: blur(28px);"
+  >
+    <!-- DM Header -->
+    <div class="p-4 border-b border-glassBorder flex items-center justify-between shrink-0">
+      <div class="flex items-center gap-3 min-w-0">
+        <!-- Target Friend Avatar + Frame -->
+        <div id="dm-header-frame" class="pfp-frame-container frame-galaxy p-0.5 shrink-0">
+          <div id="dm-header-avatar" class="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-800 to-indigo-600 flex items-center justify-center text-white text-xs font-bold overflow-hidden">
+            <span id="dm-header-s">S</span>
+            <img id="dm-header-img" class="w-full h-full object-cover hidden" alt="Friend" />
+          </div>
+        </div>
+        <div class="min-w-0 flex-1">
+          <div class="flex items-center gap-1.5">
+            <h4 id="dm-header-username" class="text-sm font-bold text-white truncate">Cosmic Friend</h4>
+            <span id="dm-header-status-dot" class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_6px_#34d399] shrink-0"></span>
+          </div>
+          <span id="dm-header-rank" class="text-[10px] text-accent font-semibold block truncate">Level 1 Novice Voyager</span>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-1.5">
+        <!-- Watch Together / Anime Recommendation Dropdown Trigger -->
+        <div class="relative">
+          <button 
+            onclick="toggleRecommendMenu(event)" 
+            class="px-2.5 py-1.5 rounded-xl bg-purple-950/80 hover:bg-purple-900 border border-purple-500/30 text-xs font-semibold text-purple-300 flex items-center gap-1.5 transition-all cursor-pointer"
+            title="Watch Together / Send Anime Recommendation"
+          >
+            <i class="fa-solid fa-film text-amber-400"></i>
+            <span class="hidden sm:inline">Recommend</span>
+          </button>
+
+          <!-- Recommend Dropdown Popover -->
+          <div 
+            id="dm-recommend-menu" 
+            class="hidden absolute right-0 top-10 w-64 glass-card rounded-2xl p-2.5 shadow-2xl border border-glassBorder z-50 space-y-1"
+          >
+            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-2 py-1 block">Recommend to Stream:</span>
+            <button onclick="sendAnimeRecommendation('Solo Leveling', 'Action / Fantasy')" class="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-white/10 text-xs text-white transition-colors cursor-pointer flex items-center justify-between">
+              <span>Solo Leveling</span>
+              <span class="text-[10px] text-purple-300 font-mono">Action</span>
+            </button>
+            <button onclick="sendAnimeRecommendation('Frieren: Beyond Journey\'s End', 'Fantasy / Adventure')" class="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-white/10 text-xs text-white transition-colors cursor-pointer flex items-center justify-between">
+              <span>Frieren: Beyond Journey</span>
+              <span class="text-[10px] text-cyan-300 font-mono">Fantasy</span>
+            </button>
+            <button onclick="sendAnimeRecommendation('Jujutsu Kaisen', 'Supernatural / Action')" class="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-white/10 text-xs text-white transition-colors cursor-pointer flex items-center justify-between">
+              <span>Jujutsu Kaisen</span>
+              <span class="text-[10px] text-pink-300 font-mono">Action</span>
+            </button>
+            <button onclick="sendAnimeRecommendation('Attack on Titan', 'Dark Fantasy')" class="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-white/10 text-xs text-white transition-colors cursor-pointer flex items-center justify-between">
+              <span>Attack on Titan</span>
+              <span class="text-[10px] text-amber-300 font-mono">Epic</span>
+            </button>
+            <button onclick="sendAnimeRecommendation('Steins;Gate', 'Sci-Fi / Thriller')" class="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-white/10 text-xs text-white transition-colors cursor-pointer flex items-center justify-between">
+              <span>Steins;Gate</span>
+              <span class="text-[10px] text-emerald-300 font-mono">Sci-Fi</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Close DM Drawer Button -->
+        <button 
+          onclick="closeDMChatDrawer()" 
+          class="p-2 text-slate-400 hover:text-white hover:bg-white/5 rounded-xl transition-all cursor-pointer text-xs"
+          title="Close Direct Transmission"
+        >
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Messages Container -->
+    <div id="dm-chat-messages" class="flex-1 overflow-y-auto p-4 space-y-3 text-xs">
+      <!-- Dynamic DM message history injected here -->
+    </div>
+
+    <!-- DM Input Controls -->
+    <div class="p-3 border-t border-glassBorder bg-black/40 shrink-0 space-y-2">
+      <!-- Anime reaction stickers bar -->
+      <div class="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
+        <button onclick="insertDMEmoji('🌸')" class="px-1.5 py-0.5 rounded hover:bg-white/10 transition-colors cursor-pointer">🌸</button>
+        <button onclick="insertDMEmoji('⚡')" class="px-1.5 py-0.5 rounded hover:bg-white/10 transition-colors cursor-pointer">⚡</button>
+        <button onclick="insertDMEmoji('⭐')" class="px-1.5 py-0.5 rounded hover:bg-white/10 transition-colors cursor-pointer">⭐</button>
+        <button onclick="insertDMEmoji('🔥')" class="px-1.5 py-0.5 rounded hover:bg-white/10 transition-colors cursor-pointer">🔥</button>
+        <button onclick="insertDMEmoji('✨')" class="px-1.5 py-0.5 rounded hover:bg-white/10 transition-colors cursor-pointer">✨</button>
+        <button onclick="insertDMEmoji('🍙')" class="px-1.5 py-0.5 rounded hover:bg-white/10 transition-colors cursor-pointer">🍙</button>
+        <button onclick="insertDMEmoji('⚔️')" class="px-1.5 py-0.5 rounded hover:bg-white/10 transition-colors cursor-pointer">⚔️</button>
+        <button onclick="insertDMEmoji('🍿')" class="px-1.5 py-0.5 rounded hover:bg-white/10 transition-colors cursor-pointer">🍿</button>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <input 
+          id="dm-chat-input" 
+          type="text" 
+          maxlength="280"
+          placeholder="Transmit private direct message..." 
+          class="flex-1 bg-[#07050e] border border-purple-500/30 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400 transition-all"
+          onkeydown="if(event.key === 'Enter') sendDirectMessage();"
+        />
+        <button 
+          onclick="sendDirectMessage()" 
+          class="w-10 h-10 rounded-xl bg-purple-600 hover:bg-purple-500 text-white flex items-center justify-center transition-all shadow-accent-glow cursor-pointer shrink-0"
+          title="Send DM"
+        >
+          <i class="fa-solid fa-paper-plane text-xs"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================== -->
+  <!-- MODAL: MEMBER ACTION CARD / PROFILE PREVIEW MODAL          -->
+  <!-- ========================================================== -->
+  <div id="user-profile-preview-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-xl">
+    <div class="w-full max-w-sm glass-card rounded-3xl p-6 relative shadow-2xl border border-glassBorder space-y-4">
+      <button onclick="closeUserProfilePreviewModal()" class="absolute top-4 right-4 p-2 text-slate-400 hover:text-white transition-colors cursor-pointer">
+        <i class="fa-solid fa-xmark text-sm"></i>
+      </button>
+
+      <!-- Profile Header Visual -->
+      <div class="flex flex-col items-center text-center pt-2">
+        <div id="preview-modal-frame" class="pfp-frame-container frame-galaxy p-1 mb-3">
+          <div id="preview-modal-avatar-box" class="w-20 h-20 rounded-2xl bg-gradient-to-tr from-purple-800 to-indigo-600 flex items-center justify-center text-white text-2xl font-black overflow-hidden shadow-xl">
+            <span id="preview-modal-s">S</span>
+            <img id="preview-modal-img" class="w-full h-full object-cover hidden" alt="User" />
+          </div>
+        </div>
+
+        <h3 id="preview-modal-username" class="text-lg font-bold text-white font-display">VoyagerName</h3>
+        <span id="preview-modal-title" class="text-xs text-accent font-semibold mt-0.5">Level 1 Novice Voyager</span>
+        <p id="preview-modal-bio" class="text-xs text-slate-300 mt-2 max-w-xs leading-relaxed">
+          Exploring galaxies, cataloging anime soundtracks, and discovering stargates.
+        </p>
+      </div>
+
+      <!-- Quick Stats Grid -->
+      <div class="grid grid-cols-3 gap-2 py-2 border-y border-glassBorder text-center">
+        <div class="p-2 rounded-xl bg-white/[0.02]">
+          <span id="preview-modal-level" class="block font-bold text-sm text-purple-300">Lv 1</span>
+          <span class="text-[9px] uppercase tracking-wider text-slate-500">Rank</span>
+        </div>
+        <div class="p-2 rounded-xl bg-white/[0.02]">
+          <span id="preview-modal-anime" class="block font-bold text-sm text-electricCyan">0</span>
+          <span class="text-[9px] uppercase tracking-wider text-slate-500">Watched</span>
+        </div>
+        <div class="p-2 rounded-xl bg-white/[0.02]">
+          <span id="preview-modal-status" class="block font-bold text-sm text-emerald-400">Online</span>
+          <span class="text-[9px] uppercase tracking-wider text-slate-500">Status</span>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex items-center gap-2 pt-1">
+        <button 
+          id="preview-modal-btn-friend" 
+          onclick="handlePreviewModalFriendAction()" 
+          class="flex-1 py-2.5 rounded-xl text-xs font-bold text-white bg-purple-600 hover:bg-purple-500 shadow-accent-glow transition-all cursor-pointer flex items-center justify-center gap-2"
+        >
+          <i class="fa-solid fa-user-plus"></i>
+          <span id="preview-modal-btn-friend-text">Add Friend</span>
+        </button>
+        <button 
+          id="preview-modal-btn-dm" 
+          onclick="handlePreviewModalDMAction()" 
+          class="flex-1 py-2.5 rounded-xl text-xs font-bold text-white bg-white/10 hover:bg-white/20 border border-white/10 transition-all cursor-pointer flex items-center justify-center gap-2"
+        >
+          <i class="fa-solid fa-message text-electricCyan"></i>
+          <span>Direct Message</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================== -->
+  <!-- MODAL 1: AUTHENTICATION MODAL (Persistent & Unique Check)  -->
+  <!-- ========================================================== -->
+  <div id="auth-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-xl">
+    <div class="w-full max-w-md glass-card rounded-3xl p-6 sm:p-8 relative shadow-2xl border border-glassBorder">
+      
+      <!-- Close Button -->
+      <button onclick="closeAuthModal()" class="absolute top-4 right-4 p-2 text-slate-400 hover:text-white transition-colors cursor-pointer" title="Close">
+        <i class="fa-solid fa-xmark text-sm"></i>
+      </button>
+
+      <!-- Modal Header -->
+      <div class="text-center mb-6">
+        <div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-purple-950/60 border border-purple-500/40 mb-3 text-purple-300">
+          <i class="fa-solid fa-atom text-xl animate-spin-slow"></i>
+        </div>
+        <h3 id="auth-modal-title" class="text-xl font-display font-bold text-white">Access Soranix Galaxy</h3>
+        <p class="text-xs text-purple-300/70 mt-1">Local persistent session with automatic login on this device</p>
+      </div>
+
+      <!-- Auth Switch Tabs: Log In vs Sign Up -->
+      <div class="flex items-center p-1 bg-white/[0.04] border border-white/10 rounded-2xl mb-6">
+        <button 
+          id="auth-tab-login" 
+          onclick="setAuthMode('login')" 
+          class="flex-1 py-2 rounded-xl text-xs font-bold transition-all bg-purple-600 text-white cursor-pointer"
+        >
+          Log In
+        </button>
+        <button 
+          id="auth-tab-signup" 
+          onclick="setAuthMode('signup')" 
+          class="flex-1 py-2 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-white cursor-pointer"
+        >
+          Sign Up
+        </button>
+      </div>
+
+      <!-- Auth Form -->
+      <form onsubmit="handleAuthSubmit(event)" class="space-y-4">
+        
+        <!-- Unique Username Input (Always required on Sign Up and Log In) -->
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+            Unique Username
+          </label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-500">
+              <i class="fa-solid fa-at text-xs"></i>
+            </span>
+            <input 
+              id="auth-username" 
+              type="text" 
+              required 
+              maxlength="20"
+              placeholder="e.g. StarVoyager" 
+              class="w-full pl-9 pr-8 py-2.5 text-xs bg-[#07050e]/90 border border-purple-500/30 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400 transition-all"
+              oninput="validateAuthUsernameRealtime()"
+            />
+            <span id="auth-username-status-icon" class="absolute inset-y-0 right-0 flex items-center pr-3"></span>
+          </div>
+          <!-- Inline Validation Messages -->
+          <p id="auth-username-error" class="hidden text-xs text-red-400 mt-1.5 font-semibold flex items-center gap-1.5">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            <span>Username already taken. Please choose another.</span>
+          </p>
+          <p id="auth-username-success" class="hidden text-xs text-emerald-400 mt-1.5 font-semibold flex items-center gap-1.5">
+            <i class="fa-solid fa-circle-check"></i>
+            <span>Username available!</span>
+          </p>
+        </div>
+
+        <!-- Email Field (For Sign Up) -->
+        <div id="auth-email-group" class="hidden">
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">Email Address</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-500">
+              <i class="fa-regular fa-envelope text-xs"></i>
+            </span>
+            <input 
+              id="auth-email" 
+              type="email" 
+              placeholder="voyager@soranix.to" 
+              class="w-full pl-9 pr-4 py-2.5 text-xs bg-[#07050e]/90 border border-purple-500/30 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400 transition-all"
+            />
+          </div>
+        </div>
+
+        <!-- Password Field -->
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">Password</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-500">
+              <i class="fa-solid fa-lock text-xs"></i>
+            </span>
+            <input 
+              id="auth-password" 
+              type="password" 
+              required 
+              placeholder="••••••••••••" 
+              class="w-full pl-9 pr-4 py-2.5 text-xs bg-[#07050e]/90 border border-purple-500/30 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400 transition-all"
+            />
+          </div>
+        </div>
+
+        <!-- Confirm Password Field (Visible on Sign Up) -->
+        <div id="auth-confirm-group" class="hidden">
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">Confirm Password</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-500">
+              <i class="fa-solid fa-shield-halved text-xs"></i>
+            </span>
+            <input 
+              id="auth-confirm-password" 
+              type="password" 
+              placeholder="••••••••••••" 
+              class="w-full pl-9 pr-4 py-2.5 text-xs bg-[#07050e]/90 border border-purple-500/30 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400 transition-all"
+            />
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button 
+          id="auth-submit-btn" 
+          type="submit" 
+          class="w-full py-3 rounded-xl text-xs font-extrabold uppercase tracking-wider text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 shadow-accent-glow hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
+        >
+          Sign In to Soranix
+        </button>
+      </form>
+
+      <!-- Divider -->
+      <div class="relative my-5">
+        <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-white/10"></div></div>
+        <div class="relative flex justify-center text-[10px] uppercase tracking-widest"><span class="bg-[#130e26] px-3 text-slate-400">or continue with</span></div>
+      </div>
+
+      <!-- Google Sign In via Firebase -->
+      <button 
+        type="button" 
+        onclick="triggerFirebaseGoogleLogin()" 
+        class="w-full flex items-center justify-center gap-3 py-2.5 px-4 text-xs font-semibold text-slate-200 bg-[#07050e]/90 border border-slate-700/80 rounded-xl hover:bg-[#110B22] hover:border-purple-500/50 transition-all cursor-pointer shadow-md mb-4"
+      >
+        <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
+        </svg>
+        <span>Sign in with Google</span>
+      </button>
+
+      <!-- Guest Entry Option -->
+      <div class="text-center">
+        <button 
+          onclick="closeAuthModal(); continueAsGuest();" 
+          class="text-xs text-purple-300/80 hover:text-white transition-colors cursor-pointer"
+        >
+          <i class="fa-solid fa-arrow-right mr-1"></i> Continue as Guest Explorer (0 Coins &bull; Level 1)
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================================== -->
+  <!-- MODAL 2: EDIT PROFILE MODAL (With Username Uniqueness)     -->
+  <!-- ========================================================== -->
+  <div id="edit-profile-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-xl overflow-y-auto">
+    <div class="w-full max-w-2xl glass-card rounded-3xl p-6 sm:p-8 relative shadow-2xl border border-glassBorder my-auto max-h-[92vh] overflow-y-auto">
+      
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between pb-4 border-b border-glassBorder mb-6">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-purple-950/60 border border-purple-500/30 flex items-center justify-center text-accent text-lg">
+            <i class="fa-solid fa-sliders"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-display font-bold text-white">Customize Cosmic Profile</h3>
+            <p class="text-xs text-slate-400">Configure your username, avatar frames, local photo uploads, and theme</p>
+          </div>
+        </div>
+        <button onclick="closeEditProfileModal()" class="p-2 text-slate-400 hover:text-white rounded-lg transition-colors cursor-pointer" title="Close">
+          <i class="fa-solid fa-xmark text-base"></i>
+        </button>
+      </div>
+
+      <!-- LIVE PREVIEW CARD -->
+      <div class="mb-6 p-4 rounded-2xl bg-white/[0.03] border border-white/5 flex items-center gap-4">
+        <!-- Live Avatar Preview with equipped frame -->
+        <div id="preview-frame-wrapper" class="pfp-frame-container frame-galaxy p-1 transition-all duration-300 shrink-0">
+          <div id="preview-avatar-box" class="w-16 h-16 rounded-xl bg-gradient-to-tr from-purple-800 to-indigo-600 flex items-center justify-center text-white overflow-hidden shadow-lg relative">
+            <span id="preview-s-badge" class="font-display font-black text-2xl text-white">S</span>
+            <img id="preview-avatar-img" class="w-full h-full object-cover hidden" alt="Avatar" />
+          </div>
+        </div>
+        <div class="min-w-0 flex-1">
+          <div class="flex items-center gap-2">
+            <h4 id="preview-username" class="text-base font-bold text-white truncate">Guest Explorer</h4>
+            <span id="preview-title" class="text-[10px] text-accent font-semibold px-2 py-0.5 rounded-full bg-purple-950/60 border border-purple-500/30 truncate">Level 1 Novice Voyager</span>
+          </div>
+          <p id="preview-bio" class="text-xs text-slate-400 truncate mt-0.5">Stargazing across infinite nebulae...</p>
+        </div>
+      </div>
+
+      <!-- Customization Form -->
+      <div class="space-y-6">
+        
+        <!-- 1. Username Editor with Instant Real-Time Uniqueness Validation -->
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+            Change Username (Unique Identifier)
+          </label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+              <i class="fa-solid fa-at text-xs"></i>
+            </span>
+            <input 
+              id="input-username" 
+              type="text" 
+              maxlength="20" 
+              placeholder="e.g. AstralVoyager" 
+              class="w-full pl-9 pr-9 py-2.5 text-xs sm:text-sm bg-[#07050e]/90 border border-purple-500/30 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400 transition-all"
+              oninput="handleEditUsernameInput()"
+            />
+            <span id="edit-username-status-icon" class="absolute inset-y-0 right-0 flex items-center pr-3"></span>
+          </div>
+          <p id="edit-username-error" class="hidden text-xs text-red-400 mt-1 font-semibold flex items-center gap-1">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            <span>Username already taken. Please choose another.</span>
+          </p>
+          <p id="edit-username-success" class="hidden text-xs text-emerald-400 mt-1 font-semibold flex items-center gap-1">
+            <i class="fa-solid fa-circle-check"></i>
+            <span>Username available!</span>
+          </p>
+        </div>
+
+        <!-- 2. Local Device Photo Uploaders: Avatar & Banner -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          
+          <!-- Avatar File Upload -->
+          <div class="p-4 rounded-2xl bg-white/[0.03] border border-white/5 space-y-2.5">
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-300">Avatar Photo</label>
+            <p class="text-[11px] text-slate-400">Select an image directly from your local device.</p>
+            <div class="flex items-center gap-2">
+              <label 
+                for="modal-avatar-file" 
+                class="flex-1 py-2 px-3 text-xs font-semibold text-center text-white bg-purple-600 hover:bg-purple-500 rounded-xl transition-all cursor-pointer shadow-sm"
+              >
+                <i class="fa-solid fa-upload mr-1.5"></i> Choose Image
+              </label>
+              <input type="file" id="modal-avatar-file" accept="image/*" class="hidden" onchange="handleModalAvatarUpload(event)" />
+              <button 
+                onclick="resetAvatarToDefaultS()" 
+                type="button" 
+                class="py-2 px-3 text-xs font-semibold text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 transition-all cursor-pointer"
+                title="Reset to default 'S' badge"
+              >
+                Reset
+              </button>
+            </div>
+          </div>
+
+          <!-- Banner File Upload -->
+          <div class="p-4 rounded-2xl bg-white/[0.03] border border-white/5 space-y-2.5">
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-300">Banner Photo</label>
+            <p class="text-[11px] text-slate-400">Upload a custom header banner from your device.</p>
+            <label 
+              for="modal-banner-file" 
+              class="w-full py-2 px-3 text-xs font-semibold text-center text-white bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-all cursor-pointer block"
+            >
+              <i class="fa-solid fa-image mr-1.5 text-accent"></i> Choose Banner
+            </label>
+            <input type="file" id="modal-banner-file" accept="image/*" class="hidden" onchange="handleModalBannerUpload(event)" />
+          </div>
+
+        </div>
+
+        <!-- 3. PFP DECORATIONS / FRAMES SELECTOR -->
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2.5">
+            Avatar Decoration Frames
+          </label>
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3" id="frame-selector-grid">
+            
+            <button 
+              type="button" 
+              data-frame="standard"
+              onclick="selectFrame('standard')" 
+              class="frame-option-card p-3 rounded-2xl bg-white/[0.02] border border-white/10 hover:border-purple-400/50 flex flex-col items-center gap-2 cursor-pointer transition-all"
+            >
+              <div class="w-12 h-12 rounded-xl border-2 border-white/30 flex items-center justify-center text-xs text-slate-300">
+                <i class="fa-solid fa-ban"></i>
+              </div>
+              <span class="text-xs font-semibold text-slate-300">Standard Glass</span>
+            </button>
+
+            <button 
+              type="button" 
+              data-frame="cyberpunk"
+              onclick="selectFrame('cyberpunk')" 
+              class="frame-option-card p-3 rounded-2xl bg-white/[0.02] border border-white/10 hover:border-cyan-400 flex flex-col items-center gap-2 cursor-pointer transition-all"
+            >
+              <div class="w-12 h-12 rounded-xl border-2 border-cyan-400 shadow-[0_0_15px_#06b6d4] flex items-center justify-center text-xs text-cyan-300">
+                <i class="fa-solid fa-bolt"></i>
+              </div>
+              <span class="text-xs font-semibold text-cyan-300">Cyberpunk Neon</span>
+            </button>
+
+            <button 
+              type="button" 
+              data-frame="galaxy"
+              onclick="selectFrame('galaxy')" 
+              class="frame-option-card p-3 rounded-2xl bg-white/[0.02] border border-purple-500/60 shadow-[0_0_15px_rgba(168,85,247,0.3)] flex flex-col items-center gap-2 cursor-pointer transition-all"
+            >
+              <div class="w-12 h-12 rounded-full border-2 border-purple-400 shadow-[0_0_15px_#a855f7] flex items-center justify-center text-xs text-purple-300">
+                <i class="fa-solid fa-circle-notch animate-spin-slow"></i>
+              </div>
+              <span class="text-xs font-semibold text-purple-300">Galaxy Ring</span>
+            </button>
+
+            <button 
+              type="button" 
+              data-frame="flame"
+              onclick="selectFrame('flame')" 
+              class="frame-option-card p-3 rounded-2xl bg-white/[0.02] border border-white/10 hover:border-amber-400 flex flex-col items-center gap-2 cursor-pointer transition-all"
+            >
+              <div class="w-12 h-12 rounded-xl border-2 border-amber-400 shadow-[0_0_15px_#f59e0b] flex items-center justify-center text-xs text-amber-300">
+                <i class="fa-solid fa-fire animate-pulse"></i>
+              </div>
+              <span class="text-xs font-semibold text-amber-300">Flame Aura</span>
+            </button>
+
+            <button 
+              type="button" 
+              data-frame="crown"
+              onclick="selectFrame('crown')" 
+              class="frame-option-card p-3 rounded-2xl bg-white/[0.02] border border-white/10 hover:border-yellow-400 flex flex-col items-center gap-2 cursor-pointer transition-all"
+            >
+              <div class="w-12 h-12 rounded-xl border-2 border-yellow-400 shadow-[0_0_15px_#facc15] flex items-center justify-center text-xs text-yellow-300">
+                <i class="fa-solid fa-crown"></i>
+              </div>
+              <span class="text-xs font-semibold text-yellow-300">Golden Crown</span>
+            </button>
+
+            <button 
+              type="button" 
+              data-frame="void"
+              onclick="selectFrame('void')" 
+              class="frame-option-card p-3 rounded-2xl bg-white/[0.02] border border-white/10 hover:border-indigo-400 flex flex-col items-center gap-2 cursor-pointer transition-all"
+            >
+              <div class="w-12 h-12 rounded-full border-2 border-indigo-400 shadow-[0_0_15px_#818cf8] flex items-center justify-center text-xs text-indigo-300">
+                <i class="fa-solid fa-atom animate-spin-slow"></i>
+              </div>
+              <span class="text-xs font-semibold text-indigo-300">Void Halo</span>
+            </button>
+
+          </div>
+        </div>
+
+        <!-- 4. CUSTOM THEME ACCENT SWITCHER -->
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
+            Glow Theme Accent
+          </label>
+          <div class="flex flex-wrap items-center gap-3 p-3 rounded-2xl bg-white/[0.03] border border-white/5">
+            <button onclick="setCosmicTheme('violet')" class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-purple-950/50 border border-purple-500/40 text-xs font-semibold text-purple-200 cursor-pointer hover:scale-105 transition-all">
+              <span class="w-3.5 h-3.5 rounded-full bg-purple-500 shadow-[0_0_8px_#a855f7]"></span>
+              <span>Cosmic Violet</span>
+            </button>
+            <button onclick="setCosmicTheme('pink')" class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-pink-950/50 border border-pink-500/40 text-xs font-semibold text-pink-200 cursor-pointer hover:scale-105 transition-all">
+              <span class="w-3.5 h-3.5 rounded-full bg-pink-500 shadow-[0_0_8px_#ec4899]"></span>
+              <span>Neon Pink</span>
+            </button>
+            <button onclick="setCosmicTheme('cyan')" class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-cyan-950/50 border border-cyan-500/40 text-xs font-semibold text-cyan-200 cursor-pointer hover:scale-105 transition-all">
+              <span class="w-3.5 h-3.5 rounded-full bg-cyan-500 shadow-[0_0_8px_#06b6d4]"></span>
+              <span>Electric Cyan</span>
+            </button>
+            <button onclick="setCosmicTheme('gold')" class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-amber-950/50 border border-amber-500/40 text-xs font-semibold text-amber-200 cursor-pointer hover:scale-105 transition-all">
+              <span class="w-3.5 h-3.5 rounded-full bg-amber-500 shadow-[0_0_8px_#f59e0b]"></span>
+              <span>Solar Gold</span>
+            </button>
+            <button onclick="setCosmicTheme('emerald')" class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-950/50 border border-emerald-500/40 text-xs font-semibold text-emerald-200 cursor-pointer hover:scale-105 transition-all">
+              <span class="w-3.5 h-3.5 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]"></span>
+              <span>Emerald Green</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 5. Bio & Quote Textarea -->
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Profile Transmission (Bio / Quote)</label>
+          <textarea 
+            id="input-bio" 
+            rows="3" 
+            maxlength="250"
+            placeholder="Share your favorite anime quote or galactic status..." 
+            class="w-full p-3 text-xs sm:text-sm bg-[#07050e]/90 border border-purple-500/30 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400 transition-all resize-none"
+            oninput="updateLivePreview()"
+          ></textarea>
+        </div>
+
+        <!-- 6. Global Chat Interface Preference -->
+        <div class="p-3.5 rounded-2xl bg-white/[0.03] border border-white/5 flex items-center justify-between">
+          <div>
+            <h4 class="text-xs font-bold text-white flex items-center gap-1.5">
+              <i class="fa-solid fa-comments text-electricCyan"></i>
+              <span>Cosmic Global Chat Visibility</span>
+            </h4>
+            <p class="text-[11px] text-slate-400">Toggle whether the global chat drawer is enabled or hidden</p>
+          </div>
+          <button 
+            type="button" 
+            id="modal-toggle-global-chat-btn" 
+            onclick="toggleGlobalChatVisibilitySetting()" 
+            class="px-3 py-1.5 rounded-xl bg-purple-950/80 border border-purple-500/40 text-xs font-semibold text-purple-300 hover:text-white transition-all cursor-pointer flex items-center gap-1.5"
+          >
+            <i id="modal-chat-toggle-icon" class="fa-solid fa-eye"></i>
+            <span id="modal-chat-toggle-text">Visible</span>
+          </button>
+        </div>
+
+        <!-- Modal Action Buttons -->
+        <div class="flex items-center justify-end gap-3 pt-3 border-t border-glassBorder">
+          <button 
+            type="button" 
+            onclick="closeEditProfileModal()" 
+            class="px-5 py-2.5 text-xs font-semibold text-slate-400 hover:text-white transition-colors cursor-pointer"
+          >
+            Cancel
+          </button>
+          <button 
+            id="btn-save-profile"
+            type="button" 
+            onclick="saveProfileChanges()" 
+            class="px-6 py-2.5 text-xs font-bold uppercase tracking-wider text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 rounded-xl shadow-accent-glow hover:scale-105 active:scale-95 transition-all cursor-pointer"
+          >
+            Save Changes
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================================== -->
+  <!-- MODAL 3: BUG REPORT MODAL                                  -->
+  <!-- ========================================================== -->
+  <div id="bug-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-xl">
+    <div class="w-full max-w-md glass-card rounded-3xl p-6 relative shadow-2xl border border-glassBorder">
+      <button onclick="closeBugReportModal()" class="absolute top-4 right-4 p-2 text-slate-400 hover:text-white transition-colors cursor-pointer">
+        <i class="fa-solid fa-xmark text-sm"></i>
+      </button>
+
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 rounded-xl bg-amber-950/60 border border-amber-500/40 flex items-center justify-center text-solarGold text-lg">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <div>
+          <h3 class="text-base font-display font-bold text-white">Report System Issue</h3>
+          <p class="text-xs text-slate-400">Stream, audio, or subtitle feedback</p>
+        </div>
+      </div>
+
+      <form onsubmit="handleBugSubmit(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">Issue Category</label>
+          <select class="w-full p-2.5 text-xs bg-[#07050e] border border-purple-500/30 rounded-xl text-white focus:outline-none focus:border-purple-400">
+            <option>Video Buffering / Playback Glitch</option>
+            <option>Subtitle Sync or Missing Language</option>
+            <option>Audio Track Desynchronization</option>
+            <option>Watch-Time XP Reward Issue</option>
+            <option>Other Galactic Anomaly</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">Details</label>
+          <textarea rows="3" required placeholder="Describe what occurred during your transmission..." class="w-full p-2.5 text-xs bg-[#07050e] border border-purple-500/30 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-400 resize-none"></textarea>
+        </div>
+
+        <button type="submit" class="w-full py-2.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 shadow-accent-glow cursor-pointer">
+          Transmit Bug Report
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================================== -->
+  <!-- JAVASCRIPT SYSTEM ENGINE (Single-File Architecture)        -->
+  <!-- ========================================================== -->
+  <script type="module">
+    import { 
+      auth, 
+      signInWithGoogle, 
+      signOutUser, 
+      syncUserProfile, 
+      updateUserProfile, 
+      testConnection 
+    } from '/src/firebase.ts';
+    import { onAuthStateChanged } from 'firebase/auth';
+
+    // ----------------------------------------------------
+    // ----------------------------------------------------
+    // STORAGE KEYS & LOCAL DATABASE INITIALIZATION
+    // ----------------------------------------------------
+    const USERS_DB_KEY = 'soranix_users_db';
+    const ACTIVE_SESSION_KEY = 'soranix_active_session';
+    const NOTIFICATIONS_PREFIX = 'soranix_notifications_';
+    const GLOBAL_CHAT_KEY = 'soranix_global_chat';
+    const DM_THREADS_KEY = 'soranix_dm_threads';
+    const HIDE_GLOBAL_CHAT_KEY = 'soranix_hide_global_chat';
+
+    function getUsersDB() {
+      try {
+        const raw = localStorage.getItem(USERS_DB_KEY);
+        return raw ? JSON.parse(raw) : {};
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function saveUsersDB(db) {
+      try {
+        localStorage.setItem(USERS_DB_KEY, JSON.stringify(db));
+      } catch (e) {
+        console.warn('LocalStorage save error:', e);
+      }
+    }
+
+    function getActiveSession() {
+      try {
+        const raw = localStorage.getItem(ACTIVE_SESSION_KEY);
+        return raw ? JSON.parse(raw) : null;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function setActiveSession(session) {
+      if (!session) {
+        localStorage.removeItem(ACTIVE_SESSION_KEY);
+      } else {
+        localStorage.setItem(ACTIVE_SESSION_KEY, JSON.stringify(session));
+      }
+    }
+
+    function getNotifications(username) {
+      if (!username || username === 'Guest Explorer') return [];
+      try {
+        const raw = localStorage.getItem(`${NOTIFICATIONS_PREFIX}${username.toLowerCase()}`);
+        return raw ? JSON.parse(raw) : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveNotifications(username, list) {
+      if (!username || username === 'Guest Explorer') return;
+      try {
+        localStorage.setItem(`${NOTIFICATIONS_PREFIX}${username.toLowerCase()}`, JSON.stringify(list));
+      } catch (e) {
+        console.warn('Notification save error:', e);
+      }
+    }
+
+    function getGlobalChatMessages() {
+      try {
+        const raw = localStorage.getItem(GLOBAL_CHAT_KEY);
+        if (raw) return JSON.parse(raw);
+      } catch (e) {}
+
+      // Pre-seed engaging cosmic community messages if empty
+      const defaultChat = [
+        {
+          id: 'seed-1',
+          sender: 'KaitoX',
+          senderTitle: 'Level 14 Galactic Champion',
+          senderLevel: 14,
+          senderAvatar: null,
+          senderFrame: 'cyberpunk',
+          message: 'Anyone caught up on the latest Solo Leveling episode? The animation in the dungeon battle was unreal! 🔥',
+          timestamp: '10:14 AM',
+          time: Date.now() - 3600000 * 2
+        },
+        {
+          id: 'seed-2',
+          sender: 'AriaStar',
+          senderTitle: 'Level 8 Cosmic Pioneer',
+          senderLevel: 8,
+          senderAvatar: null,
+          senderFrame: 'galaxy',
+          message: 'Currently rewatching Frieren: Beyond Journey. The pacing, magic system, and orchestral soundtrack hit differently every time ✨',
+          timestamp: '11:05 AM',
+          time: Date.now() - 3600000
+        },
+        {
+          id: 'seed-3',
+          sender: 'ShadowRei',
+          senderTitle: 'Level 11 Cosmic Voyager',
+          senderLevel: 11,
+          senderAvatar: null,
+          senderFrame: 'void',
+          message: 'Whatever you do, make sure you don\'t miss >! the secret event in chapter 82 !<, it connects the entire lore arc!',
+          timestamp: '11:42 AM',
+          time: Date.now() - 1800000
+        },
+        {
+          id: 'seed-4',
+          sender: 'Zenith',
+          senderTitle: 'Level 5 Starlight Master',
+          senderLevel: 5,
+          senderAvatar: null,
+          senderFrame: 'crown',
+          message: 'Claimed my Day 1 login reward and streamed 2 episodes, earned +100 Stardust! Loving this glassmorphic dashboard 🚀',
+          timestamp: '12:15 PM',
+          time: Date.now() - 600000
+        }
+      ];
+
+      try {
+        localStorage.setItem(GLOBAL_CHAT_KEY, JSON.stringify(defaultChat));
+      } catch (e) {}
+      return defaultChat;
+    }
+
+    function saveGlobalChatMessages(msgs) {
+      try {
+        localStorage.setItem(GLOBAL_CHAT_KEY, JSON.stringify(msgs));
+      } catch (e) {
+        console.warn('Chat save error:', e);
+      }
+    }
+
+    function getDMThreads() {
+      try {
+        const raw = localStorage.getItem(DM_THREADS_KEY);
+        return raw ? JSON.parse(raw) : {};
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function saveDMThreads(threads) {
+      try {
+        localStorage.setItem(DM_THREADS_KEY, JSON.stringify(threads));
+      } catch (e) {
+        console.warn('DM threads save error:', e);
+      }
+    }
+
+    function getThreadKey(u1, u2) {
+      return [u1.toLowerCase(), u2.toLowerCase()].sort().join('___');
+    }
+
+    // Rank titles according to Level
+    function getTitleForLevel(lvl) {
+      if (lvl <= 1) return 'Level 1 Novice Voyager';
+      if (lvl === 2) return 'Level 2 Astral Scout';
+      if (lvl === 3) return 'Level 3 Nebula Navigator';
+      if (lvl === 4) return 'Level 4 Cosmic Pioneer';
+      if (lvl === 5) return 'Level 5 Starlight Master';
+      return `Level ${lvl} Galactic Champion`;
+    }
+
+    // Default Starting User Factory (Zeroed Initial State)
+    function createInitialUser(username, email = '', password = '') {
+      return {
+        username: username,
+        email: email,
+        password: password,
+        level: 1,
+        xp: 0,
+        stardust: 0,
+        animeWatched: 0,
+        episodesWatched: 0,
+        favouritesCount: 0,
+        bio: 'Stargazing across infinite nebulae, collecting rare cyber soundtracks, and cataloging forgotten anime classics.',
+        title: 'Level 1 Novice Voyager',
+        equippedFrame: 'galaxy',
+        avatarDataUrl: null,
+        bannerDataUrl: null,
+        watchSecondsTotal: 0,
+        currentCycleSeconds: 0,
+        theme: 'violet',
+        friends: [],
+        incomingRequests: [],
+        outgoingRequests: []
+      };
+    }
+
+    // Application Master State
+    const AppState = {
+      currentView: 'splash', // 'splash' or 'dashboard'
+      currentTab: 'home',    // 'home', 'profile', 'friends', 'favorites', 'rewards', 'shop'
+      isGuest: true,
+      currentUserKey: null,
+      authModalMode: 'login', // 'login' or 'signup'
+      theme: 'violet',
+      layoutMode: 'cards',
+      user: createInitialUser('Guest Explorer'),
+      draft: {
+        username: '',
+        bio: '',
+        equippedFrame: '',
+        avatarDataUrl: null,
+        bannerDataUrl: null,
+      },
+      currentFriendsSubTab: 'list',
+      activeDMFriend: null,
+      previewTargetUser: null,
+      isGlobalChatOpen: false,
+      hideGlobalChatSetting: localStorage.getItem('soranix_hide_global_chat') === 'true',
+      // Watch-time Reward Engine State
+      isWatchingAnime: false,
+      watch: {
+        active: true,
+        multiplier: 1,
+        intervalId: null
+      }
+    };
+
+    function $(id) {
+      return document.getElementById(id);
+    }
+
+    // ----------------------------------------------------
+    // 1. AUTO-LOGIN & SESSION RESTORATION (Main Menu Preserved)
+    // ----------------------------------------------------
+    (function initAutoLogin() {
+      const savedTheme = localStorage.getItem('soranix_theme') || 'violet';
+      setCosmicTheme(savedTheme, false);
+
+      const activeSession = getActiveSession();
+
+      if (activeSession && activeSession.username) {
+        const users = getUsersDB();
+        const userKey = activeSession.username.toLowerCase();
+
+        if (activeSession.isGuest) {
+          AppState.isGuest = true;
+          AppState.currentUserKey = null;
+          AppState.user = createInitialUser('Guest Explorer');
+          updateViewableProfileUI();
+        } else if (users[userKey]) {
+          AppState.isGuest = false;
+          AppState.currentUserKey = userKey;
+          AppState.user = { ...createInitialUser(users[userKey].username), ...users[userKey] };
+          if (AppState.user.theme) {
+            setCosmicTheme(AppState.user.theme, false);
+          }
+          updateViewableProfileUI();
+        }
+      }
+
+      // CRITICAL: Always stay on the Main Menu screen on initial boot!
+      // NEVER automatically navigate away or remove the Main Menu screen!
+      returnToSplash();
+    })();
+
+    // ----------------------------------------------------
+    // 2. VIEW SWITCHING: SPLASH VS DASHBOARD
+    // ----------------------------------------------------
+    function enterDashboard(tabToOpen = 'home') {
+      const splash = $('view-splash');
+      const dash = $('view-dashboard');
+
+      if (splash && dash) {
+        splash.classList.add('hidden');
+        dash.classList.remove('hidden');
+        AppState.currentView = 'dashboard';
+        switchDashboardTab(tabToOpen);
+        startWatchTracker();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+
+    function returnToSplash() {
+      const splash = $('view-splash');
+      const dash = $('view-dashboard');
+
+      if (splash && dash) {
+        dash.classList.add('hidden');
+        splash.classList.remove('hidden');
+        AppState.currentView = 'splash';
+        closeGearMenu();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+
+    function continueAsGuest() {
+      AppState.isGuest = true;
+      AppState.currentUserKey = null;
+      AppState.user = createInitialUser('Guest Explorer');
+      setActiveSession({ username: 'Guest Explorer', isGuest: true });
+      updateViewableProfileUI();
+      enterDashboard('home');
+      showToast('Continuing as Guest Explorer. Level 1 with 0 coins.', 'info');
+    }
+
+    function handleLogout() {
+      setActiveSession(null);
+      AppState.isGuest = true;
+      AppState.currentUserKey = null;
+      AppState.user = createInitialUser('Guest Explorer');
+      updateViewableProfileUI();
+      returnToSplash();
+      showToast('Logged out. Session cleared.', 'info');
+    }
+
+    // ----------------------------------------------------
+    // 3. DASHBOARD TABS SWITCHER
+    // ----------------------------------------------------
+    function switchDashboardTab(tabName) {
+      AppState.currentTab = tabName;
+
+      const tabs = [
+        { name: 'home', el: $('tab-view-home') },
+        { name: 'profile', el: $('tab-view-profile') },
+        { name: 'favorites', el: $('tab-view-favorites') },
+        { name: 'rewards', el: $('tab-view-rewards') },
+        { name: 'shop', el: $('tab-view-shop') }
+      ];
+
+      tabs.forEach(t => {
+        if (!t.el) return;
+        if (t.name === tabName) {
+          t.el.classList.remove('hidden');
+        } else {
+          t.el.classList.add('hidden');
+        }
+      });
+
+      const breadcrumb = $('header-breadcrumb');
+      if (breadcrumb) {
+        const labels = {
+          home: 'DASHBOARD HOME',
+          profile: 'MY PROFILE HUB',
+          favorites: 'FAVOURITED ANIME',
+          rewards: 'DAILY REWARDS TRACK',
+          shop: 'COSMIC SHOP'
+        };
+        breadcrumb.textContent = labels[tabName] || tabName.toUpperCase();
+      }
+
+      const btnMap = {
+        home: $('nav-tab-btn-home'),
+        profile: $('nav-tab-btn-profile'),
+        favorites: $('nav-tab-btn-favorites'),
+        rewards: $('nav-tab-btn-rewards'),
+        shop: $('nav-tab-btn-shop')
+      };
+
+      Object.entries(btnMap).forEach(([k, btn]) => {
+        if (!btn) return;
+        if (k === tabName) {
+          btn.className = 'sidebar-tab-btn w-11 h-11 rounded-2xl flex items-center justify-center text-white bg-purple-600 shadow-accent-glow transition-all cursor-pointer relative';
+        } else {
+          btn.className = 'sidebar-tab-btn w-11 h-11 rounded-2xl flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all cursor-pointer relative';
+        }
+      });
+
+      if (tabName === 'profile') {
+        updateViewableProfileUI();
+      } else if (tabName === 'rewards') {
+        renderDailyRewardsUI();
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ----------------------------------------------------
+    // 4. GEAR MENU CONTROLS
+    // ----------------------------------------------------
+    function toggleGearMenu(e) {
+      if (e) e.stopPropagation();
+      const menu = $('gear-dropdown');
+      if (!menu) return;
+      menu.classList.toggle('hidden');
+    }
+
+    function closeGearMenu() {
+      const menu = $('gear-dropdown');
+      if (menu && !menu.classList.contains('hidden')) {
+        menu.classList.add('hidden');
+      }
+    }
+
+    document.addEventListener('click', (event) => {
+      const menu = $('gear-dropdown');
+      const gearBtn = $('gear-btn');
+      if (menu && !menu.classList.contains('hidden')) {
+        if (!menu.contains(event.target) && !gearBtn?.contains(event.target)) {
+          menu.classList.add('hidden');
+        }
+      }
+    });
+
+    // ----------------------------------------------------
+    // 5. UNIQUE USERNAME VALIDATION & AUTHENTICATION
+    // ----------------------------------------------------
+    function checkUsernameAvailability(username, excludeCurrentKey = null) {
+      const clean = username.trim();
+      if (!clean || clean.length < 3) {
+        return { valid: false, reason: 'Username must be at least 3 characters.' };
+      }
+      if (!/^[a-zA-Z0-9_]+$/.test(clean)) {
+        return { valid: false, reason: 'Only letters, numbers, and underscores allowed.' };
+      }
+      const key = clean.toLowerCase();
+      if (excludeCurrentKey && key === excludeCurrentKey.toLowerCase()) {
+        return { valid: true };
+      }
+      const users = getUsersDB();
+      if (users[key]) {
+        return { valid: false, reason: 'Username already taken. Please choose another.' };
+      }
+      return { valid: true };
+    }
+
+    function validateAuthUsernameRealtime() {
+      const input = $('auth-username');
+      const errorEl = $('auth-username-error');
+      const successEl = $('auth-username-success');
+      const iconEl = $('auth-username-status-icon');
+      const submitBtn = $('auth-submit-btn');
+
+      if (!input) return;
+      const val = input.value.trim();
+
+      if (!val) {
+        if (errorEl) errorEl.classList.add('hidden');
+        if (successEl) successEl.classList.add('hidden');
+        if (iconEl) iconEl.innerHTML = '';
+        if (submitBtn) submitBtn.disabled = false;
+        return;
+      }
+
+      if (AppState.authModalMode === 'signup') {
+        const check = checkUsernameAvailability(val);
+        if (!check.valid) {
+          if (errorEl) {
+            errorEl.classList.remove('hidden');
+            errorEl.querySelector('span').textContent = check.reason;
+          }
+          if (successEl) successEl.classList.add('hidden');
+          if (iconEl) iconEl.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-400 text-xs"></i>';
+          if (submitBtn) submitBtn.disabled = true;
+        } else {
+          if (errorEl) errorEl.classList.add('hidden');
+          if (successEl) successEl.classList.remove('hidden');
+          if (iconEl) iconEl.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-400 text-xs"></i>';
+          if (submitBtn) submitBtn.disabled = false;
+        }
+      } else {
+        // In login mode, reset inline uniqueness warning
+        if (errorEl) errorEl.classList.add('hidden');
+        if (successEl) successEl.classList.add('hidden');
+        if (iconEl) iconEl.innerHTML = '';
+        if (submitBtn) submitBtn.disabled = false;
+      }
+    }
+
+    function handleAuthSubmit(event) {
+      event.preventDefault();
+      const usernameInput = $('auth-username')?.value.trim();
+      const emailInput = $('auth-email')?.value.trim() || '';
+      const passwordInput = $('auth-password')?.value;
+      const confirmInput = $('auth-confirm-password')?.value;
+
+      if (!usernameInput || !passwordInput) {
+        showToast('Please fill in all required fields.', 'error');
+        return;
+      }
+
+      const users = getUsersDB();
+      const userKey = usernameInput.toLowerCase();
+
+      if (AppState.authModalMode === 'signup') {
+        // 1. Validate Unique Username
+        const check = checkUsernameAvailability(usernameInput);
+        if (!check.valid) {
+          showToast(check.reason, 'error');
+          return;
+        }
+
+        // 2. Validate Password Match
+        if (passwordInput !== confirmInput) {
+          showToast('Passwords do not match. Please re-enter.', 'error');
+          return;
+        }
+
+        // 3. Create Zeroed Account at Level 1
+        const newUser = createInitialUser(usernameInput, emailInput, passwordInput);
+        users[userKey] = newUser;
+        saveUsersDB(users);
+
+        // 4. Set Session
+        AppState.isGuest = false;
+        AppState.currentUserKey = userKey;
+        AppState.user = newUser;
+        setActiveSession({ username: usernameInput, isGuest: false });
+
+        closeAuthModal();
+        updateViewableProfileUI();
+        enterDashboard('profile');
+        showToast(`Account created! Welcome, ${usernameInput}! (Level 1 Novice Voyager)`, 'success');
+
+      } else {
+        // Log In Flow
+        const existing = users[userKey];
+        if (!existing) {
+          showToast('No account found with this username. Please Sign Up.', 'error');
+          return;
+        }
+        if (existing.password && existing.password !== passwordInput) {
+          showToast('Incorrect password for this account.', 'error');
+          return;
+        }
+
+        AppState.isGuest = false;
+        AppState.currentUserKey = userKey;
+        AppState.user = { ...createInitialUser(existing.username), ...existing };
+        setActiveSession({ username: existing.username, isGuest: false });
+
+        if (AppState.user.theme) {
+          setCosmicTheme(AppState.user.theme, false);
+        }
+
+        closeAuthModal();
+        updateViewableProfileUI();
+        enterDashboard('home');
+        showToast(`Welcome back, ${existing.username}!`, 'success');
+      }
+    }
+
+    function openAuthModal(mode = 'login') {
+      AppState.authModalMode = mode;
+      setAuthMode(mode);
+      const modal = $('auth-modal');
+      if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      }
+    }
+
+    function closeAuthModal() {
+      const modal = $('auth-modal');
+      if (modal) {
+        modal.classList.remove('flex');
+        modal.classList.add('hidden');
+      }
+    }
+
+    function setAuthMode(mode) {
+      AppState.authModalMode = mode;
+      const tabLogin = $('auth-tab-login');
+      const tabSignUp = $('auth-tab-signup');
+      const emailGroup = $('auth-email-group');
+      const confirmGroup = $('auth-confirm-group');
+      const submitBtn = $('auth-submit-btn');
+      const modalTitle = $('auth-modal-title');
+
+      validateAuthUsernameRealtime();
+
+      if (mode === 'login') {
+        if (tabLogin) tabLogin.className = 'flex-1 py-2 rounded-xl text-xs font-bold transition-all bg-purple-600 text-white cursor-pointer';
+        if (tabSignUp) tabSignUp.className = 'flex-1 py-2 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-white cursor-pointer';
+        if (emailGroup) emailGroup.classList.add('hidden');
+        if (confirmGroup) confirmGroup.classList.add('hidden');
+        if (submitBtn) submitBtn.textContent = 'Log In to Soranix';
+        if (modalTitle) modalTitle.textContent = 'Log In to Soranix';
+      } else {
+        if (tabSignUp) tabSignUp.className = 'flex-1 py-2 rounded-xl text-xs font-bold transition-all bg-purple-600 text-white cursor-pointer';
+        if (tabLogin) tabLogin.className = 'flex-1 py-2 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-white cursor-pointer';
+        if (emailGroup) emailGroup.classList.remove('hidden');
+        if (confirmGroup) confirmGroup.classList.remove('hidden');
+        if (submitBtn) submitBtn.textContent = 'Create Cosmic Account';
+        if (modalTitle) modalTitle.textContent = 'Join Soranix Galaxy';
+      }
+    }
+
+    // ----------------------------------------------------
+    // 6. WATCH-TIME REWARDS & LEVELING PROGRESSION ENGINE
+    // (Only earn money & level up from watching anime, registered accounts only)
+    // ----------------------------------------------------
+    function startWatchTracker() {
+      if (AppState.watch.intervalId) return;
+
+      AppState.watch.intervalId = setInterval(() => {
+        // Strict Constraint: Only level up and earn money from watching anime with an account
+        if (AppState.isGuest || !AppState.isWatchingAnime) return;
+
+        AppState.user.watchSecondsTotal = (AppState.user.watchSecondsTotal || 0) + 1;
+        AppState.user.currentCycleSeconds = (AppState.user.currentCycleSeconds || 0) + 1;
+
+        // Check 5-minute (300 seconds) payout threshold
+        if (AppState.user.currentCycleSeconds >= 300) {
+          AppState.user.currentCycleSeconds = 0;
+
+          // Award +50 Stardust Coins & +50 XP per 5-minute block
+          const earnedCoins = 50;
+          const earnedXP = 50;
+
+          AppState.user.stardust = (AppState.user.stardust || 0) + earnedCoins;
+          AppState.user.xp = (AppState.user.xp || 0) + earnedXP;
+
+          // Calculate Dynamic Leveling Up (100 XP per level)
+          const oldLevel = AppState.user.level || 1;
+          const newLevel = Math.floor(AppState.user.xp / 100) + 1;
+
+          if (newLevel > oldLevel) {
+            AppState.user.level = newLevel;
+            AppState.user.title = getTitleForLevel(newLevel);
+            showToast(`🎉 LEVEL UP! You reached Level ${newLevel} (${AppState.user.title})! +${earnedCoins} Stardust!`, 'success');
+          } else {
+            showToast(`✨ +${earnedCoins} Stardust & +${earnedXP} XP earned for 5 mins of anime watched!`, 'success');
+          }
+
+          saveUserToLocalStorage();
+          updateViewableProfileUI();
+        }
+
+        updateStreamTrackerUI();
+      }, 1000);
+    }
+
+    function toggleAnimeWatchSession() {
+      if (AppState.isGuest) {
+        showToast('Account Required: Please Sign Up or Log In to watch anime and earn watch-time rewards.', 'info');
+        openAuthModal('signup');
+        return;
+      }
+
+      AppState.isWatchingAnime = !AppState.isWatchingAnime;
+      const banner = $('active-anime-stream-banner');
+      const actionText = $('btn-stream-action-text');
+      const actionIcon = $('btn-stream-action-icon');
+
+      if (AppState.isWatchingAnime) {
+        if (banner) banner.classList.remove('hidden');
+        if (actionText) actionText.textContent = 'Pause Anime Stream';
+        if (actionIcon) actionIcon.className = 'fa-solid fa-pause';
+        showToast('Anime stream started! Watching anime earns +50 Stardust & +50 XP every 5 mins.', 'success');
+      } else {
+        if (banner) banner.classList.add('hidden');
+        if (actionText) actionText.textContent = 'Watch Anime';
+        if (actionIcon) actionIcon.className = 'fa-solid fa-play';
+        showToast('Anime stream paused.', 'info');
+      }
+    }
+
+    function updateStreamTrackerUI() {
+      const cycleSec = Math.floor(AppState.user.currentCycleSeconds || 0);
+      const cyclePct = Math.min(100, Math.floor((cycleSec / 300) * 100));
+
+      const secEl = $('stream-cycle-seconds');
+      const pctEl = $('stream-cycle-percent');
+      const barEl = $('stream-progress-bar');
+
+      if (secEl) secEl.textContent = `${cycleSec}s`;
+      if (pctEl) pctEl.textContent = `${cyclePct}%`;
+      if (barEl) barEl.style.width = `${cyclePct}%`;
+
+      updateStatsCounters();
+    }
+
+    function saveUserToLocalStorage() {
+      if (AppState.isGuest || !AppState.currentUserKey) return;
+      const users = getUsersDB();
+      users[AppState.currentUserKey] = { ...AppState.user };
+      saveUsersDB(users);
+    }
+
+    // ----------------------------------------------------
+    // 7. VIEWABLE PROFILE UI UPDATER
+    // ----------------------------------------------------
+    function updateViewableProfileUI() {
+      const u = AppState.user;
+
+      // Handle Guest View vs Account View toggling for Home and Profile
+      const homeGuestView = $('home-guest-view');
+      const homeAccountView = $('home-account-view');
+      const homeAccountUsername = $('home-account-username');
+      const profileGuestLocked = $('profile-guest-locked');
+      const profileUnlockedContent = $('profile-unlocked-content');
+
+      if (AppState.isGuest) {
+        if (homeGuestView) homeGuestView.classList.remove('hidden');
+        if (homeAccountView) homeAccountView.classList.add('hidden');
+        if (profileGuestLocked) profileGuestLocked.classList.remove('hidden');
+        if (profileUnlockedContent) profileUnlockedContent.classList.add('hidden');
+      } else {
+        if (homeGuestView) homeGuestView.classList.add('hidden');
+        if (homeAccountView) homeAccountView.classList.remove('hidden');
+        if (homeAccountUsername) homeAccountUsername.textContent = u.username;
+        if (profileGuestLocked) profileGuestLocked.classList.add('hidden');
+        if (profileUnlockedContent) profileUnlockedContent.classList.remove('hidden');
+      }
+
+      // 1. Identity Display
+      const nameEl = $('profile-display-name');
+      const bioEl = $('profile-bio-display');
+      const titleEl = $('profile-title-text');
+      const headerDisplay = $('header-user-display');
+      const flyoutName = $('flyout-username');
+      const flyoutRank = $('flyout-rank');
+
+      if (nameEl) nameEl.textContent = u.username;
+      if (bioEl) bioEl.textContent = u.bio;
+      if (titleEl) titleEl.textContent = AppState.isGuest ? 'Guest Explorer' : u.title;
+      if (headerDisplay) headerDisplay.textContent = AppState.isGuest ? 'Guest Explorer' : u.username;
+      if (flyoutName) flyoutName.textContent = u.username;
+      if (flyoutRank) flyoutRank.textContent = AppState.isGuest ? 'Guest (Account Required)' : u.title;
+
+      // 2. Avatar Display
+      const sBadge = $('default-s-badge');
+      const customImg = $('custom-avatar-img');
+      const gearBtnS = $('gear-btn-s');
+      const gearBtnImg = $('gear-btn-img');
+      const flyoutS = $('flyout-s-badge');
+      const flyoutImg = $('flyout-avatar-img');
+
+      if (!AppState.isGuest && u.avatarDataUrl) {
+        if (customImg) { customImg.src = u.avatarDataUrl; customImg.classList.remove('hidden'); }
+        if (sBadge) sBadge.classList.add('hidden');
+        if (gearBtnImg) { gearBtnImg.src = u.avatarDataUrl; gearBtnImg.classList.remove('hidden'); }
+        if (gearBtnS) gearBtnS.classList.add('hidden');
+        if (flyoutImg) { flyoutImg.src = u.avatarDataUrl; flyoutImg.classList.remove('hidden'); }
+        if (flyoutS) flyoutS.classList.add('hidden');
+      } else {
+        if (customImg) customImg.classList.add('hidden');
+        if (sBadge) sBadge.classList.remove('hidden');
+        if (gearBtnImg) gearBtnImg.classList.add('hidden');
+        if (gearBtnS) gearBtnS.classList.remove('hidden');
+        if (flyoutImg) flyoutImg.classList.add('hidden');
+        if (flyoutS) flyoutS.classList.remove('hidden');
+      }
+
+      // 3. Banner Image
+      const bannerImg = $('profile-banner-img');
+      if (bannerImg && u.bannerDataUrl && !AppState.isGuest) {
+        bannerImg.src = u.bannerDataUrl;
+      }
+
+      // 4. Equipped Frame
+      const frameWrapper = $('pfp-frame-wrapper');
+      const flyoutFrameWrapper = $('flyout-frame-wrapper');
+      if (frameWrapper) {
+        frameWrapper.className = `pfp-frame-container frame-${AppState.isGuest ? 'default' : u.equippedFrame} p-1.5 transition-all duration-300`;
+      }
+      if (flyoutFrameWrapper) {
+        flyoutFrameWrapper.className = `pfp-frame-container frame-${AppState.isGuest ? 'default' : u.equippedFrame} p-0.5 shrink-0 transition-all duration-300`;
+      }
+
+      // 5. XP Progress Bar & Level
+      const currentXP = u.xp || 0;
+      const currentLvl = u.level || 1;
+      const xpInCurrentLvl = currentXP % 100;
+      const xpPercent = xpInCurrentLvl;
+
+      const xpText = $('xp-text-display');
+      const xpBar = $('xp-progress-bar');
+      const xpTarget = $('xp-target-level');
+
+      if (xpText) xpText.textContent = `${xpInCurrentLvl} / 100 XP (${xpPercent}%)`;
+      if (xpBar) xpBar.style.width = `${xpPercent}%`;
+      if (xpTarget) xpTarget.textContent = `${currentLvl + 1}`;
+
+      updateStatsCounters();
+    }
+
+    function updateStatsCounters() {
+      const u = AppState.user;
+
+      const headerStardust = $('header-stardust');
+      const headerStreak = $('header-streak');
+      const headerLevel = $('header-level');
+      const statsLevel = $('stats-level-count');
+      const statsAnime = $('stats-anime-count');
+      const statsEpisodes = $('stats-episodes-count');
+      const statsFav = $('stats-fav-count');
+      const statsStardust = $('stats-stardust-count');
+      const shopStardust = $('shop-stardust-display');
+      const viewFavCount = $('view-fav-count');
+      const profileFavCount = $('profile-fav-tab-count');
+      const sidebarFavBadge = $('sidebar-fav-badge');
+      const flyoutFavBadge = $('flyout-fav-badge');
+
+      if (AppState.isGuest) {
+        // Strict gating: No access to levels, stardust, or streak without an account
+        if (headerStardust) headerStardust.innerHTML = '<i class="fa-solid fa-lock text-[10px] opacity-70"></i> <span>Locked</span>';
+        if (headerStreak) headerStreak.innerHTML = '<i class="fa-solid fa-lock text-[10px] opacity-70"></i> <span>Streak: Locked</span>';
+        if (headerLevel) headerLevel.innerHTML = '<i class="fa-solid fa-lock text-[10px] opacity-70"></i> <span>Lv --</span>';
+        if (statsLevel) statsLevel.textContent = '--';
+        if (statsAnime) statsAnime.textContent = '0';
+        if (statsEpisodes) statsEpisodes.textContent = '0';
+        if (statsFav) statsFav.textContent = '0';
+        if (statsStardust) statsStardust.textContent = '--';
+        if (shopStardust) shopStardust.textContent = 'Account Required';
+      } else {
+        const stardustVal = u.stardust || 0;
+        const levelVal = u.level || 1;
+        const streakVal = u.streakDays || 0;
+
+        if (headerStardust) headerStardust.textContent = `${stardustVal.toLocaleString()} Stardust`;
+        if (headerStreak) headerStreak.textContent = `Streak: ${streakVal} ${streakVal === 1 ? 'Day' : 'Days'}`;
+        if (headerLevel) headerLevel.textContent = `Lv ${levelVal}`;
+        if (statsLevel) statsLevel.textContent = levelVal;
+        if (statsAnime) statsAnime.textContent = u.animeWatched || 0;
+        if (statsEpisodes) statsEpisodes.textContent = u.episodesWatched || 0;
+        if (statsFav) statsFav.textContent = 0;
+        if (statsStardust) statsStardust.textContent = stardustVal.toLocaleString();
+        if (shopStardust) shopStardust.textContent = `${stardustVal.toLocaleString()} Stardust Available`;
+      }
+
+      if (viewFavCount) viewFavCount.textContent = 0;
+      if (profileFavCount) profileFavCount.textContent = 0;
+      if (sidebarFavBadge) sidebarFavBadge.classList.add('hidden');
+      if (flyoutFavBadge) flyoutFavBadge.textContent = '0';
+
+      renderDailyRewardsUI();
+    }
+
+    // ----------------------------------------------------
+    // 8. EDIT PROFILE MODAL LOGIC & USERNAME UNIQUENESS
+    // (Customization strictly gated behind account)
+    // ----------------------------------------------------
+    function openEditProfileModal() {
+      if (AppState.isGuest) {
+        showToast('Customization Locked: Please Sign Up or Log In to customize your profile, avatar, frames, and themes.', 'error');
+        openAuthModal('signup');
+        return;
+      }
+
+      AppState.draft.username = AppState.user.username;
+      AppState.draft.bio = AppState.user.bio;
+      AppState.draft.equippedFrame = AppState.user.equippedFrame;
+      AppState.draft.avatarDataUrl = AppState.user.avatarDataUrl;
+      AppState.draft.bannerDataUrl = AppState.user.bannerDataUrl;
+
+      const inputName = $('input-username');
+      const inputBio = $('input-bio');
+      if (inputName) inputName.value = AppState.draft.username;
+      if (inputBio) inputBio.value = AppState.draft.bio;
+
+      handleEditUsernameInput();
+      highlightSelectedFrameCard(AppState.draft.equippedFrame);
+      updateLivePreview();
+
+      const modal = $('edit-profile-modal');
+      if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+      }
+    }
+
+    function closeEditProfileModal() {
+      const modal = $('edit-profile-modal');
+      if (modal) {
+        modal.classList.remove('flex');
+        modal.classList.add('hidden');
+        document.body.style.overflow = '';
+      }
+    }
+
+    function handleEditUsernameInput() {
+      const input = $('input-username');
+      const errorEl = $('edit-username-error');
+      const successEl = $('edit-username-success');
+      const iconEl = $('edit-username-status-icon');
+      const saveBtn = $('btn-save-profile');
+
+      if (!input) return;
+      const val = input.value.trim();
+
+      AppState.draft.username = val;
+      updateLivePreview();
+
+      // Check uniqueness against current user key
+      const check = checkUsernameAvailability(val, AppState.user.username);
+
+      if (!check.valid) {
+        if (errorEl) {
+          errorEl.classList.remove('hidden');
+          errorEl.querySelector('span').textContent = check.reason;
+        }
+        if (successEl) successEl.classList.add('hidden');
+        if (iconEl) iconEl.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-400 text-xs"></i>';
+        if (saveBtn) saveBtn.disabled = true;
+      } else {
+        if (errorEl) errorEl.classList.add('hidden');
+        if (successEl) successEl.classList.remove('hidden');
+        if (iconEl) iconEl.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-400 text-xs"></i>';
+        if (saveBtn) saveBtn.disabled = false;
+      }
+    }
+
+    function updateLivePreview() {
+      const inputBio = $('input-bio');
+      const nameVal = AppState.draft.username || AppState.user.username;
+      const bioVal = inputBio?.value.trim() || AppState.draft.bio;
+
+      const previewName = $('preview-username');
+      const previewBio = $('preview-bio');
+      const previewFrame = $('preview-frame-wrapper');
+      const previewS = $('preview-s-badge');
+      const previewImg = $('preview-avatar-img');
+
+      if (previewName) previewName.textContent = nameVal;
+      if (previewBio) previewBio.textContent = bioVal;
+
+      if (previewFrame) {
+        previewFrame.className = `pfp-frame-container frame-${AppState.draft.equippedFrame} p-1 transition-all duration-300 shrink-0`;
+      }
+
+      if (AppState.draft.avatarDataUrl && previewImg && previewS) {
+        previewImg.src = AppState.draft.avatarDataUrl;
+        previewImg.classList.remove('hidden');
+        previewS.classList.add('hidden');
+      } else if (previewImg && previewS) {
+        previewImg.classList.add('hidden');
+        previewS.classList.remove('hidden');
+      }
+    }
+
+    function selectFrame(frameName) {
+      AppState.draft.equippedFrame = frameName;
+      highlightSelectedFrameCard(frameName);
+      updateLivePreview();
+      showToast(`Selected ${frameName.toUpperCase()} Frame!`, 'info');
+    }
+
+    function highlightSelectedFrameCard(selectedName) {
+      const cards = document.querySelectorAll('.frame-option-card');
+      cards.forEach(card => {
+        const frame = card.getAttribute('data-frame');
+        if (frame === selectedName) {
+          card.classList.add('border-purple-500', 'bg-purple-950/40', 'shadow-[0_0_15px_rgba(168,85,247,0.3)]');
+          card.classList.remove('border-white/10');
+        } else {
+          card.classList.remove('border-purple-500', 'bg-purple-950/40', 'shadow-[0_0_15px_rgba(168,85,247,0.3)]');
+          card.classList.add('border-white/10');
+        }
+      });
+    }
+
+    // Local Device Photo Pickers via FileReader API
+    function handleModalAvatarUpload(event) {
+      if (AppState.isGuest) {
+        showToast('Customization Locked: Sign Up or Log In to upload custom photos.', 'error');
+        openAuthModal('signup');
+        return;
+      }
+      const file = event.target.files?.[0];
+      if (!file) return;
+
+      if (!file.type.startsWith('image/')) {
+        showToast('Please select a valid image file.', 'error');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        AppState.draft.avatarDataUrl = e.target?.result;
+        updateLivePreview();
+        showToast('Avatar photo selected from device!', 'success');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function handleDirectAvatarUpload(event) {
+      if (AppState.isGuest) {
+        showToast('Customization Locked: Sign Up or Log In to upload custom photos.', 'error');
+        openAuthModal('signup');
+        return;
+      }
+      const file = event.target.files?.[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const result = e.target?.result;
+        AppState.user.avatarDataUrl = result;
+        saveUserToLocalStorage();
+        updateViewableProfileUI();
+        showToast('Profile photo updated successfully!', 'success');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function resetAvatarToDefaultS() {
+      if (AppState.isGuest) {
+        showToast('Customization Locked: Sign Up or Log In to modify avatar.', 'error');
+        openAuthModal('signup');
+        return;
+      }
+      AppState.draft.avatarDataUrl = null;
+      updateLivePreview();
+      showToast('Avatar reset to default "S" badge.', 'info');
+    }
+
+    function handleModalBannerUpload(event) {
+      if (AppState.isGuest) {
+        showToast('Customization Locked: Sign Up or Log In to upload custom photos.', 'error');
+        openAuthModal('signup');
+        return;
+      }
+      const file = event.target.files?.[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        AppState.draft.bannerDataUrl = e.target?.result;
+        showToast('Custom banner selected from device!', 'success');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function handleDirectBannerUpload(event) {
+      if (AppState.isGuest) {
+        showToast('Customization Locked: Sign Up or Log In to upload custom photos.', 'error');
+        openAuthModal('signup');
+        return;
+      }
+      const file = event.target.files?.[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const result = e.target?.result;
+        AppState.user.bannerDataUrl = result;
+        saveUserToLocalStorage();
+        updateViewableProfileUI();
+        showToast('Banner updated successfully!', 'success');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // Save Profile Changes
+    function saveProfileChanges() {
+      const inputName = $('input-username');
+      const inputBio = $('input-bio');
+      const newName = inputName?.value.trim();
+
+      if (!newName) {
+        showToast('Username cannot be empty.', 'error');
+        return;
+      }
+
+      // Check uniqueness if username changed
+      if (newName.toLowerCase() !== AppState.user.username.toLowerCase()) {
+        const check = checkUsernameAvailability(newName, AppState.user.username);
+        if (!check.valid) {
+          showToast(check.reason, 'error');
+          return;
+        }
+
+        // Rename key in users db
+        if (!AppState.isGuest && AppState.currentUserKey) {
+          const users = getUsersDB();
+          const oldData = users[AppState.currentUserKey];
+          delete users[AppState.currentUserKey];
+          const newKey = newName.toLowerCase();
+          users[newKey] = { ...oldData, username: newName };
+          saveUsersDB(users);
+          AppState.currentUserKey = newKey;
+          setActiveSession({ username: newName, isGuest: false });
+        }
+      }
+
+      AppState.user.username = newName;
+      if (inputBio) AppState.user.bio = inputBio.value.trim();
+      if (AppState.draft.equippedFrame) AppState.user.equippedFrame = AppState.draft.equippedFrame;
+
+      if (AppState.draft.avatarDataUrl !== undefined) {
+        AppState.user.avatarDataUrl = AppState.draft.avatarDataUrl;
+      }
+      if (AppState.draft.bannerDataUrl) {
+        AppState.user.bannerDataUrl = AppState.draft.bannerDataUrl;
+      }
+
+      saveUserToLocalStorage();
+      updateViewableProfileUI();
+      closeEditProfileModal();
+      showToast('Profile configuration saved & updated immediately!', 'success');
+    }
+
+    // ----------------------------------------------------
+    // 9. CONTENT TABS & DISPLAY MODE SWITCHER
+    // ----------------------------------------------------
+    function switchContentTab(tabName) {
+      const historyTab = $('content-tab-history');
+      const favTab = $('content-tab-favourites');
+      const btnHistory = $('tab-btn-history');
+      const btnFav = $('tab-btn-favourites');
+
+      if (tabName === 'history') {
+        if (historyTab) historyTab.classList.remove('hidden');
+        if (favTab) favTab.classList.add('hidden');
+        if (btnHistory) btnHistory.className = 'px-4 py-2 rounded-xl text-xs font-bold transition-all bg-purple-600 text-white shadow-sm cursor-pointer';
+        if (btnFav) btnFav.className = 'px-4 py-2 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-white cursor-pointer';
+      } else {
+        if (favTab) favTab.classList.remove('hidden');
+        if (historyTab) historyTab.classList.add('hidden');
+        if (btnFav) btnFav.className = 'px-4 py-2 rounded-xl text-xs font-bold transition-all bg-purple-600 text-white shadow-sm cursor-pointer';
+        if (btnHistory) btnHistory.className = 'px-4 py-2 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-white cursor-pointer';
+      }
+    }
+
+    function setLayoutMode(mode) {
+      AppState.layoutMode = mode;
+      const historyGrid = $('content-tab-history');
+      const favGrid = $('content-tab-favourites');
+      const btnCards = $('layout-btn-cards');
+      const btnList = $('layout-btn-list');
+
+      const applyMode = (el) => {
+        if (!el) return;
+        if (mode === 'cards') {
+          el.className = el.className.replace('view-list-grid', 'view-cards-grid');
+        } else {
+          el.className = el.className.replace('view-cards-grid', 'view-list-grid');
+        }
+      };
+
+      applyMode(historyGrid);
+      applyMode(favGrid);
+
+      if (mode === 'cards') {
+        if (btnCards) btnCards.className = 'px-2.5 py-1 rounded-lg text-white bg-white/10 transition-colors cursor-pointer';
+        if (btnList) btnList.className = 'px-2.5 py-1 rounded-lg text-slate-400 hover:text-white transition-colors cursor-pointer';
+        showToast('Switched to 3D Glass Cards View', 'info');
+      } else {
+        if (btnList) btnList.className = 'px-2.5 py-1 rounded-lg text-white bg-white/10 transition-colors cursor-pointer';
+        if (btnCards) btnCards.className = 'px-2.5 py-1 rounded-lg text-slate-400 hover:text-white transition-colors cursor-pointer';
+        showToast('Switched to Compact List View', 'info');
+      }
+    }
+
+    // ----------------------------------------------------
+    // 10. REAL-TIME THEME ACCENT SWITCHER
+    // ----------------------------------------------------
+    function setCosmicTheme(theme, notify = true) {
+      AppState.theme = theme;
+      AppState.user.theme = theme;
+      localStorage.setItem('soranix_theme', theme);
+      saveUserToLocalStorage();
+
+      if (theme === 'violet') {
+        document.documentElement.removeAttribute('data-theme');
+      } else {
+        document.documentElement.setAttribute('data-theme', theme);
+      }
+
+      const blob1 = $('blob-primary');
+      const blob2 = $('blob-secondary');
+      if (blob1 && blob2) {
+        if (theme === 'pink') {
+          blob1.className = 'absolute -top-32 -left-32 w-[34rem] h-[34rem] rounded-full bg-pink-600/20 blur-[120px] animate-float-blob1 transition-colors duration-700';
+          blob2.className = 'absolute top-1/3 -right-32 w-[36rem] h-[36rem] rounded-full bg-fuchsia-600/18 blur-[140px] animate-float-blob2 transition-colors duration-700';
+        } else if (theme === 'cyan') {
+          blob1.className = 'absolute -top-32 -left-32 w-[34rem] h-[34rem] rounded-full bg-cyan-600/20 blur-[120px] animate-float-blob1 transition-colors duration-700';
+          blob2.className = 'absolute top-1/3 -right-32 w-[36rem] h-[36rem] rounded-full bg-teal-600/18 blur-[140px] animate-float-blob2 transition-colors duration-700';
+        } else if (theme === 'gold') {
+          blob1.className = 'absolute -top-32 -left-32 w-[34rem] h-[34rem] rounded-full bg-amber-600/20 blur-[120px] animate-float-blob1 transition-colors duration-700';
+          blob2.className = 'absolute top-1/3 -right-32 w-[36rem] h-[36rem] rounded-full bg-yellow-600/18 blur-[140px] animate-float-blob2 transition-colors duration-700';
+        } else if (theme === 'emerald') {
+          blob1.className = 'absolute -top-32 -left-32 w-[34rem] h-[34rem] rounded-full bg-emerald-600/20 blur-[120px] animate-float-blob1 transition-colors duration-700';
+          blob2.className = 'absolute top-1/3 -right-32 w-[36rem] h-[36rem] rounded-full bg-green-600/18 blur-[140px] animate-float-blob2 transition-colors duration-700';
+        } else {
+          blob1.className = 'absolute -top-32 -left-32 w-[34rem] h-[34rem] rounded-full bg-purple-600/15 blur-[120px] animate-float-blob1 transition-colors duration-700';
+          blob2.className = 'absolute top-1/3 -right-32 w-[36rem] h-[36rem] rounded-full bg-pink-600/12 blur-[140px] animate-float-blob2 transition-colors duration-700';
+        }
+      }
+
+      if (notify) showToast(`Theme updated: ${theme.toUpperCase()}`, 'info');
+    }
+
+    // ----------------------------------------------------
+    // 11. DAILY REWARDS ENGINE (Starts at Day 1, Account Required)
+    // ----------------------------------------------------
+    function renderDailyRewardsUI() {
+      const container = $('daily-rewards-container');
+      const streakDisplay = $('rewards-streak-display');
+      if (!container) return;
+
+      const streakDays = AppState.user.streakDays || 0;
+      if (streakDisplay) {
+        streakDisplay.textContent = `Active Streak: ${streakDays} ${streakDays === 1 ? 'Day' : 'Days'}`;
+      }
+
+      if (AppState.isGuest) {
+        if (streakDisplay) streakDisplay.innerHTML = '<i class="fa-solid fa-lock text-amber-400"></i> <span>Streak: Locked</span>';
+        container.innerHTML = `
+          <div class="glass-panel rounded-2xl p-8 sm:p-12 text-center border border-dashed border-amber-500/40 flex flex-col items-center justify-center space-y-4">
+            <div class="w-14 h-14 rounded-2xl bg-amber-950/60 border border-amber-500/40 flex items-center justify-center text-solarGold text-3xl shadow-[0_0_20px_rgba(245,158,11,0.25)]">
+              <i class="fa-solid fa-lock"></i>
+            </div>
+            <div class="space-y-1">
+              <h3 class="text-xl font-display font-extrabold text-white">Daily Rewards Locked</h3>
+              <p class="text-xs sm:text-sm text-slate-300 max-w-md mx-auto">
+                You do not have access to daily rewards or login streaks without an account. Sign in or create an account to start your streak and claim Day 1 (+100 Stardust Coins).
+              </p>
+            </div>
+            <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+              <button onclick="openAuthModal('signup')" class="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-xs font-bold text-black shadow-md cursor-pointer transition-all flex items-center gap-2">
+                <i class="fa-solid fa-user-plus"></i>
+                <span>Sign Up to Unlock</span>
+              </button>
+              <button onclick="openAuthModal('login')" class="px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-semibold text-white cursor-pointer transition-all flex items-center gap-2">
+                <i class="fa-solid fa-lock"></i>
+                <span>Log In</span>
+              </button>
+              <button onclick="triggerFirebaseGoogleLogin()" class="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-slate-200 cursor-pointer transition-all flex items-center gap-2">
+                <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24">
+                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
+                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
+                </svg>
+                <span>Sign in with Google</span>
+              </button>
+            </div>
+          </div>
+        `;
+      } else {
+        const isDay1Claimed = AppState.user.day1Claimed;
+
+        container.innerHTML = `
+          <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3 mb-6">
+            <!-- Day 1 -->
+            <div class="glass-card rounded-2xl p-3 text-center ${isDay1Claimed ? 'border-emerald-500/40 bg-emerald-950/20' : 'border-amber-400 bg-amber-950/30 shadow-[0_0_15px_rgba(245,158,11,0.3)] animate-pulse'}">
+              <span class="text-[10px] uppercase font-bold ${isDay1Claimed ? 'text-emerald-400' : 'text-amber-300'}">Day 1 ${isDay1Claimed ? '&bull; Completed' : '&bull; Ready'}</span>
+              <p class="text-base font-extrabold ${isDay1Claimed ? 'text-white' : 'text-amber-300'} mt-1">+100</p>
+              ${isDay1Claimed ? '<i class="fa-solid fa-circle-check text-emerald-400 text-xs mt-2 block"></i>' : '<button onclick="claimDay1Reward(this)" class="mt-2 px-2.5 py-1 rounded-lg bg-amber-500 hover:bg-amber-400 text-[10px] font-bold text-black cursor-pointer shadow-md">Claim</button>'}
+            </div>
+
+            <!-- Day 2 -->
+            <div class="glass-card rounded-2xl p-3 text-center opacity-60">
+              <span class="text-[10px] uppercase font-bold text-slate-400">Day 2</span>
+              <p class="text-base font-extrabold text-slate-300 mt-1">+150</p>
+              <i class="fa-solid fa-lock text-slate-500 text-xs mt-2"></i>
+            </div>
+
+            <!-- Day 3 -->
+            <div class="glass-card rounded-2xl p-3 text-center opacity-60">
+              <span class="text-[10px] uppercase font-bold text-slate-400">Day 3</span>
+              <p class="text-base font-extrabold text-slate-300 mt-1">+200</p>
+              <i class="fa-solid fa-lock text-slate-500 text-xs mt-2"></i>
+            </div>
+
+            <!-- Day 4 -->
+            <div class="glass-card rounded-2xl p-3 text-center opacity-60">
+              <span class="text-[10px] uppercase font-bold text-slate-400">Day 4</span>
+              <p class="text-base font-extrabold text-slate-300 mt-1">+250</p>
+              <i class="fa-solid fa-lock text-slate-500 text-xs mt-2"></i>
+            </div>
+
+            <!-- Day 5 (Locked) -->
+            <div class="glass-card rounded-2xl p-3 text-center opacity-60">
+              <span class="text-[10px] uppercase font-bold text-slate-400">Day 5</span>
+              <p class="text-base font-extrabold text-slate-300 mt-1">+350</p>
+              <i class="fa-solid fa-lock text-slate-500 text-xs mt-2"></i>
+            </div>
+
+            <!-- Day 6 (Locked) -->
+            <div class="glass-card rounded-2xl p-3 text-center opacity-60">
+              <span class="text-[10px] uppercase font-bold text-slate-400">Day 6</span>
+              <p class="text-base font-extrabold text-slate-300 mt-1">+500</p>
+              <i class="fa-solid fa-lock text-slate-500 text-xs mt-2"></i>
+            </div>
+
+            <!-- Day 7 Grand (Locked) -->
+            <div class="glass-card rounded-2xl p-3 text-center opacity-60 border-purple-500/30">
+              <span class="text-[10px] uppercase font-bold text-purple-300">Day 7 Grand</span>
+              <p class="text-base font-extrabold text-purple-300 mt-1">+1,000</p>
+              <i class="fa-solid fa-gift text-purple-400 text-xs mt-2"></i>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    function claimDay1Reward(btn) {
+      if (AppState.isGuest) {
+        showToast('Please log in or sign up to claim daily login rewards!', 'info');
+        openAuthModal('signup');
+        return;
+      }
+      AppState.user.day1Claimed = true;
+      AppState.user.streakDays = 1;
+      AppState.user.stardust = (AppState.user.stardust || 0) + 100;
+      saveUserToLocalStorage();
+      updateViewableProfileUI();
+      renderDailyRewardsUI();
+      showToast('🎉 Day 1 Streak Claimed! +100 Stardust Coins added to your vault!', 'success');
+    }
+
+    // ----------------------------------------------------
+    // 12. BUG REPORT MODAL
+    // ----------------------------------------------------
+    function openBugReportModal() {
+      const modal = $('bug-modal');
+      if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      }
+    }
+
+    function closeBugReportModal() {
+      const modal = $('bug-modal');
+      if (modal) {
+        modal.classList.remove('flex');
+        modal.classList.add('hidden');
+      }
+    }
+
+    function handleBugSubmit(e) {
+      e.preventDefault();
+      closeBugReportModal();
+      showToast('Transmission received! Bug report filed with Soranix telemetry.', 'success');
+    }
+
+    // ----------------------------------------------------
+    // 13. FIREBASE GOOGLE AUTHENTICATION INTEGRATION
+    // ----------------------------------------------------
+    testConnection().then((connected) => {
+      if (connected) {
+        console.log('[Soranix] Cloud Firestore connection active.');
+      }
+    });
+
+    async function triggerFirebaseGoogleLogin() {
+      try {
+        closeAuthModal();
+        showToast('Connecting with Google...', 'info');
+        const user = await signInWithGoogle();
+        if (user) {
+          const googleUsername = user.displayName ? user.displayName.replace(/\s+/g, '') : `Voyager_${Math.floor(Math.random()*1000)}`;
+          const users = getUsersDB();
+          let finalUsername = googleUsername;
+          let counter = 1;
+
+          while (users[finalUsername.toLowerCase()]) {
+            finalUsername = `${googleUsername}${counter++}`;
+          }
+
+          const existingUser = users[finalUsername.toLowerCase()] || createInitialUser(finalUsername, user.email || '');
+          if (user.photoURL && !existingUser.avatarDataUrl) {
+            existingUser.avatarDataUrl = user.photoURL;
+          }
+
+          users[finalUsername.toLowerCase()] = existingUser;
+          saveUsersDB(users);
+
+          AppState.isGuest = false;
+          AppState.currentUserKey = finalUsername.toLowerCase();
+          AppState.user = existingUser;
+          setActiveSession({ username: finalUsername, isGuest: false });
+
+          updateViewableProfileUI();
+          enterDashboard('profile');
+          showToast(`Google Sign-In successful! Welcome, ${finalUsername}.`, 'success');
+        }
+      } catch (err) {
+        showToast('Google sign-in canceled or failed.', 'error');
+      }
+    }
+
+    // ----------------------------------------------------
+    // 14. CANVAS STARFIELD ENGINE
+    // ----------------------------------------------------
+    (function initStarfield() {
+      const canvas = $('galaxy-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      let stars = [];
+      let width = 0;
+      let height = 0;
+
+      function resize() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = width;
+        canvas.height = height;
+
+        const count = Math.min(Math.max(Math.floor((width * height) / 5000), 120), 300);
+        stars = [];
+        for (let i = 0; i < count; i++) {
+          stars.push({
+            x: Math.random() * width,
+            y: Math.random() * height,
+            radius: Math.random() * 1.5 + 0.3,
+            alpha: Math.random() * 0.8 + 0.2,
+            twinkleSpeed: (Math.random() * 0.02 + 0.005) * (Math.random() > 0.5 ? 1 : -1),
+            driftY: Math.random() * 0.2 + 0.05
+          });
+        }
+      }
+
+      function render() {
+        ctx.clearRect(0, 0, width, height);
+
+        for (let i = 0; i < stars.length; i++) {
+          const s = stars[i];
+          s.alpha += s.twinkleSpeed;
+          if (s.alpha > 0.95 || s.alpha < 0.15) {
+            s.twinkleSpeed = -s.twinkleSpeed;
+          }
+
+          s.y += s.driftY;
+          if (s.y > height) {
+            s.y = 0;
+            s.x = Math.random() * width;
+          }
+
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(235, 225, 255, ${Math.max(0.1, Math.min(1, s.alpha))})`;
+          ctx.fill();
+        }
+
+        requestAnimationFrame(render);
+      }
+
+      window.addEventListener('resize', resize);
+      resize();
+      render();
+    })();
+
+    // ----------------------------------------------------
+    // 15. TOAST NOTIFICATIONS
+    // ----------------------------------------------------
+    function showToast(message, type = 'info') {
+      const container = $('toast-container');
+      if (!container) return;
+
+      const toast = document.createElement('div');
+      toast.className = 'flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-xs font-semibold text-white shadow-2xl transition-all duration-300 pointer-events-auto transform translate-y-2 opacity-0 backdrop-blur-xl';
+
+      if (type === 'success') {
+        toast.style.background = 'rgba(16, 185, 129, 0.95)';
+        toast.style.border = '1px solid rgba(52, 211, 153, 0.5)';
+        toast.innerHTML = `<i class="fa-solid fa-circle-check text-white"></i> <span>${message}</span>`;
+      } else if (type === 'error') {
+        toast.style.background = 'rgba(239, 68, 68, 0.95)';
+        toast.style.border = '1px solid rgba(248, 113, 113, 0.5)';
+        toast.innerHTML = `<i class="fa-solid fa-circle-exclamation text-white"></i> <span>${message}</span>`;
+      } else {
+        toast.style.background = 'rgba(25, 18, 48, 0.95)';
+        toast.style.border = '1px solid rgba(var(--accent-rgb), 0.4)';
+        toast.innerHTML = `<i class="fa-solid fa-atom text-accent"></i> <span>${message}</span>`;
+      }
+
+      container.appendChild(toast);
+      requestAnimationFrame(() => {
+        toast.classList.remove('translate-y-2', 'opacity-0');
+      });
+
+      setTimeout(() => {
+        toast.classList.add('opacity-0', '-translate-y-2');
+        setTimeout(() => toast.remove(), 3400);
+      }, 3400);
+    }
+
+    // Keyboard ESC listener
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeEditProfileModal();
+        closeAuthModal();
+        closeBugReportModal();
+        closeGearMenu();
+      }
+    });
+
+    // Expose functions globally for HTML event attributes
+    window.enterDashboard = enterDashboard;
+    window.returnToSplash = returnToSplash;
+    window.continueAsGuest = continueAsGuest;
+    window.handleLogout = handleLogout;
+    window.switchDashboardTab = switchDashboardTab;
+    window.toggleGearMenu = toggleGearMenu;
+    window.closeGearMenu = closeGearMenu;
+    window.openEditProfileModal = openEditProfileModal;
+    window.closeEditProfileModal = closeEditProfileModal;
+    window.updateLivePreview = updateLivePreview;
+    window.selectFrame = selectFrame;
+    window.saveProfileChanges = saveProfileChanges;
+    window.handleModalAvatarUpload = handleModalAvatarUpload;
+    window.handleDirectAvatarUpload = handleDirectAvatarUpload;
+    window.handleModalBannerUpload = handleModalBannerUpload;
+    window.handleDirectBannerUpload = handleDirectBannerUpload;
+    window.resetAvatarToDefaultS = resetAvatarToDefaultS;
+    window.switchContentTab = switchContentTab;
+    window.setLayoutMode = setLayoutMode;
+    window.setCosmicTheme = setCosmicTheme;
+    window.openAuthModal = openAuthModal;
+    window.closeAuthModal = closeAuthModal;
+    window.setAuthMode = setAuthMode;
+    window.handleAuthSubmit = handleAuthSubmit;
+    window.validateAuthUsernameRealtime = validateAuthUsernameRealtime;
+    window.handleEditUsernameInput = handleEditUsernameInput;
+    window.triggerFirebaseGoogleLogin = triggerFirebaseGoogleLogin;
+    window.claimDay1Reward = claimDay1Reward;
+    window.renderDailyRewardsUI = renderDailyRewardsUI;
+    window.openBugReportModal = openBugReportModal;
+    window.closeBugReportModal = closeBugReportModal;
+    window.handleBugSubmit = handleBugSubmit;
+    window.toggleAnimeWatchSession = toggleAnimeWatchSession;
+    window.showToast = showToast;
+  </script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile data including stardust balance, streak, equipped cosmetics, and bio.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique user ID matching auth.uid",
+          "maxLength": 128
+        },
+        "displayName": {
+          "type": "string",
+          "description": "User display name",
+          "maxLength": 64
+        },
+        "email": {
+          "type": "string",
+          "description": "User email address",
+          "maxLength": 128
+        },
+        "stardust": {
+          "type": "number",
+          "description": "Current balance of Stardust currency"
+        },
+        "streak": {
+          "type": "number",
+          "description": "Current consecutive daily login streak"
+        },
+        "lastClaimedDate": {
+          "type": "string",
+          "description": "Date string of last claimed daily reward (YYYY-MM-DD)",
+          "maxLength": 32
+        },
+        "equippedBorder": {
+          "type": "string",
+          "description": "Currently equipped avatar border cosmetic",
+          "maxLength": 64
+        },
+        "bio": {
+          "type": "string",
+          "description": "Cadet profile transmission biography",
+          "maxLength": 256
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when profile was created",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp when profile was last updated",
+          "format": "date-time"
+        }
+      },
+      "required": ["id", "displayName", "stardust", "streak"]
+    },
+    "UserFavorite": {
+      "title": "UserFavorite",
+      "description": "Anime series favorited by a user.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Favorite entry document ID",
+          "maxLength": 128
+        },
+        "userId": {
+          "type": "string",
+          "description": "Auth UID of the user who owns this favorite",
+          "maxLength": 128
+        },
+        "animeId": {
+          "type": "string",
+          "description": "Anime identifier",
+          "maxLength": 64
+        },
+        "title": {
+          "type": "string",
+          "description": "Anime title",
+          "maxLength": 128
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when favorited",
+          "format": "date-time"
+        }
+      },
+      "required": ["id", "userId", "animeId", "title"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": {
+        "$ref": "#/entities/UserProfile"
+      },
+      "description": "Stores private user profile, stardust currency, and streak info."
+    },
+    "/users/{userId}/favorites/{favoriteId}": {
+      "schema": {
+        "$ref": "#/entities/UserFavorite"
+      },
+      "description": "Subcollection of favorited anime titles for the user."
+    }
+  }
+}

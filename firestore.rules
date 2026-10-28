@@ -1,0 +1,82 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Connection test document
+    match /test/connection {
+      allow read: if true;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidUserProfile(data) {
+      return data.keys().hasAll(['id', 'displayName', 'stardust', 'streak'])
+        && data.id is string && data.id.size() <= 128
+        && data.displayName is string && data.displayName.size() <= 64
+        && data.stardust is number && data.stardust >= 0
+        && data.streak is number && data.streak >= 0
+        && (!('bio' in data) || (data.bio is string && data.bio.size() <= 256))
+        && (!('equippedBorder' in data) || (data.equippedBorder is string && data.equippedBorder.size() <= 64))
+        && (!('lastClaimedDate' in data) || (data.lastClaimedDate is string && data.lastClaimedDate.size() <= 32))
+        && (!('email' in data) || (data.email is string && data.email.size() <= 128))
+        && (!('createdAt' in data) || (data.createdAt is string && data.createdAt.size() <= 64))
+        && (!('updatedAt' in data) || (data.updatedAt is string && data.updatedAt.size() <= 64));
+    }
+
+    function isValidUserFavorite(data) {
+      return data.keys().hasAll(['id', 'userId', 'animeId', 'title'])
+        && data.id is string && data.id.size() <= 128
+        && data.userId is string && data.userId.size() <= 128
+        && data.animeId is string && data.animeId.size() <= 64
+        && data.title is string && data.title.size() <= 128;
+    }
+
+    // User Profile Documents
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow create: if isOwner(userId)
+        && isValidId(userId)
+        && isValidUserProfile(incoming())
+        && incoming().id == userId;
+      allow update: if isOwner(userId)
+        && isValidId(userId)
+        && isValidUserProfile(incoming())
+        && incoming().id == existing().id;
+      allow delete: if false;
+
+      // User Favorites Subcollection
+      match /favorites/{favoriteId} {
+        allow get, list: if isOwner(userId);
+        allow create: if isOwner(userId)
+          && isValidId(favoriteId)
+          && isValidUserFavorite(incoming())
+          && incoming().userId == userId;
+        allow delete: if isOwner(userId) && isValidId(favoriteId);
+        allow update: if false;
+      }
+    }
+
+    // Default-deny all other unmatched paths
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
