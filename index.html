@@ -152,23 +152,24 @@
       box-shadow: 0 0 25px var(--accent-glow);
     }
 
-    /* Avatar Decoration Frames */
+    /* Avatar Decoration Frames - Circular PFP Geometry */
     .pfp-frame-container {
       position: relative;
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      border-radius: 9999px;
     }
 
     .frame-standard {
       border: 2px solid rgba(255, 255, 255, 0.2);
-      border-radius: 1.5rem;
+      border-radius: 9999px;
       box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
     }
 
     .frame-cyberpunk {
       border: 3px solid #06B6D4;
-      border-radius: 1.5rem;
+      border-radius: 9999px;
       box-shadow: 0 0 25px #06B6D4, inset 0 0 15px #EC4899;
       position: relative;
     }
@@ -177,7 +178,7 @@
       position: absolute;
       inset: -6px;
       border: 1px dashed #EC4899;
-      border-radius: 1.75rem;
+      border-radius: 9999px;
       animation: spin 16s linear infinite;
       pointer-events: none;
     }
@@ -202,7 +203,7 @@
 
     .frame-flame {
       border: 3px solid #F59E0B;
-      border-radius: 1.5rem;
+      border-radius: 9999px;
       box-shadow: 0 0 30px #F59E0B, 0 0 50px #EF4444;
       position: relative;
       animation: flamePulse 2.5s ease-in-out infinite alternate;
@@ -214,7 +215,7 @@
 
     .frame-crown {
       border: 3px solid #FBBF24;
-      border-radius: 1.5rem;
+      border-radius: 9999px;
       box-shadow: 0 0 35px rgba(251, 191, 36, 0.7);
       position: relative;
     }
@@ -237,6 +238,160 @@
       border-radius: 9999px;
       box-shadow: 0 0 30px #8B5CF6, inset 0 0 20px #4C1D95;
       animation: pulseGlow 3s ease-in-out infinite;
+    }
+
+    /* Extended Anime & Cosmic Shop Frames - All Circular (rounded-full) */
+    .frame-supersaiyan {
+      border: 3px solid #FACC15;
+      border-radius: 9999px;
+      box-shadow: 0 0 25px #FACC15, 0 0 45px rgba(234, 179, 8, 0.8), inset 0 0 15px #FEF08A;
+      animation: flamePulse 1.8s ease-in-out infinite alternate;
+    }
+    .frame-sharingan {
+      border: 3px solid #EF4444;
+      border-radius: 9999px;
+      box-shadow: 0 0 25px #EF4444, inset 0 0 15px #7F1D1D;
+    }
+    .frame-waterdragon {
+      border: 3px solid #06B6D4;
+      border-radius: 9999px;
+      box-shadow: 0 0 25px #06B6D4, 0 0 40px #0284C7, inset 0 0 10px #38BDF8;
+    }
+    .frame-cursedenergy {
+      border: 3px solid #6366F1;
+      border-radius: 9999px;
+      box-shadow: 0 0 30px #4338CA, 0 0 50px #1E1B4B, inset 0 0 15px #818CF8;
+      animation: pulseGlow 2.2s ease-in-out infinite alternate;
+    }
+    .frame-sandevistan {
+      border: 3px dashed #EAB308;
+      border-radius: 9999px;
+      box-shadow: 0 0 25px #84CC16, 0 0 40px #EAB308;
+    }
+    .frame-sakura {
+      border: 3px solid #F472B6;
+      border-radius: 9999px;
+      box-shadow: 0 0 25px #F472B6, 0 0 40px rgba(244, 114, 182, 0.5);
+    }
+    .frame-lightning {
+      border: 3px solid #FDE047;
+      border-radius: 9999px;
+      box-shadow: 0 0 30px #38BDF8, 0 0 50px #FDE047;
+    }
+    .frame-blooddemon {
+      border: 3px solid #BE123C;
+      border-radius: 9999px;
+      box-shadow: 0 0 30px #E11D48, 0 0 50px #881337;
+    }
+    .frame-iceempress {
+      border: 3px solid #A5F3FC;
+      border-radius: 9999px;
+      box-shadow: 0 0 25px #67E8F9, 0 0 45px #38BDF8, inset 0 0 15px #CFFAFE;
+    }
+    .frame-solarflare {
+      border: 3px solid #FB923C;
+      border-radius: 9999px;
+      box-shadow: 0 0 30px #F97316, 0 0 50px #DC2626;
+    }
+    .frame-neondemon {
+      border: 3px solid #C084FC;
+      border-radius: 9999px;
+      box-shadow: 0 0 30px #D946EF, 0 0 50px #9333EA;
+    }
+    .frame-phoenix {
+      border: 3px solid #F97316;
+      border-radius: 9999px;
+      box-shadow: 0 0 35px #EF4444, 0 0 60px #FBBF24;
+    }
+    .frame-prism {
+      border: 3px solid #E2E8F0;
+      border-radius: 9999px;
+      box-shadow: 0 0 25px #38BDF8, 0 0 40px #EC4899;
+    }
+    .frame-cybergrid {
+      border: 3px solid #22C55E;
+      border-radius: 9999px;
+      box-shadow: 0 0 25px #15803D, inset 0 0 15px #4ADE80;
+    }
+    .frame-moonlight {
+      border: 3px solid #E0E7FF;
+      border-radius: 9999px;
+      box-shadow: 0 0 25px #818CF8, 0 0 45px #C7D2FE;
+    }
+    .frame-toxic {
+      border: 3px solid #A3E635;
+      border-radius: 9999px;
+      box-shadow: 0 0 30px #65A30D, 0 0 50px #84CC16;
+    }
+    .frame-angel {
+      border: 3px solid #FEF08A;
+      border-radius: 9999px;
+      box-shadow: 0 0 35px #FFFFFF, 0 0 60px #FDE047;
+    }
+    .frame-dragonslayer {
+      border: 3px solid #DC2626;
+      border-radius: 9999px;
+      box-shadow: 0 0 30px #B91C1C, 0 0 50px #7F1D1D;
+    }
+    .frame-titanarmor {
+      border: 3px solid #D97706;
+      border-radius: 9999px;
+      box-shadow: 0 0 25px #B45309, inset 0 0 15px #78350F;
+    }
+    .frame-ninetails {
+      border: 3px solid #EA580C;
+      border-radius: 9999px;
+      box-shadow: 0 0 35px #F97316, 0 0 60px #C2410C;
+    }
+    .frame-shadowgarden {
+      border: 3px solid #4C1D95;
+      border-radius: 9999px;
+      box-shadow: 0 0 30px #581C87, inset 0 0 20px #2E1065;
+    }
+    .frame-mechacore {
+      border: 3px dashed #0284C7;
+      border-radius: 9999px;
+      box-shadow: 0 0 25px #0EA5E9, inset 0 0 15px #0369A1;
+    }
+
+    /* Name Glow Effects */
+    .name-glow-cyan { color: #A5F3FC !important; text-shadow: 0 0 12px #06B6D4, 0 0 24px #0891B2 !important; }
+    .name-glow-gold { color: #FEF08A !important; text-shadow: 0 0 12px #F59E0B, 0 0 24px #D97706 !important; }
+    .name-glow-crimson { color: #FECDD3 !important; text-shadow: 0 0 12px #EF4444, 0 0 24px #DC2626 !important; }
+    .name-glow-purple { color: #E9D5FF !important; text-shadow: 0 0 12px #A855F7, 0 0 24px #9333EA !important; }
+    .name-glow-emerald { color: #A7F3D0 !important; text-shadow: 0 0 12px #10B981, 0 0 24px #059669 !important; }
+    .name-glow-pink { color: #FBCFE8 !important; text-shadow: 0 0 12px #EC4899, 0 0 24px #DB2777 !important; }
+    .name-glow-rainbow { 
+      background: linear-gradient(90deg, #f43f5e, #eab308, #10b981, #06b6d4, #8b5cf6, #ec4899);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: rainbowShift 4s linear infinite;
+    }
+    @keyframes rainbowShift {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 200% 50%; }
+    }
+    .name-glow-ice { color: #E0F2FE !important; text-shadow: 0 0 12px #38BDF8, 0 0 24px #0284C7 !important; }
+    .name-glow-fire { color: #FFEDD5 !important; text-shadow: 0 0 12px #F97316, 0 0 24px #EA580C !important; }
+    .name-glow-white { color: #FFFFFF !important; text-shadow: 0 0 14px #FFFFFF, 0 0 28px rgba(255, 255, 255, 0.7) !important; }
+    .name-glow-lime { color: #ECFCCB !important; text-shadow: 0 0 12px #84CC16, 0 0 24px #65A30D !important; }
+    .name-glow-lavender { color: #EDE9FE !important; text-shadow: 0 0 12px #8B5CF6, 0 0 24px #6D28D9 !important; }
+
+    /* Spoiler Tag Blur Effect */
+    .spoiler-text {
+      filter: blur(5px);
+      background: rgba(255, 255, 255, 0.12);
+      padding: 1px 6px;
+      border-radius: 4px;
+      user-select: none;
+      cursor: pointer;
+      transition: filter 0.25s, background-color 0.25s;
+    }
+    .spoiler-text.revealed {
+      filter: blur(0px) !important;
+      background: rgba(168, 85, 247, 0.25) !important;
+      user-select: text;
     }
 
     /* Layout modes */
@@ -507,9 +662,9 @@
           title="Profile & Settings Menu"
         >
           <div class="relative">
-            <div id="gear-btn-avatar-box" class="w-7 h-7 rounded-lg bg-gradient-to-tr from-purple-800 to-indigo-600 flex items-center justify-center text-white text-[10px] font-bold overflow-hidden">
+            <div id="gear-btn-avatar-box" class="w-7 h-7 rounded-full bg-gradient-to-tr from-purple-800 to-indigo-600 flex items-center justify-center text-white text-[10px] font-bold overflow-hidden">
               <span id="gear-btn-s">S</span>
-              <img id="gear-btn-img" class="w-full h-full object-cover hidden" alt="Avatar" />
+              <img id="gear-btn-img" class="w-full h-full object-cover hidden rounded-full" alt="Avatar" />
             </div>
             <div class="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full bg-black border border-purple-400 text-[8px] flex items-center justify-center text-purple-300 group-hover:rotate-90 transition-transform">
               <i class="fa-solid fa-gear"></i>
@@ -524,10 +679,10 @@
         >
           <!-- User Mini-Profile Header -->
           <div class="flex items-center gap-3 pb-3 border-b border-glassBorder mb-3">
-            <div id="flyout-frame-wrapper" class="pfp-frame-container frame-galaxy p-0.5 shrink-0">
-              <div id="flyout-avatar-box" class="w-11 h-11 rounded-xl bg-gradient-to-tr from-purple-800 to-indigo-600 flex items-center justify-center text-white font-display font-black text-sm overflow-hidden">
+            <div id="flyout-frame-wrapper" class="pfp-frame-container frame-galaxy p-0.5 shrink-0 rounded-full">
+              <div id="flyout-avatar-box" class="w-11 h-11 rounded-full bg-gradient-to-tr from-purple-800 to-indigo-600 flex items-center justify-center text-white font-display font-black text-sm overflow-hidden">
                 <span id="flyout-s-badge">S</span>
-                <img id="flyout-avatar-img" class="w-full h-full object-cover hidden" alt="Avatar" />
+                <img id="flyout-avatar-img" class="w-full h-full object-cover hidden rounded-full" alt="Avatar" />
               </div>
             </div>
             <div class="min-w-0 flex-1">
@@ -928,10 +1083,10 @@
               
               <!-- Avatar Container with Equipped Frame -->
               <div class="relative">
-                <div id="pfp-frame-wrapper" class="pfp-frame-container frame-galaxy p-1.5 transition-all duration-300">
+                <div id="pfp-frame-wrapper" class="pfp-frame-container frame-galaxy p-1.5 transition-all duration-300 rounded-full">
                   
-                  <!-- Avatar Display Box: Letter "S" badge or uploaded image -->
-                  <div id="avatar-image-box" class="w-28 h-28 sm:w-32 sm:h-32 rounded-2xl sm:rounded-3xl bg-gradient-to-tr from-purple-800 via-purple-600 to-indigo-600 flex items-center justify-center text-white overflow-hidden shadow-2xl relative">
+                  <!-- Avatar Display Box: Letter "S" badge or uploaded image (Circular) -->
+                  <div id="avatar-image-box" class="w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-gradient-to-tr from-purple-800 via-purple-600 to-indigo-600 flex items-center justify-center text-white overflow-hidden shadow-2xl relative">
                     
                     <!-- Default letter "S" badge -->
                     <div id="default-s-badge" class="flex flex-col items-center justify-center select-none">
@@ -940,7 +1095,7 @@
                     </div>
 
                     <!-- Uploaded Custom Avatar Image -->
-                    <img id="custom-avatar-img" class="w-full h-full object-cover hidden" alt="Profile Picture" />
+                    <img id="custom-avatar-img" class="w-full h-full object-cover rounded-full hidden" alt="Profile Picture" />
                   </div>
 
                 </div>
@@ -1348,56 +1503,90 @@
       <!-- VIEW 2 - TAB 5: COSMIC SHOP                            -->
       <!-- ====================================================== -->
       <section id="tab-view-shop" class="p-4 sm:p-8 space-y-6 max-w-6xl w-full mx-auto hidden">
-        <div class="flex items-center justify-between pb-4 border-b border-glassBorder">
+        <!-- Shop Header -->
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-glassBorder">
           <div>
-            <h2 class="text-2xl font-display font-extrabold text-white">Cosmic Shop</h2>
-            <p class="text-xs text-slate-400">Unlock decorative avatar frames, colors, and VIP badges</p>
+            <h2 class="text-2xl font-display font-extrabold text-white flex items-center gap-2.5">
+              <span>Cosmic Shop</span>
+              <span class="text-xs px-2.5 py-0.5 rounded-full bg-cyan-950/80 text-cyan-300 border border-cyan-500/40 font-mono">105+ Items</span>
+            </h2>
+            <p class="text-xs text-slate-400">Unlock decorative avatar frames, cosmic banners, name glows, chat badges, anime stickers, and audio SFX</p>
           </div>
-          <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-950/40 border border-amber-500/30 text-xs font-bold text-amber-300">
-            <i class="fa-solid fa-sparkles"></i>
-            <span id="shop-stardust-display">0 Stardust Available</span>
+          <div class="flex items-center gap-3">
+            <div class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-950/40 border border-amber-500/30 text-xs font-bold text-amber-300 shadow-[0_0_15px_rgba(245,158,11,0.2)]">
+              <i class="fa-solid fa-sparkles text-solarGold"></i>
+              <span id="shop-stardust-display">0 Stardust Available</span>
+            </div>
           </div>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div class="glass-card rounded-2xl p-5 flex flex-col justify-between space-y-4">
-            <div class="w-12 h-12 rounded-xl border-2 border-cyan-400 shadow-[0_0_15px_#06b6d4] flex items-center justify-center text-cyan-300">
-              <i class="fa-solid fa-bolt"></i>
-            </div>
-            <div>
-              <h4 class="text-sm font-bold text-white">Cyberpunk Neon Frame</h4>
-              <p class="text-xs text-slate-400 mt-0.5">High-contrast cyan &amp; magenta spinning dashed aura.</p>
-            </div>
-            <button onclick="openEditProfileModal()" class="w-full py-2 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-bold text-white transition-colors cursor-pointer">
-              Equip in Profile
+        <!-- Controls: Category Filter Tabs & Search & Inventory Toggle -->
+        <div class="space-y-3">
+          <!-- Categories Bar -->
+          <div class="flex items-center gap-2 overflow-x-auto pb-1.5 scrollbar-thin">
+            <button onclick="filterShopCategory('all')" id="shop-cat-all" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all bg-purple-600 text-white shadow-sm cursor-pointer whitespace-nowrap">
+              All Items (105)
+            </button>
+            <button onclick="filterShopCategory('frame')" id="shop-cat-frame" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-white bg-white/[0.04] hover:bg-white/10 cursor-pointer whitespace-nowrap">
+              <i class="fa-solid fa-circle-notch text-cyan-400 mr-1"></i> PFP Frames (26)
+            </button>
+            <button onclick="filterShopCategory('banner')" id="shop-cat-banner" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-white bg-white/[0.04] hover:bg-white/10 cursor-pointer whitespace-nowrap">
+              <i class="fa-solid fa-image text-pink-400 mr-1"></i> Banners (15)
+            </button>
+            <button onclick="filterShopCategory('name_glow')" id="shop-cat-name_glow" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-white bg-white/[0.04] hover:bg-white/10 cursor-pointer whitespace-nowrap">
+              <i class="fa-solid fa-wand-magic-sparkles text-amber-400 mr-1"></i> Name Glows (12)
+            </button>
+            <button onclick="filterShopCategory('badge')" id="shop-cat-badge" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-white bg-white/[0.04] hover:bg-white/10 cursor-pointer whitespace-nowrap">
+              <i class="fa-solid fa-certificate text-purple-400 mr-1"></i> Chat Badges (18)
+            </button>
+            <button onclick="filterShopCategory('sticker')" id="shop-cat-sticker" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-white bg-white/[0.04] hover:bg-white/10 cursor-pointer whitespace-nowrap">
+              <i class="fa-solid fa-face-smile text-emerald-400 mr-1"></i> Stickers (15)
+            </button>
+            <button onclick="filterShopCategory('theme')" id="shop-cat-theme" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-white bg-white/[0.04] hover:bg-white/10 cursor-pointer whitespace-nowrap">
+              <i class="fa-solid fa-palette text-blue-400 mr-1"></i> Themes (10)
+            </button>
+            <button onclick="filterShopCategory('audio')" id="shop-cat-audio" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-white bg-white/[0.04] hover:bg-white/10 cursor-pointer whitespace-nowrap">
+              <i class="fa-solid fa-volume-high text-yellow-400 mr-1"></i> Audio SFX (9)
             </button>
           </div>
 
-          <div class="glass-card rounded-2xl p-5 flex flex-col justify-between space-y-4">
-            <div class="w-12 h-12 rounded-xl border-2 border-yellow-400 shadow-[0_0_15px_#facc15] flex items-center justify-center text-yellow-300">
-              <i class="fa-solid fa-crown"></i>
+          <!-- Search Bar & Ownership Filter -->
+          <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+            <div class="relative flex-1 max-w-md">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+                <i class="fa-solid fa-magnifying-glass text-xs"></i>
+              </span>
+              <input 
+                id="shop-search-input" 
+                type="text" 
+                placeholder="Search shop catalog (e.g. Saiyan, Sharingan, Gold, Cyber)..." 
+                class="w-full pl-9 pr-4 py-2 text-xs bg-[#07050e]/90 border border-purple-500/30 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400 transition-all"
+                oninput="handleShopSearchInput()"
+              />
             </div>
-            <div>
-              <h4 class="text-sm font-bold text-white">Golden Crown Frame</h4>
-              <p class="text-xs text-slate-400 mt-0.5">Regal golden crown crest for elite anime voyagers.</p>
+            <div class="flex items-center gap-2">
+              <button 
+                id="shop-filter-all" 
+                onclick="setShopOwnershipFilter('all')" 
+                class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white/15 text-white transition-all cursor-pointer"
+              >
+                All Items
+              </button>
+              <button 
+                id="shop-filter-owned" 
+                onclick="setShopOwnershipFilter('owned')" 
+                class="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-400 hover:text-white bg-white/[0.04] hover:bg-white/10 transition-all cursor-pointer flex items-center gap-1.5"
+              >
+                <i class="fa-solid fa-box-open text-xs"></i>
+                <span>My Vault (<span id="shop-owned-count">0</span>)</span>
+              </button>
             </div>
-            <button onclick="openEditProfileModal()" class="w-full py-2 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-bold text-white transition-colors cursor-pointer">
-              Equip in Profile
-            </button>
           </div>
+        </div>
 
-          <div class="glass-card rounded-2xl p-5 flex flex-col justify-between space-y-4">
-            <div class="w-12 h-12 rounded-xl border-2 border-purple-400 shadow-[0_0_15px_#a855f7] flex items-center justify-center text-purple-300">
-              <i class="fa-solid fa-atom"></i>
-            </div>
-            <div>
-              <h4 class="text-sm font-bold text-white">Void Halo Frame</h4>
-              <p class="text-xs text-slate-400 mt-0.5">Pulsing deep ultraviolet ring forged in event horizons.</p>
-            </div>
-            <button onclick="openEditProfileModal()" class="w-full py-2 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-bold text-white transition-colors cursor-pointer">
-              Equip in Profile
-            </button>
-          </div>
+        <!-- Dynamic Shop Catalog Cards Grid Container -->
+        <div id="shop-catalog-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          <!-- Dynamically populated by renderShopCatalog() -->
         </div>
       </section>
 
@@ -1543,11 +1732,11 @@
     <!-- DM Header -->
     <div class="p-4 border-b border-glassBorder flex items-center justify-between shrink-0">
       <div class="flex items-center gap-3 min-w-0">
-        <!-- Target Friend Avatar + Frame -->
-        <div id="dm-header-frame" class="pfp-frame-container frame-galaxy p-0.5 shrink-0">
-          <div id="dm-header-avatar" class="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-800 to-indigo-600 flex items-center justify-center text-white text-xs font-bold overflow-hidden">
+        <!-- Target Friend Avatar + Frame (Circular) -->
+        <div id="dm-header-frame" class="pfp-frame-container frame-galaxy p-0.5 shrink-0 rounded-full">
+          <div id="dm-header-avatar" class="w-10 h-10 rounded-full bg-gradient-to-tr from-purple-800 to-indigo-600 flex items-center justify-center text-white text-xs font-bold overflow-hidden">
             <span id="dm-header-s">S</span>
-            <img id="dm-header-img" class="w-full h-full object-cover hidden" alt="Friend" />
+            <img id="dm-header-img" class="w-full h-full object-cover rounded-full hidden" alt="Friend" />
           </div>
         </div>
         <div class="min-w-0 flex-1">
@@ -1661,10 +1850,10 @@
 
       <!-- Profile Header Visual -->
       <div class="flex flex-col items-center text-center pt-2">
-        <div id="preview-modal-frame" class="pfp-frame-container frame-galaxy p-1 mb-3">
-          <div id="preview-modal-avatar-box" class="w-20 h-20 rounded-2xl bg-gradient-to-tr from-purple-800 to-indigo-600 flex items-center justify-center text-white text-2xl font-black overflow-hidden shadow-xl">
+        <div id="preview-modal-frame" class="pfp-frame-container frame-galaxy p-1 mb-3 rounded-full">
+          <div id="preview-modal-avatar-box" class="w-20 h-20 rounded-full bg-gradient-to-tr from-purple-800 to-indigo-600 flex items-center justify-center text-white text-2xl font-black overflow-hidden shadow-xl">
             <span id="preview-modal-s">S</span>
-            <img id="preview-modal-img" class="w-full h-full object-cover hidden" alt="User" />
+            <img id="preview-modal-img" class="w-full h-full object-cover rounded-full hidden" alt="User" />
           </div>
         </div>
 
@@ -1710,6 +1899,118 @@
           <span>Direct Message</span>
         </button>
       </div>
+    </div>
+  </div>
+
+  <!-- ========================================================== -->
+  <!-- MODAL: COSMIC SHOP ITEM PREVIEW MODAL                      -->
+  <!-- ========================================================== -->
+  <div id="shop-item-preview-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/85 backdrop-blur-2xl">
+    <div class="w-full max-w-lg glass-card rounded-3xl p-6 relative shadow-2xl border border-glassBorder space-y-5">
+      
+      <!-- Close Button -->
+      <button onclick="closeShopItemPreview()" class="absolute top-4 right-4 p-2 text-slate-400 hover:text-white transition-colors cursor-pointer z-20" title="Close Preview">
+        <i class="fa-solid fa-xmark text-base"></i>
+      </button>
+
+      <!-- Modal Title -->
+      <div class="flex items-center gap-3 pb-3 border-b border-glassBorder">
+        <div class="w-10 h-10 rounded-full bg-cyan-950/70 border border-cyan-500/40 flex items-center justify-center text-cyan-300 text-lg shadow-[0_0_15px_rgba(6,182,212,0.3)]">
+          <i id="shop-preview-item-icon" class="fa-solid fa-eye"></i>
+        </div>
+        <div class="min-w-0 flex-1">
+          <div class="flex items-center gap-2">
+            <h3 id="shop-preview-item-name" class="text-base font-display font-bold text-white truncate">Item Name</h3>
+            <span id="shop-preview-item-category" class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase bg-white/10 text-cyan-300 border border-cyan-500/30 shrink-0">CATEGORY</span>
+          </div>
+          <p id="shop-preview-item-desc" class="text-xs text-slate-400 mt-0.5 line-clamp-1">Live preview on your profile and transmissions</p>
+        </div>
+      </div>
+
+      <!-- Live Profile Simulation Box -->
+      <div class="space-y-2.5">
+        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+          <i class="fa-solid fa-user-astronaut text-accent"></i>
+          <span>Profile Appearance Preview</span>
+        </div>
+
+        <div class="rounded-2xl overflow-hidden border border-white/10 relative bg-[#07050e] shadow-xl">
+          <!-- Preview Banner -->
+          <div class="relative h-28 w-full bg-[#0d0a1a] overflow-hidden">
+            <img 
+              id="shop-preview-banner-img" 
+              src="https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=1600&q=80" 
+              alt="Preview Banner" 
+              class="w-full h-full object-cover object-center"
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-[#07050e] via-[#07050e]/50 to-transparent"></div>
+          </div>
+
+          <!-- Avatar & Identity Overlay -->
+          <div class="px-5 pb-4 -mt-10 flex items-end gap-3.5 relative">
+            <!-- Circular Avatar with Preview Frame -->
+            <div id="shop-preview-frame-wrapper" class="pfp-frame-container frame-galaxy p-1 shrink-0 rounded-full bg-black/40">
+              <div id="shop-preview-avatar-box" class="w-16 h-16 rounded-full bg-gradient-to-tr from-purple-800 to-indigo-600 flex items-center justify-center text-white text-xl font-black overflow-hidden shadow-2xl relative">
+                <span id="shop-preview-s-badge">S</span>
+                <img id="shop-preview-avatar-img" class="w-full h-full object-cover rounded-full hidden" alt="Avatar" />
+              </div>
+            </div>
+
+            <div class="min-w-0 flex-1 pb-1">
+              <div class="flex items-center gap-2 flex-wrap">
+                <h4 id="shop-preview-username" class="text-sm font-bold text-white truncate">Guest Explorer</h4>
+                <span id="shop-preview-badge-pill" class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-purple-950/80 text-cyan-300 border border-purple-500/30">Novice Voyager</span>
+              </div>
+              <span id="shop-preview-rank-text" class="text-[11px] text-accent font-semibold block truncate">Level 1 Cosmic Voyager</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Chat Transmission Simulation Box -->
+      <div class="space-y-2">
+        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+          <i class="fa-solid fa-comments text-electricCyan"></i>
+          <span>Global Chat Broadcast Preview</span>
+        </div>
+
+        <div class="glass-card rounded-2xl p-3 border border-purple-500/30 bg-purple-950/20 space-y-1.5">
+          <div class="flex items-center justify-between gap-2">
+            <div class="flex items-center gap-2 min-w-0">
+              <div id="shop-preview-chat-frame" class="pfp-frame-container frame-galaxy p-0.5 shrink-0 rounded-full">
+                <div id="shop-preview-chat-avatar" class="w-6 h-6 rounded-full bg-gradient-to-tr from-purple-800 to-indigo-600 flex items-center justify-center text-white text-[10px] font-bold overflow-hidden">
+                  <span id="shop-preview-chat-s">S</span>
+                  <img id="shop-preview-chat-img" class="w-full h-full object-cover rounded-full hidden" alt="Chat User" />
+                </div>
+              </div>
+              <div class="flex items-center gap-1.5 flex-wrap min-w-0">
+                <span id="shop-preview-chat-name" class="font-bold text-xs text-white">Guest Explorer</span>
+                <span class="text-[9px] px-1.5 py-0.2 rounded bg-purple-950/80 text-purple-300 font-mono font-semibold">Lv 1</span>
+                <span id="shop-preview-chat-badge" class="text-[9px] px-1.5 py-0.2 rounded bg-indigo-950/80 text-cyan-300 font-semibold truncate max-w-[120px]">Novice Voyager</span>
+              </div>
+            </div>
+            <span class="text-[10px] text-slate-500 font-mono shrink-0">Just now</span>
+          </div>
+          <p class="text-xs text-slate-200 pl-8 leading-relaxed">
+            Streaming anime and exploring cosmic stargates across Soranix.to! ✨
+          </p>
+        </div>
+      </div>
+
+      <!-- Modal Actions -->
+      <div class="pt-2 flex items-center gap-3 border-t border-glassBorder">
+        <button 
+          onclick="closeShopItemPreview()" 
+          class="flex-1 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-slate-300 transition-all cursor-pointer text-center"
+        >
+          Close Preview
+        </button>
+
+        <div id="shop-preview-action-btn-container" class="flex-1">
+          <!-- Injected dynamically: Unlock for X Stardust or Equip -->
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -1900,13 +2201,13 @@
         </button>
       </div>
 
-      <!-- LIVE PREVIEW CARD -->
+      <!-- LIVE PREVIEW CARD (Circular Avatar) -->
       <div class="mb-6 p-4 rounded-2xl bg-white/[0.03] border border-white/5 flex items-center gap-4">
         <!-- Live Avatar Preview with equipped frame -->
-        <div id="preview-frame-wrapper" class="pfp-frame-container frame-galaxy p-1 transition-all duration-300 shrink-0">
-          <div id="preview-avatar-box" class="w-16 h-16 rounded-xl bg-gradient-to-tr from-purple-800 to-indigo-600 flex items-center justify-center text-white overflow-hidden shadow-lg relative">
+        <div id="preview-frame-wrapper" class="pfp-frame-container frame-galaxy p-1 transition-all duration-300 shrink-0 rounded-full">
+          <div id="preview-avatar-box" class="w-16 h-16 rounded-full bg-gradient-to-tr from-purple-800 to-indigo-600 flex items-center justify-center text-white overflow-hidden shadow-lg relative">
             <span id="preview-s-badge" class="font-display font-black text-2xl text-white">S</span>
-            <img id="preview-avatar-img" class="w-full h-full object-cover hidden" alt="Avatar" />
+            <img id="preview-avatar-img" class="w-full h-full object-cover rounded-full hidden" alt="Avatar" />
           </div>
         </div>
         <div class="min-w-0 flex-1">
@@ -1991,7 +2292,7 @@
 
         </div>
 
-        <!-- 3. PFP DECORATIONS / FRAMES SELECTOR -->
+        <!-- 3. PFP DECORATIONS / FRAMES SELECTOR (Circular Badges) -->
         <div>
           <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2.5">
             Avatar Decoration Frames
@@ -2004,7 +2305,7 @@
               onclick="selectFrame('standard')" 
               class="frame-option-card p-3 rounded-2xl bg-white/[0.02] border border-white/10 hover:border-purple-400/50 flex flex-col items-center gap-2 cursor-pointer transition-all"
             >
-              <div class="w-12 h-12 rounded-xl border-2 border-white/30 flex items-center justify-center text-xs text-slate-300">
+              <div class="w-12 h-12 rounded-full border-2 border-white/30 flex items-center justify-center text-xs text-slate-300">
                 <i class="fa-solid fa-ban"></i>
               </div>
               <span class="text-xs font-semibold text-slate-300">Standard Glass</span>
@@ -2016,7 +2317,7 @@
               onclick="selectFrame('cyberpunk')" 
               class="frame-option-card p-3 rounded-2xl bg-white/[0.02] border border-white/10 hover:border-cyan-400 flex flex-col items-center gap-2 cursor-pointer transition-all"
             >
-              <div class="w-12 h-12 rounded-xl border-2 border-cyan-400 shadow-[0_0_15px_#06b6d4] flex items-center justify-center text-xs text-cyan-300">
+              <div class="w-12 h-12 rounded-full border-2 border-cyan-400 shadow-[0_0_15px_#06b6d4] flex items-center justify-center text-xs text-cyan-300">
                 <i class="fa-solid fa-bolt"></i>
               </div>
               <span class="text-xs font-semibold text-cyan-300">Cyberpunk Neon</span>
@@ -2040,7 +2341,7 @@
               onclick="selectFrame('flame')" 
               class="frame-option-card p-3 rounded-2xl bg-white/[0.02] border border-white/10 hover:border-amber-400 flex flex-col items-center gap-2 cursor-pointer transition-all"
             >
-              <div class="w-12 h-12 rounded-xl border-2 border-amber-400 shadow-[0_0_15px_#f59e0b] flex items-center justify-center text-xs text-amber-300">
+              <div class="w-12 h-12 rounded-full border-2 border-amber-400 shadow-[0_0_15px_#f59e0b] flex items-center justify-center text-xs text-amber-300">
                 <i class="fa-solid fa-fire animate-pulse"></i>
               </div>
               <span class="text-xs font-semibold text-amber-300">Flame Aura</span>
@@ -2052,7 +2353,7 @@
               onclick="selectFrame('crown')" 
               class="frame-option-card p-3 rounded-2xl bg-white/[0.02] border border-white/10 hover:border-yellow-400 flex flex-col items-center gap-2 cursor-pointer transition-all"
             >
-              <div class="w-12 h-12 rounded-xl border-2 border-yellow-400 shadow-[0_0_15px_#facc15] flex items-center justify-center text-xs text-yellow-300">
+              <div class="w-12 h-12 rounded-full border-2 border-yellow-400 shadow-[0_0_15px_#facc15] flex items-center justify-center text-xs text-yellow-300">
                 <i class="fa-solid fa-crown"></i>
               </div>
               <span class="text-xs font-semibold text-yellow-300">Golden Crown</span>
@@ -2283,61 +2584,27 @@
     function getGlobalChatMessages() {
       try {
         const raw = localStorage.getItem(GLOBAL_CHAT_KEY);
-        if (raw) return JSON.parse(raw);
-      } catch (e) {}
-
-      // Pre-seed engaging cosmic community messages if empty
-      const defaultChat = [
-        {
-          id: 'seed-1',
-          sender: 'KaitoX',
-          senderTitle: 'Level 14 Galactic Champion',
-          senderLevel: 14,
-          senderAvatar: null,
-          senderFrame: 'cyberpunk',
-          message: 'Anyone caught up on the latest Solo Leveling episode? The animation in the dungeon battle was unreal! 🔥',
-          timestamp: '10:14 AM',
-          time: Date.now() - 3600000 * 2
-        },
-        {
-          id: 'seed-2',
-          sender: 'AriaStar',
-          senderTitle: 'Level 8 Cosmic Pioneer',
-          senderLevel: 8,
-          senderAvatar: null,
-          senderFrame: 'galaxy',
-          message: 'Currently rewatching Frieren: Beyond Journey. The pacing, magic system, and orchestral soundtrack hit differently every time ✨',
-          timestamp: '11:05 AM',
-          time: Date.now() - 3600000
-        },
-        {
-          id: 'seed-3',
-          sender: 'ShadowRei',
-          senderTitle: 'Level 11 Cosmic Voyager',
-          senderLevel: 11,
-          senderAvatar: null,
-          senderFrame: 'void',
-          message: 'Whatever you do, make sure you don\'t miss >! the secret event in chapter 82 !<, it connects the entire lore arc!',
-          timestamp: '11:42 AM',
-          time: Date.now() - 1800000
-        },
-        {
-          id: 'seed-4',
-          sender: 'Zenith',
-          senderTitle: 'Level 5 Starlight Master',
-          senderLevel: 5,
-          senderAvatar: null,
-          senderFrame: 'crown',
-          message: 'Claimed my Day 1 login reward and streamed 2 episodes, earned +100 Stardust! Loving this glassmorphic dashboard 🚀',
-          timestamp: '12:15 PM',
-          time: Date.now() - 600000
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed)) {
+            // Strictly filter out any mock/seeded dummy messages
+            const filtered = parsed.filter(m => {
+              if (!m) return false;
+              if (m.id && String(m.id).startsWith('seed-')) return false;
+              const sender = (m.sender || '').toLowerCase();
+              if (['kaitox', 'ariastar', 'shadowrei', 'zenith', 'starlightvoyager', 'cyberronin_99'].includes(sender)) return false;
+              return true;
+            });
+            if (filtered.length !== parsed.length) {
+              localStorage.setItem(GLOBAL_CHAT_KEY, JSON.stringify(filtered));
+            }
+            return filtered;
+          }
         }
-      ];
-
-      try {
-        localStorage.setItem(GLOBAL_CHAT_KEY, JSON.stringify(defaultChat));
       } catch (e) {}
-      return defaultChat;
+
+      // Initial state is strictly empty - no fake or seeded users
+      return [];
     }
 
     function saveGlobalChatMessages(msgs) {
@@ -2394,6 +2661,10 @@
         bio: 'Stargazing across infinite nebulae, collecting rare cyber soundtracks, and cataloging forgotten anime classics.',
         title: 'Level 1 Novice Voyager',
         equippedFrame: 'galaxy',
+        equippedBanner: null,
+        equippedNameGlow: null,
+        equippedChatBadge: null,
+        inventory: ['frame_galaxy', 'theme_violet', 'audio_coin'],
         avatarDataUrl: null,
         bannerDataUrl: null,
         watchSecondsTotal: 0,
@@ -2427,6 +2698,10 @@
       previewTargetUser: null,
       isGlobalChatOpen: false,
       hideGlobalChatSetting: localStorage.getItem('soranix_hide_global_chat') === 'true',
+      // Cosmic Shop Filter State
+      shopCategory: 'all',
+      shopOwnership: 'all',
+      shopSearch: '',
       // Watch-time Reward Engine State
       isWatchingAnime: false,
       watch: {
@@ -2446,6 +2721,9 @@
     (function initAutoLogin() {
       const savedTheme = localStorage.getItem('soranix_theme') || 'violet';
       setCosmicTheme(savedTheme, false);
+
+      // Cleanse any stale mock/seeded dummy messages from global chat
+      getGlobalChatMessages();
 
       const activeSession = getActiveSession();
 
@@ -2533,6 +2811,7 @@
       const tabs = [
         { name: 'home', el: $('tab-view-home') },
         { name: 'profile', el: $('tab-view-profile') },
+        { name: 'friends', el: $('tab-view-friends') },
         { name: 'favorites', el: $('tab-view-favorites') },
         { name: 'rewards', el: $('tab-view-rewards') },
         { name: 'shop', el: $('tab-view-shop') }
@@ -2552,6 +2831,7 @@
         const labels = {
           home: 'DASHBOARD HOME',
           profile: 'MY PROFILE HUB',
+          friends: 'FRIENDS & TRANSMISSIONS',
           favorites: 'FAVOURITED ANIME',
           rewards: 'DAILY REWARDS TRACK',
           shop: 'COSMIC SHOP'
@@ -2562,6 +2842,7 @@
       const btnMap = {
         home: $('nav-tab-btn-home'),
         profile: $('nav-tab-btn-profile'),
+        friends: $('nav-tab-btn-friends'),
         favorites: $('nav-tab-btn-favorites'),
         rewards: $('nav-tab-btn-rewards'),
         shop: $('nav-tab-btn-shop')
@@ -2578,8 +2859,12 @@
 
       if (tabName === 'profile') {
         updateViewableProfileUI();
+      } else if (tabName === 'friends') {
+        renderFriendsUI();
       } else if (tabName === 'rewards') {
         renderDailyRewardsUI();
+      } else if (tabName === 'shop') {
+        renderShopCatalog();
       }
 
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -2828,8 +3113,15 @@
           if (newLevel > oldLevel) {
             AppState.user.level = newLevel;
             AppState.user.title = getTitleForLevel(newLevel);
+            SoranixAudio.play('level_up');
+            addNotification(AppState.user.username, {
+              type: 'level_up',
+              title: `Level Up: Level ${newLevel}!`,
+              body: `Congratulations, Voyager! You reached Level ${newLevel} (${AppState.user.title}) and earned +${earnedCoins} Stardust!`
+            });
             showToast(`🎉 LEVEL UP! You reached Level ${newLevel} (${AppState.user.title})! +${earnedCoins} Stardust!`, 'success');
           } else {
+            SoranixAudio.play('coin');
             showToast(`✨ +${earnedCoins} Stardust & +${earnedXP} XP earned for 5 mins of anime watched!`, 'success');
           }
 
@@ -2997,14 +3289,45 @@
       const statsEpisodes = $('stats-episodes-count');
       const statsFav = $('stats-fav-count');
       const statsStardust = $('stats-stardust-count');
+      const statsFriends = $('stats-friends-count');
       const shopStardust = $('shop-stardust-display');
       const viewFavCount = $('view-fav-count');
       const profileFavCount = $('profile-fav-tab-count');
       const sidebarFavBadge = $('sidebar-fav-badge');
       const flyoutFavBadge = $('flyout-fav-badge');
 
+      const friendsPill = $('friends-count-pill');
+      const subtabFriends = $('subtab-friends-count');
+      const subtabIncoming = $('subtab-incoming-count');
+      const subtabOutgoing = $('subtab-outgoing-count');
+      const sidebarFriendsBadge = $('sidebar-friends-badge');
+      const flyoutFriendsBadge = $('flyout-friends-badge');
+      const headerNotifContainer = $('header-notification-container');
+      const friendsGuestLocked = $('friends-guest-locked');
+      const friendsUnlockedContent = $('friends-unlocked-content');
+
+      const friendsCount = (u.friends || []).length;
+      const incomingCount = (u.incomingRequests || []).length;
+      const outgoingCount = (u.outgoingRequests || []).length;
+
+      if (statsFriends) statsFriends.textContent = AppState.isGuest ? '0' : friendsCount;
+      if (friendsPill) friendsPill.textContent = `${friendsCount} ${friendsCount === 1 ? 'Friend' : 'Friends'}`;
+      if (subtabFriends) subtabFriends.textContent = friendsCount;
+      if (subtabIncoming) subtabIncoming.textContent = incomingCount;
+      if (subtabOutgoing) subtabOutgoing.textContent = outgoingCount;
+      if (flyoutFriendsBadge) flyoutFriendsBadge.textContent = friendsCount;
+
+      if (sidebarFriendsBadge) {
+        if (!AppState.isGuest && incomingCount > 0) {
+          sidebarFriendsBadge.textContent = incomingCount;
+          sidebarFriendsBadge.classList.remove('hidden');
+        } else {
+          sidebarFriendsBadge.classList.add('hidden');
+        }
+      }
+
       if (AppState.isGuest) {
-        // Strict gating: No access to levels, stardust, or streak without an account
+        // Strict gating: No access to levels, stardust, streak, or notifications without an account
         if (headerStardust) headerStardust.innerHTML = '<i class="fa-solid fa-lock text-[10px] opacity-70"></i> <span>Locked</span>';
         if (headerStreak) headerStreak.innerHTML = '<i class="fa-solid fa-lock text-[10px] opacity-70"></i> <span>Streak: Locked</span>';
         if (headerLevel) headerLevel.innerHTML = '<i class="fa-solid fa-lock text-[10px] opacity-70"></i> <span>Lv --</span>';
@@ -3014,6 +3337,9 @@
         if (statsFav) statsFav.textContent = '0';
         if (statsStardust) statsStardust.textContent = '--';
         if (shopStardust) shopStardust.textContent = 'Account Required';
+        if (headerNotifContainer) headerNotifContainer.classList.add('hidden');
+        if (friendsGuestLocked) friendsGuestLocked.classList.remove('hidden');
+        if (friendsUnlockedContent) friendsUnlockedContent.classList.add('hidden');
       } else {
         const stardustVal = u.stardust || 0;
         const levelVal = u.level || 1;
@@ -3028,6 +3354,9 @@
         if (statsFav) statsFav.textContent = 0;
         if (statsStardust) statsStardust.textContent = stardustVal.toLocaleString();
         if (shopStardust) shopStardust.textContent = `${stardustVal.toLocaleString()} Stardust Available`;
+        if (headerNotifContainer) headerNotifContainer.classList.remove('hidden');
+        if (friendsGuestLocked) friendsGuestLocked.classList.add('hidden');
+        if (friendsUnlockedContent) friendsUnlockedContent.classList.remove('hidden');
       }
 
       if (viewFavCount) viewFavCount.textContent = 0;
@@ -3036,6 +3365,9 @@
       if (flyoutFavBadge) flyoutFavBadge.textContent = '0';
 
       renderDailyRewardsUI();
+      if (!AppState.isGuest) {
+        renderNotificationsUI();
+      }
     }
 
     // ----------------------------------------------------
@@ -3648,8 +3980,1568 @@
       render();
     })();
 
+    // ====================================================
+    // 15. WEB AUDIO API SYNTHESIZER (ZERO-ASSET SOUND ENGINE)
+    // ====================================================
+    const SoranixAudio = {
+      ctx: null,
+      init() {
+        if (!this.ctx) {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          if (AudioContextClass) {
+            this.ctx = new AudioContextClass();
+          }
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      },
+      play(type) {
+        try {
+          this.init();
+          if (!this.ctx) return;
+          const ctx = this.ctx;
+          const now = ctx.currentTime;
+
+          if (type === 'coin') {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(987.77, now);
+            osc.frequency.setValueAtTime(1318.51, now + 0.08);
+            gain.gain.setValueAtTime(0.15, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now);
+            osc.stop(now + 0.35);
+          } else if (type === 'level_up') {
+            [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+              const osc = ctx.createOscillator();
+              const gain = ctx.createGain();
+              osc.type = 'triangle';
+              osc.frequency.setValueAtTime(freq, now + i * 0.09);
+              gain.gain.setValueAtTime(0.2, now + i * 0.09);
+              gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.09 + 0.3);
+              osc.connect(gain);
+              gain.connect(ctx.destination);
+              osc.start(now + i * 0.09);
+              osc.stop(now + i * 0.09 + 0.35);
+            });
+          } else if (type === 'sword') {
+            const bufferSize = Math.floor(ctx.sampleRate * 0.2);
+            const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+              data[i] = Math.random() * 2 - 1;
+            }
+            const noise = ctx.createBufferSource();
+            noise.buffer = buffer;
+            const filter = ctx.createBiquadFilter();
+            filter.type = 'bandpass';
+            filter.frequency.setValueAtTime(3200, now);
+            filter.frequency.exponentialRampToValueAtTime(600, now + 0.2);
+            const gain = ctx.createGain();
+            gain.gain.setValueAtTime(0.25, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+            noise.connect(filter);
+            filter.connect(gain);
+            gain.connect(ctx.destination);
+            noise.start(now);
+          } else if (type === 'power_up') {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(180, now);
+            osc.frequency.exponentialRampToValueAtTime(880, now + 0.35);
+            gain.gain.setValueAtTime(0.12, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now);
+            osc.stop(now + 0.35);
+          } else if (type === 'laser') {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(1200, now);
+            osc.frequency.exponentialRampToValueAtTime(120, now + 0.22);
+            gain.gain.setValueAtTime(0.15, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now);
+            osc.stop(now + 0.22);
+          } else if (type === 'bell') {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(1760, now);
+            gain.gain.setValueAtTime(0.18, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now);
+            osc.stop(now + 0.8);
+          } else {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(600, now);
+            gain.gain.setValueAtTime(0.08, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now);
+            osc.stop(now + 0.05);
+          }
+        } catch (e) {}
+      }
+    };
+
+    // ====================================================
+    // 16. EXPANDED COSMIC SHOP (105+ WELL-CRAFTED ANIME ITEMS)
+    // ====================================================
+    const COSMIC_SHOP_CATALOG = [
+      // CATEGORY 1: PFP FRAMES (26 items)
+      { id: 'frame_standard', name: 'Standard Voyager Frame', category: 'frame', cost: 0, frameClass: 'standard', icon: 'fa-regular fa-square', desc: 'Minimalist frosted border for cosmic apprentices.' },
+      { id: 'frame_cyberpunk', name: 'Cyberpunk Neon Frame', category: 'frame', cost: 250, frameClass: 'cyberpunk', icon: 'fa-solid fa-bolt', desc: 'High-contrast cyan & magenta spinning dashed aura.' },
+      { id: 'frame_galaxy', name: 'Galaxy Ring Frame', category: 'frame', cost: 300, frameClass: 'galaxy', icon: 'fa-solid fa-circle-notch', desc: 'Pulsing ultraviolet nebula orbit with rotating cosmic ring.' },
+      { id: 'frame_flame', name: 'Flame Aura Frame', category: 'frame', cost: 350, frameClass: 'flame', icon: 'fa-solid fa-fire', desc: 'Blazing shonen energy radiating dynamic amber and crimson heat.' },
+      { id: 'frame_crown', name: 'Golden Crown Frame', category: 'frame', cost: 500, frameClass: 'crown', icon: 'fa-solid fa-crown', desc: 'Regal golden crown crest for elite anime voyagers.' },
+      { id: 'frame_void', name: 'Void Halo Frame', category: 'frame', cost: 450, frameClass: 'void', icon: 'fa-solid fa-atom', desc: 'Pulsing deep ultraviolet event horizon ring.' },
+      { id: 'frame_supersaiyan', name: 'Super Saiyan Ki Frame', category: 'frame', cost: 600, frameClass: 'supersaiyan', icon: 'fa-solid fa-burst', desc: 'Intense golden ki aura vibrating with electric sparks.' },
+      { id: 'frame_sharingan', name: 'Sharingan Eye Frame', category: 'frame', cost: 650, frameClass: 'sharingan', icon: 'fa-solid fa-eye', desc: 'Three-tomoe crimson eye border steeped in ancient shinobi power.' },
+      { id: 'frame_waterdragon', name: 'Water Dragon Wave Frame', category: 'frame', cost: 550, frameClass: 'waterdragon', icon: 'fa-solid fa-water', desc: 'Flowing azure-teal breathing form with crashing surf glow.' },
+      { id: 'frame_cursedenergy', name: 'Cursed Energy Frame', category: 'frame', cost: 600, frameClass: 'cursedenergy', icon: 'fa-solid fa-skull', desc: 'Deep indigo spirit mist pulsating with special-grade sorcery.' },
+      { id: 'frame_sandevistan', name: 'Sandevistan Overdrive Frame', category: 'frame', cost: 700, frameClass: 'sandevistan', icon: 'fa-solid fa-gauge-high', desc: 'High-speed cyber yellow afterimage trail with optic matrix blur.' },
+      { id: 'frame_sakura', name: 'Sakura Petals Frame', category: 'frame', cost: 350, frameClass: 'sakura', icon: 'fa-solid fa-spa', desc: 'Soft pastel pink aura adorned with floating cherry blossom petals.' },
+      { id: 'frame_lightning', name: 'High-Voltage Lightning Frame', category: 'frame', cost: 500, frameClass: 'lightning', icon: 'fa-solid fa-bolt-lightning', desc: 'Crackling electric blue and yellow lightning storm perimeter.' },
+      { id: 'frame_blooddemon', name: 'Blood Demon Crest Frame', category: 'frame', cost: 650, frameClass: 'blooddemon', icon: 'fa-solid fa-droplet', desc: 'Crimson and magenta demon art sigil glowing under blood moons.' },
+      { id: 'frame_iceempress', name: 'Ice Empress Crystal Frame', category: 'frame', cost: 550, frameClass: 'iceempress', icon: 'fa-solid fa-snowflake', desc: 'Sub-zero crystalline frost ring forged from glacial spires.' },
+      { id: 'frame_solarflare', name: 'Solar Flare Corona Frame', category: 'frame', cost: 600, frameClass: 'solarflare', icon: 'fa-solid fa-sun', desc: 'Blazing thermonuclear solar prominence erupting in plasma arcs.' },
+      { id: 'frame_neondemon', name: 'Neon Demon Horns Frame', category: 'frame', cost: 750, frameClass: 'neondemon', icon: 'fa-solid fa-ghost', desc: 'Cyberpunk Oni mask geometry in ultraviolet neon violet.' },
+      { id: 'frame_phoenix', name: 'Phoenix Rebirth Frame', category: 'frame', cost: 800, frameClass: 'phoenix', icon: 'fa-solid fa-dove', desc: 'Radiant eternal flame wings surging from golden embers.' },
+      { id: 'frame_prism', name: 'Holo Prism Frame', category: 'frame', cost: 500, frameClass: 'prism', icon: 'fa-solid fa-cubes', desc: 'Chromatic aberration spectrum shifting across RGB facets.' },
+      { id: 'frame_cybergrid', name: 'Retro Cyber Grid Frame', category: 'frame', cost: 400, frameClass: 'cybergrid', icon: 'fa-solid fa-terminal', desc: 'Phosphor green matrix terminal grid with animated scanlines.' },
+      { id: 'frame_moonlight', name: 'Moonlight Crescent Frame', category: 'frame', cost: 450, frameClass: 'moonlight', icon: 'fa-solid fa-moon', desc: 'Silvery lunar crescent sheen bathed in celestial stardust.' },
+      { id: 'frame_toxic', name: 'Biohazard Toxic Frame', category: 'frame', cost: 450, frameClass: 'toxic', icon: 'fa-solid fa-biohazard', desc: 'Radioactive neon lime acid wash with volatile bio-luminescence.' },
+      { id: 'frame_angel', name: 'Archangel Halo Frame', category: 'frame', cost: 850, frameClass: 'angel', icon: 'fa-solid fa-feather', desc: 'Divine golden ring crowned with pure radiant luminescence.' },
+      { id: 'frame_dragonslayer', name: 'Dragon Slayer Crest Frame', category: 'frame', cost: 900, frameClass: 'dragonslayer', icon: 'fa-solid fa-dragon', desc: 'Dark titanium scales etched with ancient dragon flame runes.' },
+      { id: 'frame_titanarmor', name: 'Titan Armored Frame', category: 'frame', cost: 700, frameClass: 'titanarmor', icon: 'fa-solid fa-shield-halved', desc: 'Hardened battle plate forged to withstand wall-level impacts.' },
+      { id: 'frame_ninetails', name: 'Nine Tails Chakra Frame', category: 'frame', cost: 950, frameClass: 'ninetails', icon: 'fa-solid fa-paw', desc: 'Legendary vermilion chakra beast shroud burning with raw fury.' },
+
+      // CATEGORY 2: PROFILE BANNERS (15 items)
+      { id: 'banner_nebula', name: 'Infinite Cosmic Nebula', category: 'banner', cost: 200, bannerUrl: 'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=1600&q=80', icon: 'fa-solid fa-image', desc: 'Deep violet galactic cloud nursery swirling across dark void.' },
+      { id: 'banner_tokyo_cyber', name: 'Neo-Tokyo Cyber City', category: 'banner', cost: 350, bannerUrl: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=1600&q=80', icon: 'fa-solid fa-city', desc: 'Futuristic metropolis skyscrapers drenched in magenta rainfall.' },
+      { id: 'banner_shinjuku', name: 'Midnight Shinjuku Alley', category: 'banner', cost: 400, bannerUrl: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?auto=format&fit=crop&w=1600&q=80', icon: 'fa-solid fa-road', desc: 'Glowing lantern alleys reflecting neon lights after midnight.' },
+      { id: 'banner_dragon_temple', name: 'Dragon Mountain Shrine', category: 'banner', cost: 450, bannerUrl: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=1600&q=80', icon: 'fa-solid fa-torii-gate', desc: 'Historic mountain temple overlooking mist-covered bamboo peaks.' },
+      { id: 'banner_supernova', name: 'Supernova Horizon', category: 'banner', cost: 500, bannerUrl: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1600&q=80', icon: 'fa-solid fa-meteor', desc: 'Cataclysmic star collapse shockwaves lighting up deep space.' },
+      { id: 'banner_sakura_moon', name: 'Cherry Blossom Blood Moon', category: 'banner', cost: 400, bannerUrl: 'https://images.unsplash.com/photo-1528164344705-475426879c0d?auto=format&fit=crop&w=1600&q=80', icon: 'fa-solid fa-moon', desc: 'Full crimson moon illuminating ancient blooming sakura trees.' },
+      { id: 'banner_synthwave', name: 'Outrun Synthwave Sunset', category: 'banner', cost: 350, bannerUrl: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1600&q=80', icon: 'fa-solid fa-mountain', desc: 'Retrofuturistic wireframe grid sunset with digital palms.' },
+      { id: 'banner_singularity', name: 'Void Singularity', category: 'banner', cost: 600, bannerUrl: 'https://images.unsplash.com/photo-1502134249126-9f3755a50d78?auto=format&fit=crop&w=1600&q=80', icon: 'fa-solid fa-circle', desc: 'Gravitational lensing ring bending spacetime around a black hole.' },
+      { id: 'banner_coral_ruins', name: 'Abyssal Sunken Temple', category: 'banner', cost: 400, bannerUrl: 'https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=1600&q=80', icon: 'fa-solid fa-water', desc: 'Bioluminescent deep-sea ruins humming with ancient forgotten mana.' },
+      { id: 'banner_valhalla', name: 'Nordic Valhalla Aurora', category: 'banner', cost: 500, bannerUrl: 'https://images.unsplash.com/photo-1531366936337-7c912a4589a7?auto=format&fit=crop&w=1600&q=80', icon: 'fa-solid fa-wind', desc: 'Dancing green and violet northern lights across frozen glaciers.' },
+      { id: 'banner_cyber_alley', name: 'Cyberpunk Rainy Alley', category: 'banner', cost: 350, bannerUrl: 'https://images.unsplash.com/photo-1514565131-fce0801e5785?auto=format&fit=crop&w=1600&q=80', icon: 'fa-solid fa-umbrella', desc: 'Holographic billboards illuminating reflective puddle ripples.' },
+      { id: 'banner_stargate', name: 'Hyperdrive Stargate', category: 'banner', cost: 550, bannerUrl: 'https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&w=1600&q=80', icon: 'fa-solid fa-ring', desc: 'Colossal orbital accelerator ring bridging distant galactic clusters.' },
+      { id: 'banner_solar_eruption', name: 'Solar Corona Eruption', category: 'banner', cost: 450, bannerUrl: 'https://images.unsplash.com/photo-1447433589675-4aaa569f3e05?auto=format&fit=crop&w=1600&q=80', icon: 'fa-solid fa-sun', desc: 'Molten prominence arcs leaping millions of kilometers into space.' },
+      { id: 'banner_astral_portal', name: 'Astral Realm Gateway', category: 'banner', cost: 650, bannerUrl: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1600&q=80', icon: 'fa-solid fa-archway', desc: 'Celestial stone archway opening into the infinite star corridor.' },
+      { id: 'banner_mech_hangar', name: 'Mecha Orbital Hangar', category: 'banner', cost: 500, bannerUrl: 'https://images.unsplash.com/photo-1464802686167-b939a6910659?auto=format&fit=crop&w=1600&q=80', icon: 'fa-solid fa-robot', desc: 'Massive orbital dockyard preparing humanoid combat mechs.' },
+
+      // CATEGORY 3: NAME GLOWS (12 items)
+      { id: 'glow_cyan', name: 'Electric Cyan Glow', category: 'name_glow', cost: 300, glowClass: 'name-glow-cyan', icon: 'fa-solid fa-wand-magic-sparkles', desc: 'Neon cyan atmospheric luminescence across your username.' },
+      { id: 'glow_gold', name: 'Solar Gold Glow', category: 'name_glow', cost: 400, glowClass: 'name-glow-gold', icon: 'fa-solid fa-star', desc: 'Rich golden shimmer denoting prestige and high watch-time.' },
+      { id: 'glow_crimson', name: 'Blood Crimson Glow', category: 'name_glow', cost: 450, glowClass: 'name-glow-crimson', icon: 'fa-solid fa-fire-flame-curved', desc: 'Menacing blood-red aura radiating intense dark battle prowess.' },
+      { id: 'glow_purple', name: 'Void Amethyst Glow', category: 'name_glow', cost: 350, glowClass: 'name-glow-purple', icon: 'fa-solid fa-gem', desc: 'Deep ultraviolet void energy humming around your tag.' },
+      { id: 'glow_emerald', name: 'Emerald Plasma Glow', category: 'name_glow', cost: 300, glowClass: 'name-glow-emerald', icon: 'fa-solid fa-leaf', desc: 'Vibrant verdant green sheen infused with forest spirit aura.' },
+      { id: 'glow_pink', name: 'Hyper Magenta Glow', category: 'name_glow', cost: 350, glowClass: 'name-glow-pink', icon: 'fa-solid fa-heart', desc: 'Vivid cyberpunk hot pink glow favored by elite otaku.' },
+      { id: 'glow_rainbow', name: 'Chroma Rainbow Prism', category: 'name_glow', cost: 800, glowClass: 'name-glow-rainbow', icon: 'fa-solid fa-rainbow', desc: 'Animated spectrum wave constantly cycling prismatic rainbow hues.' },
+      { id: 'glow_ice', name: 'Glacial Frost Glow', category: 'name_glow', cost: 400, glowClass: 'name-glow-ice', icon: 'fa-solid fa-icicles', desc: 'Sub-zero crystal light radiating icy mist.' },
+      { id: 'glow_fire', name: 'Blazing Firestorm Glow', category: 'name_glow', cost: 450, glowClass: 'name-glow-fire', icon: 'fa-solid fa-fire', desc: 'Scorching orange corona radiating ember embers.' },
+      { id: 'glow_white', name: 'Pure Starlight Radiance', category: 'name_glow', cost: 500, glowClass: 'name-glow-white', icon: 'fa-solid fa-certificate', desc: 'Blinding pure white starlight glow cutting through deep space.' },
+      { id: 'glow_lime', name: 'Toxic Lime Bio Glow', category: 'name_glow', cost: 300, glowClass: 'name-glow-lime', icon: 'fa-solid fa-biohazard', desc: 'Radioactive green neon charge highlighting your gamer tag.' },
+      { id: 'glow_lavender', name: 'Celestial Lavender Glow', category: 'name_glow', cost: 350, glowClass: 'name-glow-lavender', icon: 'fa-solid fa-cloud-moon', desc: 'Serene ethereal lavender mist for cosmic dreamers.' },
+
+      // CATEGORY 4: CHAT BADGES (18 items)
+      { id: 'badge_voyager', name: '[VIP Voyager] Badge', category: 'badge', cost: 200, badgeTitle: 'VIP Voyager', icon: 'fa-solid fa-user-astronaut', desc: 'Distinguished pioneer insignia displayed in Global Chat.' },
+      { id: 'badge_anime_god', name: '[Anime God] Badge', category: 'badge', cost: 1000, badgeTitle: 'Anime God', icon: 'fa-solid fa-crown', desc: 'Supreme honor badge for voyagers who have seen it all.' },
+      { id: 'badge_demon_king', name: '[Demon King] Badge', category: 'badge', cost: 800, badgeTitle: 'Demon King', icon: 'fa-solid fa-skull', desc: 'Menacing title claimed only by commanders of shadow realms.' },
+      { id: 'badge_hokage', name: '[Hokage] Badge', category: 'badge', cost: 750, badgeTitle: 'Hokage', icon: 'fa-solid fa-leaf', desc: 'Supreme leader crest of the Hidden Leaf village.' },
+      { id: 'badge_hunter_x', name: '[Hunter X] Badge', category: 'badge', cost: 600, badgeTitle: 'Hunter X', icon: 'fa-solid fa-crosshairs', desc: 'Triple-star Hunter license badge denoting elite hunter rank.' },
+      { id: 'badge_titan_shifter', name: '[Titan Shifter] Badge', category: 'badge', cost: 700, badgeTitle: 'Titan Shifter', icon: 'fa-solid fa-hand-fist', desc: 'Inheritor badge of ancient titan power beyond the walls.' },
+      { id: 'badge_sorcerer', name: '[Sorcerer Supreme] Badge', category: 'badge', cost: 850, badgeTitle: 'Sorcerer Supreme', icon: 'fa-solid fa-hat-wizard', desc: 'Mastery insignia of domain expansions and boundless cursed energy.' },
+      { id: 'badge_captain', name: '[Space Captain] Badge', category: 'badge', cost: 500, badgeTitle: 'Space Captain', icon: 'fa-solid fa-compass', desc: 'Fleet commander authority badge on Soranix transmissions.' },
+      { id: 'badge_otaku', name: '[Otaku Master] Badge', category: 'badge', cost: 400, badgeTitle: 'Otaku Master', icon: 'fa-solid fa-tv', desc: 'Certified encyclopedia of seasonal anime and classic OVAs.' },
+      { id: 'badge_bankai', name: '[Bankai Master] Badge', category: 'badge', cost: 750, badgeTitle: 'Bankai Master', icon: 'fa-solid fa-kanda', desc: 'Soul Reaper captain status unleashing final blade release.' },
+      { id: 'badge_cyber_ronin', name: '[Cyber Ronin] Badge', category: 'badge', cost: 600, badgeTitle: 'Cyber Ronin', icon: 'fa-solid fa-shield-virus', desc: 'Masterless mercenary roaming dystopian virtual networks.' },
+      { id: 'badge_pirate_king', name: '[Pirate King] Badge', category: 'badge', cost: 900, badgeTitle: 'Pirate King', icon: 'fa-solid fa-anchor', desc: 'The freest traveler sailing toward the One Treasure.' },
+      { id: 'badge_alchemist', name: '[Fullmetal] Badge', category: 'badge', cost: 700, badgeTitle: 'Fullmetal Alchemist', icon: 'fa-solid fa-circle-nodes', desc: 'Equivalent exchange state alchemist pocket watch emblem.' },
+      { id: 'badge_ghost', name: '[Cyber Ghost] Badge', category: 'badge', cost: 650, badgeTitle: 'Cyber Ghost', icon: 'fa-solid fa-microchip', desc: 'Disembodied consciousness navigating the worldwide net.' },
+      { id: 'badge_shadow_monarch', name: '[Shadow Monarch] Badge', category: 'badge', cost: 1200, badgeTitle: 'Shadow Monarch', icon: 'fa-solid fa-dungeon', desc: '"Arise" — Ruler of infinite shadow soldiers and monarch gates.' },
+      { id: 'badge_stand_user', name: '[Stand User] Badge', category: 'badge', cost: 650, badgeTitle: 'Stand User', icon: 'fa-solid fa-arrow-trend-up', desc: 'Manifested fighting spirit visible only to fellow Stand users.' },
+      { id: 'badge_saiyan_prince', name: '[Saiyan Prince] Badge', category: 'badge', cost: 800, badgeTitle: 'Saiyan Prince', icon: 'fa-solid fa-meteor', desc: 'Royal saiyan crest burning with unyielding proud warrior spirit.' },
+      { id: 'badge_celestial', name: '[Celestial Being] Badge', category: 'badge', cost: 950, badgeTitle: 'Celestial Being', icon: 'fa-solid fa-satellite', desc: 'Transcendent star traveler existing beyond time and space.' },
+
+      // CATEGORY 5: ANIME STICKERS (15 items)
+      { id: 'pack_chibi', name: 'Chibi Expressions Pack', category: 'sticker', cost: 150, icon: 'fa-solid fa-face-smile-wink', desc: 'Adorable miniature emotes: 🍙, ✨, 🌸, ⚡, 🍡, 🍥' },
+      { id: 'pack_kawaii', name: 'Kawaii Anime Sparks', category: 'sticker', cost: 150, icon: 'fa-solid fa-sparkles', desc: 'Heart sparkles and blushing cute anime reaction emotes.' },
+      { id: 'pack_battle', name: 'Shonen Battle Shouts', category: 'sticker', cost: 200, icon: 'fa-solid fa-fire-burner', desc: 'Punchy battle typography: "ORA!", "MUDA!", "PLUS ULTRA!", "BANKAI!"' },
+      { id: 'pack_food', name: 'Ramen & Bento Feast', category: 'sticker', cost: 150, icon: 'fa-solid fa-bowl-food', desc: 'Steaming hot anime dishes: tonkotsu ramen, gyoza, dango, matcha.' },
+      { id: 'pack_magic', name: 'Magic Circle Emotes', category: 'sticker', cost: 200, icon: 'fa-solid fa-ring', desc: 'Glowing occult pentagrams, alchemy seals, and spell arrays.' },
+      { id: 'pack_rage', name: 'Anime Rage Mode', category: 'sticker', cost: 150, icon: 'fa-solid fa-face-angry', desc: 'Popping forehead veins, crimson eye flashes, and steam clouds.' },
+      { id: 'pack_nani', name: 'Nani?! Shock Emotes', category: 'sticker', cost: 150, icon: 'fa-solid fa-face-surprise', desc: 'Classic white eye hollow shocks and dramatic speedlines.' },
+      { id: 'pack_senpai', name: 'Notice Me Senpai Pack', category: 'sticker', cost: 200, icon: 'fa-solid fa-heart-pulse', desc: 'Playful romance tropes and cherry blossom confessions.' },
+      { id: 'pack_gg', name: 'Good Game Transmissions', category: 'sticker', cost: 150, icon: 'fa-solid fa-gamepad', desc: 'Retro arcade "GG WP", "Level Clear", and "Victory Royale" stamps.' },
+      { id: 'pack_tea', name: 'Dramatic Tea Sips', category: 'sticker', cost: 150, icon: 'fa-solid fa-mug-hot', desc: 'Smug glasses push and calm teacup sipping during chaos.' },
+      { id: 'pack_sweat', name: 'Sweatdrop Reactions', category: 'sticker', cost: 150, icon: 'fa-solid fa-droplet-slash', desc: 'Giant cartoon sweat drops and anime facepalms.' },
+      { id: 'pack_hearts', name: 'Heart Eyes Anime', category: 'sticker', cost: 150, icon: 'fa-solid fa-heart', desc: 'Floating pink hearts and starry admiration eyes.' },
+      { id: 'pack_ninja', name: 'Stealth Ninja Emotes', category: 'sticker', cost: 200, icon: 'fa-solid fa-mask', desc: 'Smoke bombs, shurikens, kunai blades, and shadow clones.' },
+      { id: 'pack_power', name: 'Over 9000 Power Pack', category: 'sticker', cost: 250, icon: 'fa-solid fa-bolt', desc: 'Crushing scouters, energy charge flashes, and crater cracks.' },
+      { id: 'pack_victory', name: 'Anime Victory Peace', category: 'sticker', cost: 150, icon: 'fa-solid fa-hand-peace', desc: 'Double peace sign, winks, and confetti celebration bursts.' },
+
+      // CATEGORY 6: THEMES (10 items)
+      { id: 'theme_violet', name: 'Cosmic Violet Theme', category: 'theme', cost: 0, themeId: 'violet', icon: 'fa-solid fa-palette', desc: 'Default deep ultraviolet abyss palette with glowing purple nebulae.' },
+      { id: 'theme_pink', name: 'Neon Pink Theme', category: 'theme', cost: 200, themeId: 'pink', icon: 'fa-solid fa-palette', desc: 'Cyberpunk hot fuchsia and magenta glow across the dashboard.' },
+      { id: 'theme_cyan', name: 'Electric Cyan Theme', category: 'theme', cost: 200, themeId: 'cyan', icon: 'fa-solid fa-palette', desc: 'High-tech luminous turquoise and cyan sci-fi aesthetic.' },
+      { id: 'theme_gold', name: 'Solar Gold Theme', category: 'theme', cost: 250, themeId: 'gold', icon: 'fa-solid fa-palette', desc: 'Prestigious warm amber and regal gold glow accents.' },
+      { id: 'theme_emerald', name: 'Emerald Green Theme', category: 'theme', cost: 200, themeId: 'emerald', icon: 'fa-solid fa-palette', desc: 'Matrix green and alien planet bioluminescent accents.' },
+      { id: 'theme_crimson', name: 'Blood Crimson Theme', category: 'theme', cost: 350, themeId: 'pink', icon: 'fa-solid fa-palette', desc: 'Menacing dark crimson aesthetic with fiery neon flares.' },
+      { id: 'theme_abyss', name: 'Abyssal Deep Blue Theme', category: 'theme', cost: 300, themeId: 'cyan', icon: 'fa-solid fa-palette', desc: 'Midnight ocean trench depth with cobalt crystal highlights.' },
+      { id: 'theme_sunset', name: 'Retro Sunset Theme', category: 'theme', cost: 300, themeId: 'gold', icon: 'fa-solid fa-palette', desc: 'Warm 80s outrun gradient with orange and lavender tones.' },
+      { id: 'theme_monochrome', name: 'Monochrome Void Theme', category: 'theme', cost: 250, themeId: 'violet', icon: 'fa-solid fa-palette', desc: 'Sleek titanium and pure silver stark minimalist contrasts.' },
+      { id: 'theme_amethyst', name: 'Royal Amethyst Theme', category: 'theme', cost: 350, themeId: 'violet', icon: 'fa-solid fa-palette', desc: 'Lustrous imperial jewel purple tailored for galactic royalty.' },
+
+      // CATEGORY 7: AUDIO SFX (9 items)
+      { id: 'audio_coin', name: '8-Bit Stardust Coin SFX', category: 'audio', cost: 0, sfxType: 'coin', icon: 'fa-solid fa-volume-high', desc: 'Nostalgic dual-tone retro arcade chime on actions and claims.' },
+      { id: 'audio_level_up', name: 'Level Up Grand Fanfare', category: 'audio', cost: 200, sfxType: 'level_up', icon: 'fa-solid fa-music', desc: 'Triumphant rising 4-note chord fanfare upon leveling up.' },
+      { id: 'audio_sword', name: 'Katana Sword Slash', category: 'audio', cost: 250, sfxType: 'sword', icon: 'fa-solid fa-kanda', desc: 'Synthesized high-speed wind slicing blade strike.' },
+      { id: 'audio_power_up', name: 'Saiyan Ki Blast SFX', category: 'audio', cost: 250, sfxType: 'power_up', icon: 'fa-solid fa-burst', desc: 'Surging frequency ramp of explosive inner martial power.' },
+      { id: 'audio_laser', name: 'Sci-Fi Laser Cannon', category: 'audio', cost: 200, sfxType: 'laser', icon: 'fa-solid fa-crosshairs', desc: 'Sharp downward photon beam blast on sending transmissions.' },
+      { id: 'audio_bell', name: 'Zen Lofi Temple Bell', category: 'audio', cost: 200, sfxType: 'bell', icon: 'fa-solid fa-bell', desc: 'Harmonic resonant bell chime echoing into peaceful quiet.' },
+      { id: 'audio_click', name: 'Glass Crystal Tap SFX', category: 'audio', cost: 150, sfxType: 'click', icon: 'fa-solid fa-hand-pointer', desc: 'Soft satisfying haptic click on glass UI elements.' },
+      { id: 'audio_warp', name: 'Hyperdrive Warp Pulse', category: 'audio', cost: 300, sfxType: 'power_up', icon: 'fa-solid fa-space-shuttle', desc: 'Resonant sub-bass warp distortion entering lightspeed.' },
+      { id: 'audio_fanfare', name: 'Galactic Victory Chime', category: 'audio', cost: 350, sfxType: 'level_up', icon: 'fa-solid fa-trophy', desc: 'Glorious arpeggiated orchestral synthesizer triumph.' }
+    ];
+
+    // Shop Catalog Rendering & Filtering
+    function renderShopCatalog() {
+      const grid = $('shop-catalog-grid');
+      const ownedCountEl = $('shop-owned-count');
+      if (!grid) return;
+
+      const userInventory = AppState.user.inventory || ['frame_galaxy', 'theme_violet', 'audio_coin'];
+      if (ownedCountEl) ownedCountEl.textContent = userInventory.length;
+
+      const filterCat = AppState.shopCategory || 'all';
+      const filterOwnership = AppState.shopOwnership || 'all';
+      const search = (AppState.shopSearch || '').toLowerCase().trim();
+
+      const filtered = COSMIC_SHOP_CATALOG.filter(item => {
+        if (filterCat !== 'all' && item.category !== filterCat) return false;
+        const isOwned = userInventory.includes(item.id);
+        if (filterOwnership === 'owned' && !isOwned) return false;
+        if (search) {
+          const matchName = item.name.toLowerCase().includes(search);
+          const matchDesc = item.desc.toLowerCase().includes(search);
+          const matchCat = item.category.toLowerCase().includes(search);
+          if (!matchName && !matchDesc && !matchCat) return false;
+        }
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full py-16 text-center glass-panel rounded-3xl border border-dashed border-white/10 space-y-3">
+            <i class="fa-solid fa-box-open text-3xl text-purple-400/50"></i>
+            <h4 class="text-sm font-bold text-white">No Cosmic Items Found</h4>
+            <p class="text-xs text-slate-400 max-w-sm mx-auto">
+              ${filterOwnership === 'owned' ? 'You have not acquired any items in this category yet. Browse "All Items" to unlock cosmetics with Stardust!' : 'No items match your search filter.'}
+            </p>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = filtered.map(item => {
+        const isOwned = userInventory.includes(item.id);
+        const canAfford = !AppState.isGuest && (AppState.user.stardust || 0) >= item.cost;
+        let isEquipped = false;
+
+        if (item.category === 'frame' && AppState.user.equippedFrame === item.frameClass) isEquipped = true;
+        if (item.category === 'banner' && AppState.user.bannerDataUrl === item.bannerUrl) isEquipped = true;
+        if (item.category === 'name_glow' && AppState.user.equippedNameGlow === item.glowClass) isEquipped = true;
+        if (item.category === 'badge' && AppState.user.equippedChatBadge === item.badgeTitle) isEquipped = true;
+        if (item.category === 'theme' && (AppState.theme === item.themeId || AppState.user.theme === item.themeId)) isEquipped = true;
+
+        let badgeLabel = item.category.replace('_', ' ').toUpperCase();
+
+        return `
+          <div class="glass-card rounded-2xl p-4 flex flex-col justify-between space-y-3 border ${isEquipped ? 'border-purple-500 shadow-[0_0_20px_rgba(168,85,247,0.3)] bg-purple-950/20' : 'border-white/10'} hover:border-purple-400/50 transition-all">
+            <div class="space-y-3">
+              <!-- Item Header & Preview (Circular) -->
+              <div class="flex items-start justify-between gap-2">
+                <div class="w-12 h-12 rounded-full bg-white/[0.04] border border-white/10 flex items-center justify-center shrink-0 ${item.category === 'frame' ? 'pfp-frame-container frame-' + item.frameClass : ''}">
+                  <i class="${item.icon} text-lg text-accent"></i>
+                </div>
+                <div class="flex flex-col items-end gap-1">
+                  <span class="text-[9px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/[0.05] text-slate-300">
+                    ${badgeLabel}
+                  </span>
+                  ${isEquipped ? '<span class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-emerald-950/80 text-emerald-300 border border-emerald-500/40">EQUIPPED</span>' : ''}
+                </div>
+              </div>
+
+              <!-- Title & Description -->
+              <div>
+                <h4 class="text-sm font-bold text-white line-clamp-1 ${item.glowClass || ''}">${item.name}</h4>
+                <p class="text-xs text-slate-400 mt-1 line-clamp-2 leading-relaxed">${item.desc}</p>
+              </div>
+            </div>
+
+            <!-- Price & Action Button (with Live Preview on Customisables) -->
+            <div class="pt-3 border-t border-glassBorder flex items-center justify-between gap-2">
+              <div class="flex items-center gap-1 text-xs font-bold ${isOwned ? 'text-slate-400' : 'text-amber-300'}">
+                <i class="fa-solid fa-sparkles text-[10px] text-solarGold"></i>
+                <span>${item.cost === 0 ? 'FREE' : `${item.cost} Stardust`}</span>
+              </div>
+
+              <div class="flex items-center gap-1.5">
+                ${(item.category === 'frame' || item.category === 'banner' || item.category === 'name_glow' || item.category === 'badge' || item.category === 'theme' || item.category === 'audio') ? `
+                  <button 
+                    type="button"
+                    onclick="openShopItemPreview('${item.id}')" 
+                    class="px-2.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white border border-white/10 text-xs font-semibold cursor-pointer transition-all flex items-center gap-1.5 shadow-sm" 
+                    title="Live Preview Item"
+                  >
+                    <i class="${item.category === 'audio' ? 'fa-solid fa-volume-high text-amber-400' : 'fa-solid fa-eye text-cyan-400'} text-[10px]"></i>
+                    <span>Preview</span>
+                  </button>
+                ` : ''}
+
+                ${isEquipped ? `
+                  <button disabled class="px-3 py-1.5 rounded-xl bg-white/10 text-slate-400 text-xs font-bold cursor-default">
+                    Active
+                  </button>
+                ` : isOwned ? `
+                  <button onclick="equipShopItem('${item.id}')" class="px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold cursor-pointer transition-all shadow-sm">
+                    Equip
+                  </button>
+                ` : `
+                  <button onclick="buyShopItem('${item.id}')" class="px-3 py-1.5 rounded-xl ${canAfford ? 'bg-amber-500 hover:bg-amber-400 text-black' : 'bg-white/10 text-slate-400 hover:bg-white/20'} text-xs font-bold cursor-pointer transition-all shadow-sm flex items-center gap-1.5">
+                    <i class="fa-solid fa-cart-shopping text-[10px]"></i>
+                    <span>Unlock</span>
+                  </button>
+                `}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function filterShopCategory(cat) {
+      AppState.shopCategory = cat;
+      const cats = ['all', 'frame', 'banner', 'name_glow', 'badge', 'sticker', 'theme', 'audio'];
+      cats.forEach(c => {
+        const btn = $(`shop-cat-${c}`);
+        if (!btn) return;
+        if (c === cat) {
+          btn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all bg-purple-600 text-white shadow-sm cursor-pointer whitespace-nowrap';
+        } else {
+          btn.className = 'px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-white bg-white/[0.04] hover:bg-white/10 cursor-pointer whitespace-nowrap';
+        }
+      });
+      renderShopCatalog();
+    }
+
+    function setShopOwnershipFilter(ownership) {
+      AppState.shopOwnership = ownership;
+      const btnAll = $('shop-filter-all');
+      const btnOwned = $('shop-filter-owned');
+
+      if (ownership === 'all') {
+        if (btnAll) btnAll.className = 'px-3 py-1.5 rounded-xl text-xs font-bold bg-white/15 text-white transition-all cursor-pointer';
+        if (btnOwned) btnOwned.className = 'px-3 py-1.5 rounded-xl text-xs font-bold text-slate-400 hover:text-white bg-white/[0.04] hover:bg-white/10 transition-all cursor-pointer flex items-center gap-1.5';
+      } else {
+        if (btnOwned) btnOwned.className = 'px-3 py-1.5 rounded-xl text-xs font-bold bg-white/15 text-white transition-all cursor-pointer flex items-center gap-1.5';
+        if (btnAll) btnAll.className = 'px-3 py-1.5 rounded-xl text-xs font-bold text-slate-400 hover:text-white bg-white/[0.04] hover:bg-white/10 transition-all cursor-pointer';
+      }
+      renderShopCatalog();
+    }
+
+    function handleShopSearchInput() {
+      const input = $('shop-search-input');
+      AppState.shopSearch = input ? input.value : '';
+      renderShopCatalog();
+    }
+
+    function buyShopItem(itemId) {
+      if (AppState.isGuest) {
+        showToast('Account Required: Please Sign Up or Log In to buy cosmetics from the Cosmic Shop!', 'error');
+        openAuthModal('signup');
+        return;
+      }
+
+      const item = COSMIC_SHOP_CATALOG.find(i => i.id === itemId);
+      if (!item) return;
+
+      if (!AppState.user.inventory) {
+        AppState.user.inventory = ['frame_galaxy', 'theme_violet', 'audio_coin'];
+      }
+
+      if (AppState.user.inventory.includes(itemId)) {
+        equipShopItem(itemId);
+        return;
+      }
+
+      const currentCoins = AppState.user.stardust || 0;
+      if (currentCoins < item.cost) {
+        showToast(`Insufficient Stardust! You have ${currentCoins} Stardust. Stream anime to earn +50 Stardust every 5 mins!`, 'error');
+        return;
+      }
+
+      // Deduct coins & add to inventory
+      AppState.user.stardust = currentCoins - item.cost;
+      AppState.user.inventory.push(itemId);
+
+      SoranixAudio.play('coin');
+
+      // Auto-equip purchased item
+      if (item.category === 'frame') AppState.user.equippedFrame = item.frameClass;
+      if (item.category === 'banner') AppState.user.bannerDataUrl = item.bannerUrl;
+      if (item.category === 'name_glow') AppState.user.equippedNameGlow = item.glowClass;
+      if (item.category === 'badge') AppState.user.equippedChatBadge = item.badgeTitle;
+      if (item.category === 'theme') setCosmicTheme(item.themeId, false);
+
+      saveUserToLocalStorage();
+      updateViewableProfileUI();
+      renderShopCatalog();
+
+      addNotification(AppState.user.username, {
+        type: 'shop',
+        title: 'Cosmic Item Unlocked!',
+        body: `You acquired "${item.name}" for ${item.cost} Stardust. Item equipped!`
+      });
+
+      showToast(`🎉 Unlocked ${item.name}! Equipped to your cosmic profile.`, 'success');
+    }
+
+    function equipShopItem(itemId) {
+      const item = COSMIC_SHOP_CATALOG.find(i => i.id === itemId);
+      if (!item) return;
+
+      if (item.category === 'frame') {
+        AppState.user.equippedFrame = item.frameClass;
+        showToast(`Equipped ${item.name}!`, 'info');
+      } else if (item.category === 'banner') {
+        AppState.user.bannerDataUrl = item.bannerUrl;
+        showToast(`Equipped ${item.name}!`, 'info');
+      } else if (item.category === 'name_glow') {
+        AppState.user.equippedNameGlow = item.glowClass;
+        showToast(`Equipped ${item.name}!`, 'info');
+      } else if (item.category === 'badge') {
+        AppState.user.equippedChatBadge = item.badgeTitle;
+        showToast(`Equipped [${item.badgeTitle}] Chat Badge!`, 'info');
+      } else if (item.category === 'theme') {
+        setCosmicTheme(item.themeId, true);
+      } else if (item.category === 'audio') {
+        SoranixAudio.play(item.sfxType);
+        showToast(`Previewed audio effect: ${item.name}`, 'info');
+        return;
+      } else if (item.category === 'sticker') {
+        showToast(`Sticker pack ${item.name} active in Global & DM chat!`, 'info');
+        return;
+      }
+
+      SoranixAudio.play('click');
+      saveUserToLocalStorage();
+      updateViewableProfileUI();
+      renderShopCatalog();
+    }
+
     // ----------------------------------------------------
-    // 15. TOAST NOTIFICATIONS
+    // LIVE PREVIEW ON CUSTOMISABLE SHOP ITEMS
+    // ----------------------------------------------------
+    function openShopItemPreview(itemId) {
+      const item = COSMIC_SHOP_CATALOG.find(i => i.id === itemId);
+      if (!item) return;
+
+      // Audio SFX items play sound effect directly
+      if (item.category === 'audio') {
+        SoranixAudio.play(item.sfxType);
+        showToast(`Sound Preview: Playing "${item.name}" effect 🎵`, 'info');
+        return;
+      }
+
+      const modal = $('shop-item-preview-modal');
+      const nameEl = $('shop-preview-item-name');
+      const catEl = $('shop-preview-item-category');
+      const descEl = $('shop-preview-item-desc');
+      const iconEl = $('shop-preview-item-icon');
+      
+      if (nameEl) nameEl.textContent = item.name;
+      if (catEl) catEl.textContent = item.category.replace('_', ' ');
+      if (descEl) descEl.textContent = item.desc;
+      if (iconEl) iconEl.className = item.icon || 'fa-solid fa-eye';
+
+      // Current user baseline
+      const u = AppState.user;
+      const username = AppState.isGuest ? 'Guest Explorer' : u.username;
+      const level = u.level || 1;
+      const rankTitle = u.title || 'Level 1 Novice Voyager';
+
+      // Computed preview styles
+      let previewBanner = u.bannerDataUrl || 'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=1600&q=80';
+      let previewFrame = u.equippedFrame || 'galaxy';
+      let previewGlowClass = u.equippedNameGlow || '';
+      let previewBadge = u.equippedChatBadge || rankTitle;
+
+      if (item.category === 'banner') previewBanner = item.bannerUrl;
+      if (item.category === 'frame') previewFrame = item.frameClass;
+      if (item.category === 'name_glow') previewGlowClass = item.glowClass;
+      if (item.category === 'badge') previewBadge = item.badgeTitle;
+
+      // 1. Profile Appearance Simulation
+      const bannerImg = $('shop-preview-banner-img');
+      if (bannerImg) bannerImg.src = previewBanner;
+
+      const frameWrapper = $('shop-preview-frame-wrapper');
+      if (frameWrapper) {
+        frameWrapper.className = `pfp-frame-container frame-${previewFrame} p-1 shrink-0 rounded-full bg-black/40`;
+      }
+
+      const sBadge = $('shop-preview-s-badge');
+      const avatarImg = $('shop-preview-avatar-img');
+      if (u.avatarDataUrl && avatarImg && sBadge) {
+        avatarImg.src = u.avatarDataUrl;
+        avatarImg.classList.remove('hidden');
+        sBadge.classList.add('hidden');
+      } else if (avatarImg && sBadge) {
+        avatarImg.classList.add('hidden');
+        sBadge.classList.remove('hidden');
+        sBadge.textContent = username[0].toUpperCase();
+      }
+
+      const usernameEl = $('shop-preview-username');
+      if (usernameEl) {
+        usernameEl.textContent = username;
+        usernameEl.className = `text-sm font-bold truncate ${previewGlowClass || 'text-white'}`;
+      }
+
+      const badgePill = $('shop-preview-badge-pill');
+      if (badgePill) badgePill.textContent = previewBadge;
+
+      const rankText = $('shop-preview-rank-text');
+      if (rankText) rankText.textContent = `Level ${level} Cosmic Voyager`;
+
+      // 2. Global Chat Broadcast Simulation
+      const chatFrame = $('shop-preview-chat-frame');
+      if (chatFrame) {
+        chatFrame.className = `pfp-frame-container frame-${previewFrame} p-0.5 shrink-0 rounded-full`;
+      }
+
+      const chatS = $('shop-preview-chat-s');
+      const chatImg = $('shop-preview-chat-img');
+      if (u.avatarDataUrl && chatImg && chatS) {
+        chatImg.src = u.avatarDataUrl;
+        chatImg.classList.remove('hidden');
+        chatS.classList.add('hidden');
+      } else if (chatImg && chatS) {
+        chatImg.classList.add('hidden');
+        chatS.classList.remove('hidden');
+        chatS.textContent = username[0].toUpperCase();
+      }
+
+      const chatName = $('shop-preview-chat-name');
+      if (chatName) {
+        chatName.textContent = username;
+        chatName.className = `font-bold text-xs ${previewGlowClass || 'text-white'}`;
+      }
+
+      const chatBadge = $('shop-preview-chat-badge');
+      if (chatBadge) chatBadge.textContent = previewBadge;
+
+      // 3. Dynamic Action Button Inside Preview Modal
+      const btnContainer = $('shop-preview-action-btn-container');
+      if (btnContainer) {
+        const userInventory = u.inventory || ['frame_galaxy', 'theme_violet', 'audio_coin'];
+        const isOwned = userInventory.includes(item.id);
+        const canAfford = !AppState.isGuest && (u.stardust || 0) >= item.cost;
+        
+        let isEquipped = false;
+        if (item.category === 'frame' && u.equippedFrame === item.frameClass) isEquipped = true;
+        if (item.category === 'banner' && u.bannerDataUrl === item.bannerUrl) isEquipped = true;
+        if (item.category === 'name_glow' && u.equippedNameGlow === item.glowClass) isEquipped = true;
+        if (item.category === 'badge' && u.equippedChatBadge === item.badgeTitle) isEquipped = true;
+        if (item.category === 'theme' && (AppState.theme === item.themeId || u.theme === item.themeId)) isEquipped = true;
+
+        if (isEquipped) {
+          btnContainer.innerHTML = `
+            <button disabled class="w-full py-2.5 rounded-xl bg-white/10 text-slate-400 text-xs font-bold cursor-default text-center">
+              Currently Equipped
+            </button>
+          `;
+        } else if (isOwned) {
+          btnContainer.innerHTML = `
+            <button onclick="equipShopItem('${item.id}'); closeShopItemPreview();" class="w-full py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold transition-all shadow-accent-glow cursor-pointer text-center">
+              Equip Item Now
+            </button>
+          `;
+        } else {
+          btnContainer.innerHTML = `
+            <button onclick="buyShopItem('${item.id}'); closeShopItemPreview();" class="w-full py-2.5 rounded-xl ${canAfford ? 'bg-amber-500 hover:bg-amber-400 text-black' : 'bg-purple-900/60 text-purple-200 border border-purple-500/40'} text-xs font-bold transition-all shadow-md cursor-pointer flex items-center justify-center gap-2">
+              <i class="fa-solid fa-cart-shopping text-xs"></i>
+              <span>Unlock (${item.cost === 0 ? 'FREE' : `${item.cost} Stardust`})</span>
+            </button>
+          `;
+        }
+      }
+
+      if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+      }
+    }
+
+    function closeShopItemPreview() {
+      const modal = $('shop-item-preview-modal');
+      if (modal) {
+        modal.classList.remove('flex');
+        modal.classList.add('hidden');
+        document.body.style.overflow = '';
+      }
+    }
+
+    // ====================================================
+    // 17. GLOBAL CHAT SYSTEM (REAL-TIME, PERSISTENT & CROSS-TAB)
+    // ====================================================
+    function toggleGlobalChatPanel() {
+      const panel = $('global-chat-panel');
+      if (!panel) return;
+
+      if (panel.classList.contains('translate-x-full')) {
+        panel.classList.remove('translate-x-full');
+        AppState.isGlobalChatOpen = true;
+        renderGlobalChatMessages();
+      } else {
+        panel.classList.add('translate-x-full');
+        AppState.isGlobalChatOpen = false;
+      }
+    }
+
+    function closeGlobalChatPanel() {
+      const panel = $('global-chat-panel');
+      if (panel) {
+        panel.classList.add('translate-x-full');
+        AppState.isGlobalChatOpen = false;
+      }
+    }
+
+    function parseSpoilers(text) {
+      if (!text) return '';
+      return text.replace(/>!([\s\S]*?)!</g, '<span class="spoiler-text" onclick="this.classList.toggle(\'revealed\')">$1</span>');
+    }
+
+    function renderGlobalChatMessages() {
+      const container = $('global-chat-messages');
+      if (!container) return;
+
+      const msgs = getGlobalChatMessages();
+
+      if (msgs.length === 0) {
+        container.innerHTML = `
+          <div class="h-full min-h-[320px] flex flex-col items-center justify-center p-6 text-center text-slate-400 space-y-3">
+            <div class="w-14 h-14 rounded-full bg-purple-950/60 border border-purple-500/30 flex items-center justify-center text-cyan-400 text-2xl shadow-[0_0_20px_rgba(6,182,212,0.25)]">
+              <i class="fa-solid fa-satellite-dish animate-pulse"></i>
+            </div>
+            <div class="space-y-1">
+              <h4 class="text-sm font-bold text-white">No Transmissions Yet</h4>
+              <p class="text-xs text-slate-400 max-w-[240px] mx-auto leading-relaxed">
+                The global frequency is quiet. Be the first voyager to transmit a message across the stars!
+              </p>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = msgs.map(m => {
+        const isSelf = !AppState.isGuest && m.sender.toLowerCase() === AppState.user.username.toLowerCase();
+        const safeText = parseSpoilers(m.message);
+
+        return `
+          <div class="glass-card rounded-2xl p-3 border border-white/5 hover:border-purple-500/30 transition-all space-y-1.5">
+            <div class="flex items-center justify-between gap-2">
+              <div 
+                onclick="openUserProfilePreviewModal('${m.sender}')" 
+                class="flex items-center gap-2 cursor-pointer group"
+                title="View Voyager Profile"
+              >
+                <!-- Avatar & Frame Preview (Circular) -->
+                <div class="pfp-frame-container frame-${m.senderFrame || 'galaxy'} p-0.5 shrink-0 rounded-full">
+                  <div class="w-6 h-6 rounded-full bg-gradient-to-tr from-purple-800 to-indigo-600 flex items-center justify-center text-white text-[10px] font-bold overflow-hidden">
+                    ${m.senderAvatar ? `<img src="${m.senderAvatar}" class="w-full h-full object-cover rounded-full" alt="User" />` : `<span>${m.sender[0].toUpperCase()}</span>`}
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  <span class="font-bold text-xs group-hover:underline ${m.senderGlow || 'text-white'}">
+                    ${m.sender}
+                  </span>
+                  <span class="text-[9px] px-1.5 py-0.2 rounded bg-purple-950/80 text-purple-300 font-mono font-semibold">
+                    Lv ${m.senderLevel || 1}
+                  </span>
+                  ${m.senderTitle ? `
+                    <span class="text-[9px] px-1.5 py-0.2 rounded bg-indigo-950/80 text-cyan-300 font-semibold truncate max-w-[110px]">
+                      ${m.senderTitle}
+                    </span>
+                  ` : ''}
+                </div>
+              </div>
+
+              <span class="text-[10px] text-slate-500 font-mono shrink-0">${m.timestamp || ''}</span>
+            </div>
+
+            <!-- Message Body -->
+            <p class="text-xs text-slate-200 pl-8 leading-relaxed break-words">
+              ${safeText}
+            </p>
+          </div>
+        `;
+      }).join('');
+
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function sendGlobalChatMessage() {
+      if (AppState.isGuest) {
+        showToast('Transmissions Locked: Sign Up or Log In to chat with fellow cosmic voyagers!', 'info');
+        openAuthModal('signup');
+        return;
+      }
+
+      const input = $('global-chat-input');
+      if (!input) return;
+      const text = input.value.trim();
+      if (!text) return;
+
+      const msgs = getGlobalChatMessages();
+      const newMsg = {
+        id: `msg_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
+        sender: AppState.user.username,
+        senderTitle: AppState.user.equippedChatBadge || AppState.user.title || 'Novice Voyager',
+        senderLevel: AppState.user.level || 1,
+        senderAvatar: AppState.user.avatarDataUrl || null,
+        senderFrame: AppState.user.equippedFrame || 'galaxy',
+        senderGlow: AppState.user.equippedNameGlow || null,
+        message: text,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        time: Date.now()
+      };
+
+      msgs.push(newMsg);
+      saveGlobalChatMessages(msgs);
+
+      input.value = '';
+      SoranixAudio.play('laser');
+      renderGlobalChatMessages();
+    }
+
+    function insertGlobalEmoji(emoji) {
+      const input = $('global-chat-input');
+      if (!input) return;
+      input.value = `${input.value} ${emoji} `;
+      input.focus();
+    }
+
+    function toggleGlobalChatVisibilitySetting() {
+      AppState.hideGlobalChatSetting = !AppState.hideGlobalChatSetting;
+      localStorage.setItem('soranix_hide_global_chat', AppState.hideGlobalChatSetting ? 'true' : 'false');
+
+      const icon = $('modal-chat-toggle-icon');
+      const text = $('modal-chat-toggle-text');
+      if (AppState.hideGlobalChatSetting) {
+        if (icon) icon.className = 'fa-solid fa-eye-slash text-slate-400';
+        if (text) text.textContent = 'Hidden';
+        closeGlobalChatPanel();
+        showToast('Cosmic Global Chat hidden in preference.', 'info');
+      } else {
+        if (icon) icon.className = 'fa-solid fa-eye text-emerald-400';
+        if (text) text.textContent = 'Visible';
+        showToast('Cosmic Global Chat enabled in preference.', 'info');
+      }
+    }
+
+    // ====================================================
+    // 18. MEMBER PROFILE PREVIEW MODAL
+    // ====================================================
+    function openUserProfilePreviewModal(targetUsername) {
+      if (!targetUsername) return;
+      AppState.previewTargetUser = targetUsername;
+
+      const users = getUsersDB();
+      const targetUser = users[targetUsername.toLowerCase()] || {
+        username: targetUsername,
+        title: 'Cosmic Voyager',
+        level: 8,
+        bio: 'Cruising through anime stargates, compiling stellar soundtracks.',
+        animeWatched: 42,
+        equippedFrame: 'galaxy'
+      };
+
+      const modal = $('user-profile-preview-modal');
+      const nameEl = $('preview-modal-username');
+      const titleEl = $('preview-modal-title');
+      const bioEl = $('preview-modal-bio');
+      const lvlEl = $('preview-modal-level');
+      const animeEl = $('preview-modal-anime');
+      const frameEl = $('preview-modal-frame');
+      const sBadge = $('preview-modal-s');
+      const imgEl = $('preview-modal-img');
+      const btnFriendText = $('preview-modal-btn-friend-text');
+      const btnFriend = $('preview-modal-btn-friend');
+
+      if (nameEl) nameEl.textContent = targetUser.username;
+      if (titleEl) titleEl.textContent = targetUser.title || 'Novice Voyager';
+      if (bioEl) bioEl.textContent = targetUser.bio || 'Exploring the anime multiverse.';
+      if (lvlEl) lvlEl.textContent = `Lv ${targetUser.level || 1}`;
+      if (animeEl) animeEl.textContent = targetUser.animeWatched || 0;
+
+      if (frameEl) {
+        frameEl.className = `pfp-frame-container frame-${targetUser.equippedFrame || 'galaxy'} p-1 mb-3`;
+      }
+
+      if (targetUser.avatarDataUrl && imgEl && sBadge) {
+        imgEl.src = targetUser.avatarDataUrl;
+        imgEl.classList.remove('hidden');
+        sBadge.classList.add('hidden');
+      } else if (imgEl && sBadge) {
+        imgEl.classList.add('hidden');
+        sBadge.classList.remove('hidden');
+        sBadge.textContent = targetUser.username[0].toUpperCase();
+      }
+
+      // Configure Friend Button State
+      const isSelf = !AppState.isGuest && targetUser.username.toLowerCase() === AppState.user.username.toLowerCase();
+      const isFriend = (AppState.user.friends || []).includes(targetUser.username);
+      const isPending = (AppState.user.outgoingRequests || []).includes(targetUser.username);
+
+      if (btnFriend && btnFriendText) {
+        if (isSelf) {
+          btnFriend.disabled = true;
+          btnFriendText.textContent = 'Your Profile';
+          btnFriend.className = 'flex-1 py-2.5 rounded-xl text-xs font-bold text-slate-400 bg-white/5 cursor-default flex items-center justify-center gap-2';
+        } else if (isFriend) {
+          btnFriend.disabled = true;
+          btnFriendText.textContent = 'Already Friends';
+          btnFriend.className = 'flex-1 py-2.5 rounded-xl text-xs font-bold text-emerald-400 bg-emerald-950/40 border border-emerald-500/30 cursor-default flex items-center justify-center gap-2';
+        } else if (isPending) {
+          btnFriend.disabled = true;
+          btnFriendText.textContent = 'Request Pending';
+          btnFriend.className = 'flex-1 py-2.5 rounded-xl text-xs font-bold text-amber-300 bg-amber-950/40 border border-amber-500/30 cursor-default flex items-center justify-center gap-2';
+        } else {
+          btnFriend.disabled = false;
+          btnFriendText.textContent = 'Add Friend';
+          btnFriend.className = 'flex-1 py-2.5 rounded-xl text-xs font-bold text-white bg-purple-600 hover:bg-purple-500 shadow-accent-glow transition-all cursor-pointer flex items-center justify-center gap-2';
+        }
+      }
+
+      if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      }
+    }
+
+    function closeUserProfilePreviewModal() {
+      const modal = $('user-profile-preview-modal');
+      if (modal) {
+        modal.classList.remove('flex');
+        modal.classList.add('hidden');
+      }
+    }
+
+    function handlePreviewModalFriendAction() {
+      if (!AppState.previewTargetUser) return;
+      const target = AppState.previewTargetUser;
+      closeUserProfilePreviewModal();
+      sendFriendRequestTo(target);
+    }
+
+    function handlePreviewModalDMAction() {
+      if (AppState.isGuest) {
+        showToast('Account Required: Sign Up or Log In to transmit direct messages!', 'error');
+        openAuthModal('signup');
+        return;
+      }
+      if (!AppState.previewTargetUser) return;
+      const target = AppState.previewTargetUser;
+      closeUserProfilePreviewModal();
+      openDMChat(target);
+    }
+
+    // ====================================================
+    // 19. FRIENDS HUB & DIRECT MESSAGING (DM) ENGINE
+    // ====================================================
+    function switchFriendsSubTab(subTab) {
+      AppState.currentFriendsSubTab = subTab;
+      const btnList = $('subtab-btn-friends-list');
+      const btnIncoming = $('subtab-btn-friends-incoming');
+      const btnOutgoing = $('subtab-btn-friends-outgoing');
+      const tabList = $('friends-subtab-list');
+      const tabIncoming = $('friends-subtab-incoming');
+      const tabOutgoing = $('friends-subtab-outgoing');
+
+      if (tabList) tabList.classList.toggle('hidden', subTab !== 'list');
+      if (tabIncoming) tabIncoming.classList.toggle('hidden', subTab !== 'incoming');
+      if (tabOutgoing) tabOutgoing.classList.toggle('hidden', subTab !== 'outgoing');
+
+      if (btnList) {
+        btnList.className = subTab === 'list' 
+          ? 'px-4 py-2 rounded-xl text-xs font-bold transition-all bg-purple-600 text-white shadow-sm cursor-pointer flex items-center gap-2'
+          : 'px-4 py-2 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-white cursor-pointer flex items-center gap-2';
+      }
+      if (btnIncoming) {
+        btnIncoming.className = subTab === 'incoming'
+          ? 'px-4 py-2 rounded-xl text-xs font-bold transition-all bg-purple-600 text-white shadow-sm cursor-pointer flex items-center gap-2'
+          : 'px-4 py-2 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-white cursor-pointer flex items-center gap-2';
+      }
+      if (btnOutgoing) {
+        btnOutgoing.className = subTab === 'outgoing'
+          ? 'px-4 py-2 rounded-xl text-xs font-bold transition-all bg-purple-600 text-white shadow-sm cursor-pointer flex items-center gap-2'
+          : 'px-4 py-2 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-white cursor-pointer flex items-center gap-2';
+      }
+
+      renderFriendsUI();
+    }
+
+    function renderFriendsUI() {
+      if (AppState.isGuest) return;
+
+      const user = AppState.user;
+      const friends = user.friends || [];
+      const incoming = user.incomingRequests || [];
+      const outgoing = user.outgoingRequests || [];
+      const users = getUsersDB();
+
+      const gridContainer = $('friends-grid-container');
+      const incomingContainer = $('incoming-requests-list');
+      const outgoingContainer = $('outgoing-requests-list');
+
+      // 1. My Friends List Grid
+      if (gridContainer) {
+        if (friends.length === 0) {
+          gridContainer.innerHTML = `
+            <div class="col-span-full py-16 text-center glass-panel rounded-3xl border border-dashed border-white/10 space-y-3">
+              <i class="fa-solid fa-user-astronaut text-3xl text-purple-400/40"></i>
+              <h4 class="text-sm font-bold text-white">No Cosmic Friends Yet</h4>
+              <p class="text-xs text-slate-400 max-w-sm mx-auto">
+                Search for fellow anime voyagers using the input above, or connect with voyagers from Global Chat!
+              </p>
+            </div>
+          `;
+        } else {
+          gridContainer.innerHTML = friends.map(fName => {
+            const fData = users[fName.toLowerCase()] || { username: fName, level: 1, title: 'Novice Voyager', equippedFrame: 'galaxy' };
+            return `
+              <div class="glass-card rounded-2xl p-4 border border-white/10 hover:border-purple-400/50 transition-all flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3 min-w-0">
+                  <div class="pfp-frame-container frame-${fData.equippedFrame || 'galaxy'} p-0.5 shrink-0 rounded-full">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-purple-800 to-indigo-600 flex items-center justify-center text-white text-xs font-bold overflow-hidden">
+                      ${fData.avatarDataUrl ? `<img src="${fData.avatarDataUrl}" class="w-full h-full object-cover rounded-full" alt="${fName}" />` : `<span>${fName[0].toUpperCase()}</span>`}
+                    </div>
+                  </div>
+                  <div class="min-w-0 flex-1">
+                    <div class="flex items-center gap-1.5">
+                      <h4 class="text-xs font-bold text-white truncate">${fName}</h4>
+                      <span class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_6px_#34d399] shrink-0" title="Online"></span>
+                    </div>
+                    <span class="text-[10px] text-accent font-semibold block truncate">Lv ${fData.level || 1} &bull; ${fData.title || 'Voyager'}</span>
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-1.5 shrink-0">
+                  <button 
+                    onclick="openDMChat('${fName}')" 
+                    class="p-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white transition-all shadow-sm cursor-pointer"
+                    title="Open Direct Message"
+                  >
+                    <i class="fa-solid fa-message text-xs"></i>
+                  </button>
+                  <button 
+                    onclick="openUserProfilePreviewModal('${fName}')" 
+                    class="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white transition-all cursor-pointer"
+                    title="View Profile"
+                  >
+                    <i class="fa-solid fa-user text-xs"></i>
+                  </button>
+                  <button 
+                    onclick="removeFriend('${fName}')" 
+                    class="p-2 rounded-xl bg-red-950/40 hover:bg-red-900 border border-red-500/30 text-red-300 transition-all cursor-pointer"
+                    title="Remove Friend"
+                  >
+                    <i class="fa-solid fa-user-xmark text-xs"></i>
+                  </button>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+      }
+
+      // 2. Incoming Requests List
+      if (incomingContainer) {
+        if (incoming.length === 0) {
+          incomingContainer.innerHTML = `
+            <div class="py-12 text-center text-slate-400 space-y-2">
+              <i class="fa-solid fa-inbox text-2xl text-purple-400/40"></i>
+              <p class="text-xs">No pending incoming friend requests.</p>
+            </div>
+          `;
+        } else {
+          incomingContainer.innerHTML = incoming.map(reqName => {
+            const reqData = users[reqName.toLowerCase()] || { username: reqName, level: 1, title: 'Novice Voyager' };
+            return `
+              <div class="glass-card rounded-2xl p-3 border border-purple-500/30 flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                  <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-purple-800 to-indigo-600 flex items-center justify-center text-white text-xs font-bold">
+                    ${reqName[0].toUpperCase()}
+                  </div>
+                  <div>
+                    <h4 class="text-xs font-bold text-white">${reqName}</h4>
+                    <span class="text-[10px] text-slate-400">Lv ${reqData.level || 1} &bull; Wants to connect</span>
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-2">
+                  <button 
+                    onclick="acceptFriendRequest('${reqName}')" 
+                    class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-xs font-bold text-white transition-all cursor-pointer flex items-center gap-1 shadow-sm"
+                  >
+                    <i class="fa-solid fa-check text-[10px]"></i>
+                    <span>Accept</span>
+                  </button>
+                  <button 
+                    onclick="declineFriendRequest('${reqName}')" 
+                    class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-semibold text-slate-300 transition-all cursor-pointer flex items-center gap-1"
+                  >
+                    <i class="fa-solid fa-xmark text-[10px]"></i>
+                    <span>Decline</span>
+                  </button>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+      }
+
+      // 3. Outgoing Requests List
+      if (outgoingContainer) {
+        if (outgoing.length === 0) {
+          outgoingContainer.innerHTML = `
+            <div class="py-12 text-center text-slate-400 space-y-2">
+              <i class="fa-solid fa-clock text-2xl text-purple-400/40"></i>
+              <p class="text-xs">No pending outgoing friend requests.</p>
+            </div>
+          `;
+        } else {
+          outgoingContainer.innerHTML = outgoing.map(reqName => {
+            return `
+              <div class="glass-card rounded-2xl p-3 border border-white/10 flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                  <div class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-slate-300 text-xs font-bold">
+                    ${reqName[0].toUpperCase()}
+                  </div>
+                  <div>
+                    <h4 class="text-xs font-bold text-white">${reqName}</h4>
+                    <span class="text-[10px] text-amber-300">Awaiting user acceptance...</span>
+                  </div>
+                </div>
+
+                <button 
+                  onclick="declineFriendRequest('${reqName}')" 
+                  class="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/15 text-xs text-slate-400 hover:text-white transition-all cursor-pointer"
+                >
+                  Cancel Request
+                </button>
+              </div>
+            `;
+          }).join('');
+        }
+      }
+    }
+
+    function handleSendFriendRequest() {
+      const input = $('input-friend-search');
+      if (!input) return;
+      const target = input.value.trim();
+      if (!target) {
+        showToast('Please enter a username to send a friend request.', 'error');
+        return;
+      }
+      sendFriendRequestTo(target);
+      input.value = '';
+    }
+
+    function sendFriendRequestTo(targetUsername) {
+      if (AppState.isGuest) {
+        showToast('Account Required: Sign Up or Log In to add cosmic friends!', 'error');
+        openAuthModal('signup');
+        return;
+      }
+
+      const cleanTarget = targetUsername.trim();
+      const currentUsername = AppState.user.username;
+
+      if (cleanTarget.toLowerCase() === currentUsername.toLowerCase()) {
+        showToast('You cannot send a friend request to yourself!', 'error');
+        return;
+      }
+
+      const users = getUsersDB();
+      const targetUser = users[cleanTarget.toLowerCase()];
+
+      if (!targetUser) {
+        showToast(`No voyager account found matching "${cleanTarget}".`, 'error');
+        return;
+      }
+
+      if ((AppState.user.friends || []).includes(targetUser.username)) {
+        showToast(`You and ${targetUser.username} are already cosmic friends!`, 'info');
+        return;
+      }
+
+      if ((AppState.user.outgoingRequests || []).includes(targetUser.username)) {
+        showToast(`Friend request already sent to ${targetUser.username}. Awaiting response.`, 'info');
+        return;
+      }
+
+      // Add to current user's outgoing requests
+      if (!AppState.user.outgoingRequests) AppState.user.outgoingRequests = [];
+      AppState.user.outgoingRequests.push(targetUser.username);
+      saveUserToLocalStorage();
+
+      // Add to target user's incoming requests
+      if (!targetUser.incomingRequests) targetUser.incomingRequests = [];
+      if (!targetUser.incomingRequests.includes(currentUsername)) {
+        targetUser.incomingRequests.push(currentUsername);
+      }
+      users[cleanTarget.toLowerCase()] = targetUser;
+      saveUsersDB(users);
+
+      // Add notification for the recipient
+      addNotification(targetUser.username, {
+        type: 'friend_request',
+        title: 'New Friend Request',
+        body: `${currentUsername} sent you a cosmic transmission to connect.`
+      });
+
+      SoranixAudio.play('power_up');
+      updateStatsCounters();
+      renderFriendsUI();
+      showToast(`✨ Friend request transmitted to ${targetUser.username}!`, 'success');
+    }
+
+    function acceptFriendRequest(senderUsername) {
+      if (AppState.isGuest) return;
+
+      const currentUsername = AppState.user.username;
+      const users = getUsersDB();
+      const senderKey = senderUsername.toLowerCase();
+      const senderUser = users[senderKey];
+
+      // Remove from incoming on current user
+      AppState.user.incomingRequests = (AppState.user.incomingRequests || []).filter(u => u.toLowerCase() !== senderKey);
+      if (!AppState.user.friends) AppState.user.friends = [];
+      if (!AppState.user.friends.includes(senderUsername)) {
+        AppState.user.friends.push(senderUsername);
+      }
+      saveUserToLocalStorage();
+
+      // Update sender account
+      if (senderUser) {
+        senderUser.outgoingRequests = (senderUser.outgoingRequests || []).filter(u => u.toLowerCase() !== currentUsername.toLowerCase());
+        if (!senderUser.friends) senderUser.friends = [];
+        if (!senderUser.friends.includes(currentUsername)) {
+          senderUser.friends.push(currentUsername);
+        }
+        users[senderKey] = senderUser;
+        saveUsersDB(users);
+
+        addNotification(senderUsername, {
+          type: 'friend_accept',
+          title: 'Friend Request Accepted!',
+          body: `${currentUsername} accepted your friend request. You can now chat and stream together!`
+        });
+      }
+
+      SoranixAudio.play('bell');
+      updateStatsCounters();
+      renderFriendsUI();
+      showToast(`🎉 You and ${senderUsername} are now connected as cosmic friends!`, 'success');
+    }
+
+    function declineFriendRequest(senderUsername) {
+      if (AppState.isGuest) return;
+
+      const currentUsername = AppState.user.username;
+      const users = getUsersDB();
+      const senderKey = senderUsername.toLowerCase();
+      const senderUser = users[senderKey];
+
+      AppState.user.incomingRequests = (AppState.user.incomingRequests || []).filter(u => u.toLowerCase() !== senderKey);
+      AppState.user.outgoingRequests = (AppState.user.outgoingRequests || []).filter(u => u.toLowerCase() !== senderKey);
+      saveUserToLocalStorage();
+
+      if (senderUser) {
+        senderUser.outgoingRequests = (senderUser.outgoingRequests || []).filter(u => u.toLowerCase() !== currentUsername.toLowerCase());
+        senderUser.incomingRequests = (senderUser.incomingRequests || []).filter(u => u.toLowerCase() !== currentUsername.toLowerCase());
+        users[senderKey] = senderUser;
+        saveUsersDB(users);
+      }
+
+      updateStatsCounters();
+      renderFriendsUI();
+      showToast(`Friend request from ${senderUsername} dismissed.`, 'info');
+    }
+
+    function removeFriend(friendUsername) {
+      if (AppState.isGuest) return;
+
+      const currentUsername = AppState.user.username;
+      const users = getUsersDB();
+      const friendKey = friendUsername.toLowerCase();
+      const friendUser = users[friendKey];
+
+      AppState.user.friends = (AppState.user.friends || []).filter(f => f.toLowerCase() !== friendKey);
+      saveUserToLocalStorage();
+
+      if (friendUser) {
+        friendUser.friends = (friendUser.friends || []).filter(f => f.toLowerCase() !== currentUsername.toLowerCase());
+        users[friendKey] = friendUser;
+        saveUsersDB(users);
+      }
+
+      updateStatsCounters();
+      renderFriendsUI();
+      showToast(`Removed ${friendUsername} from your friends list.`, 'info');
+    }
+
+    // Direct Message (DM) Engine
+    function openDMChat(friendUsername) {
+      if (AppState.isGuest) {
+        showToast('Please Sign Up or Log In to send direct transmissions!', 'error');
+        openAuthModal('signup');
+        return;
+      }
+
+      AppState.activeDMFriend = friendUsername;
+      const users = getUsersDB();
+      const friendData = users[friendUsername.toLowerCase()] || { username: friendUsername, level: 1, title: 'Novice Voyager', equippedFrame: 'galaxy' };
+
+      const drawer = $('dm-chat-drawer');
+      const nameEl = $('dm-header-username');
+      const rankEl = $('dm-header-rank');
+      const frameEl = $('dm-header-frame');
+      const sBadge = $('dm-header-s');
+      const imgEl = $('dm-header-img');
+
+      if (nameEl) nameEl.textContent = friendUsername;
+      if (rankEl) rankEl.textContent = `Lv ${friendData.level || 1} &bull; ${friendData.title || 'Novice Voyager'}`;
+      if (frameEl) frameEl.className = `pfp-frame-container frame-${friendData.equippedFrame || 'galaxy'} p-0.5 shrink-0`;
+
+      if (friendData.avatarDataUrl && imgEl && sBadge) {
+        imgEl.src = friendData.avatarDataUrl;
+        imgEl.classList.remove('hidden');
+        sBadge.classList.add('hidden');
+      } else if (imgEl && sBadge) {
+        imgEl.classList.add('hidden');
+        sBadge.classList.remove('hidden');
+        sBadge.textContent = friendUsername[0].toUpperCase();
+      }
+
+      renderDMConversation();
+
+      if (drawer) {
+        drawer.classList.remove('translate-x-full');
+      }
+    }
+
+    function closeDMChatDrawer() {
+      const drawer = $('dm-chat-drawer');
+      if (drawer) {
+        drawer.classList.add('translate-x-full');
+      }
+      AppState.activeDMFriend = null;
+    }
+
+    function renderDMConversation() {
+      const container = $('dm-chat-messages');
+      if (!container || !AppState.activeDMFriend) return;
+
+      const threadKey = getThreadKey(AppState.user.username, AppState.activeDMFriend);
+      const allThreads = getDMThreads();
+      const messages = allThreads[threadKey] || [];
+
+      if (messages.length === 0) {
+        container.innerHTML = `
+          <div class="py-16 text-center text-slate-400 space-y-2">
+            <i class="fa-solid fa-comments text-2xl text-purple-400/40"></i>
+            <p class="text-xs font-semibold text-slate-300">Secure Direct Transmission Established</p>
+            <p class="text-[11px] text-slate-500 max-w-xs mx-auto">Send your first message or recommend an anime to start watching together!</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = messages.map(m => {
+        const isSelf = m.sender.toLowerCase() === AppState.user.username.toLowerCase();
+        return `
+          <div class="flex flex-col ${isSelf ? 'items-end' : 'items-start'} space-y-1">
+            <div class="max-w-[85%] rounded-2xl p-3 text-xs leading-relaxed ${isSelf ? 'bg-purple-600 text-white shadow-accent-glow rounded-br-none' : 'bg-white/10 text-slate-200 border border-white/10 rounded-bl-none'}">
+              ${m.recommendation ? `
+                <div class="p-2.5 rounded-xl bg-black/40 border border-amber-500/30 mb-1.5 space-y-1">
+                  <div class="flex items-center gap-1.5 text-amber-300 font-bold text-[11px]">
+                    <i class="fa-solid fa-film"></i>
+                    <span>Stream Recommendation</span>
+                  </div>
+                  <h5 class="font-bold text-white text-xs">${m.recommendation.title}</h5>
+                  <span class="text-[10px] text-purple-300 font-mono">${m.recommendation.genre}</span>
+                </div>
+              ` : ''}
+              <p class="break-words">${m.text}</p>
+            </div>
+            <span class="text-[9px] text-slate-500 font-mono px-1">${m.timestamp}</span>
+          </div>
+        `;
+      }).join('');
+
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function sendDirectMessage() {
+      if (AppState.isGuest) return;
+      if (!AppState.activeDMFriend) return;
+
+      const input = $('dm-chat-input');
+      if (!input) return;
+      const text = input.value.trim();
+      if (!text) return;
+
+      const threadKey = getThreadKey(AppState.user.username, AppState.activeDMFriend);
+      const allThreads = getDMThreads();
+      if (!allThreads[threadKey]) allThreads[threadKey] = [];
+
+      allThreads[threadKey].push({
+        id: `dm_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
+        sender: AppState.user.username,
+        text: text,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        time: Date.now()
+      });
+
+      saveDMThreads(allThreads);
+      input.value = '';
+
+      SoranixAudio.play('laser');
+      renderDMConversation();
+
+      addNotification(AppState.activeDMFriend, {
+        type: 'dm',
+        title: `DM from ${AppState.user.username}`,
+        body: text.length > 40 ? `${text.substring(0, 40)}...` : text
+      });
+    }
+
+    function sendAnimeRecommendation(title, genre) {
+      if (AppState.isGuest || !AppState.activeDMFriend) return;
+
+      const threadKey = getThreadKey(AppState.user.username, AppState.activeDMFriend);
+      const allThreads = getDMThreads();
+      if (!allThreads[threadKey]) allThreads[threadKey] = [];
+
+      allThreads[threadKey].push({
+        id: `dm_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
+        sender: AppState.user.username,
+        text: `Hey, let's watch ${title} together on Soranix!`,
+        recommendation: { title, genre },
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        time: Date.now()
+      });
+
+      saveDMThreads(allThreads);
+
+      const popover = $('dm-recommend-menu');
+      if (popover) popover.classList.add('hidden');
+
+      SoranixAudio.play('bell');
+      renderDMConversation();
+      showToast(`Recommended "${title}" to ${AppState.activeDMFriend}!`, 'success');
+    }
+
+    function toggleRecommendMenu(event) {
+      if (event) event.stopPropagation();
+      const popover = $('dm-recommend-menu');
+      if (popover) popover.classList.toggle('hidden');
+    }
+
+    function insertDMEmoji(emoji) {
+      const input = $('dm-chat-input');
+      if (!input) return;
+      input.value = `${input.value} ${emoji} `;
+      input.focus();
+    }
+
+    // ====================================================
+    // 20. ACCOUNT-ONLY NOTIFICATION CENTER
+    // ====================================================
+    function toggleNotificationDropdown(event) {
+      if (event) event.stopPropagation();
+      const dropdown = $('notification-dropdown');
+      if (!dropdown) return;
+      dropdown.classList.toggle('hidden');
+      if (!dropdown.classList.contains('hidden')) {
+        renderNotificationsUI();
+      }
+    }
+
+    function renderNotificationsUI() {
+      if (AppState.isGuest) return;
+
+      const username = AppState.user.username;
+      const notifs = getNotifications(username);
+      const listContainer = $('notification-items-list');
+      const emptyState = $('notification-empty-state');
+      const badge = $('header-unread-badge');
+      const countBadge = $('notif-count-badge');
+
+      const unreadCount = notifs.filter(n => !n.read).length;
+
+      if (badge) {
+        if (unreadCount > 0) {
+          badge.textContent = unreadCount;
+          badge.classList.remove('hidden');
+        } else {
+          badge.classList.add('hidden');
+        }
+      }
+
+      if (countBadge) {
+        countBadge.textContent = `${unreadCount} New`;
+      }
+
+      if (!listContainer) return;
+
+      if (notifs.length === 0) {
+        if (emptyState) emptyState.classList.remove('hidden');
+        listContainer.innerHTML = '';
+      } else {
+        if (emptyState) emptyState.classList.add('hidden');
+        listContainer.innerHTML = notifs.map(n => {
+          let iconClass = 'fa-solid fa-bell text-accent';
+          if (n.type === 'friend_request') iconClass = 'fa-solid fa-user-plus text-purple-400';
+          if (n.type === 'friend_accept') iconClass = 'fa-solid fa-heart text-pink-400';
+          if (n.type === 'shop') iconClass = 'fa-solid fa-sparkles text-amber-400';
+          if (n.type === 'level_up') iconClass = 'fa-solid fa-trophy text-solarGold';
+          if (n.type === 'dm') iconClass = 'fa-solid fa-message text-electricCyan';
+
+          return `
+            <div class="glass-card rounded-2xl p-3 border ${n.read ? 'border-white/5 opacity-70' : 'border-purple-500/30 bg-purple-950/20'} flex items-start justify-between gap-2.5 transition-all">
+              <div class="flex items-start gap-2.5 min-w-0">
+                <div class="w-7 h-7 rounded-lg bg-white/[0.04] flex items-center justify-center shrink-0 mt-0.5">
+                  <i class="${iconClass} text-xs"></i>
+                </div>
+                <div class="min-w-0">
+                  <h5 class="text-xs font-bold text-white truncate">${n.title}</h5>
+                  <p class="text-[11px] text-slate-300 mt-0.5 leading-snug break-words">${n.body}</p>
+                  <span class="text-[9px] text-slate-500 font-mono mt-1 block">${n.timestamp || 'Just now'}</span>
+                </div>
+              </div>
+              <button onclick="dismissNotification('${n.id}')" class="text-slate-500 hover:text-white p-1 cursor-pointer" title="Dismiss">
+                <i class="fa-solid fa-xmark text-xs"></i>
+              </button>
+            </div>
+          `;
+        }).join('');
+      }
+    }
+
+    function addNotification(targetUsername, notif) {
+      if (!targetUsername || targetUsername === 'Guest Explorer') return;
+
+      const list = getNotifications(targetUsername);
+      const newNotif = {
+        id: `notif_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
+        read: false,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        ...notif
+      };
+      list.unshift(newNotif);
+      saveNotifications(targetUsername, list.slice(0, 30));
+
+      if (!AppState.isGuest && targetUsername.toLowerCase() === AppState.user.username.toLowerCase()) {
+        renderNotificationsUI();
+      }
+    }
+
+    function markAllNotificationsRead() {
+      if (AppState.isGuest) return;
+      const username = AppState.user.username;
+      const notifs = getNotifications(username).map(n => ({ ...n, read: true }));
+      saveNotifications(username, notifs);
+      renderNotificationsUI();
+      showToast('All notifications marked as read.', 'info');
+    }
+
+    function dismissNotification(notifId) {
+      if (AppState.isGuest) return;
+      const username = AppState.user.username;
+      const notifs = getNotifications(username).filter(n => n.id !== notifId);
+      saveNotifications(username, notifs);
+      renderNotificationsUI();
+    }
+
+    // Close notifications popover on click outside
+    document.addEventListener('click', (event) => {
+      const dropdown = $('notification-dropdown');
+      const bell = $('header-notification-bell');
+      if (dropdown && !dropdown.classList.contains('hidden')) {
+        if (!dropdown.contains(event.target) && !bell?.contains(event.target)) {
+          dropdown.classList.add('hidden');
+        }
+      }
+      const recMenu = $('dm-recommend-menu');
+      if (recMenu && !recMenu.classList.contains('hidden')) {
+        if (!recMenu.contains(event.target)) {
+          recMenu.classList.add('hidden');
+        }
+      }
+    });
+
+    // ====================================================
+    // 21. REAL-TIME CROSS-TAB SYNC EVENT LISTENER
+    // ====================================================
+    window.addEventListener('storage', (e) => {
+      if (e.key === GLOBAL_CHAT_KEY && AppState.isGlobalChatOpen) {
+        renderGlobalChatMessages();
+      }
+      if (e.key === DM_THREADS_KEY && AppState.activeDMFriend) {
+        renderDMConversation();
+      }
+      if (e.key && e.key.startsWith(NOTIFICATIONS_PREFIX) && !AppState.isGuest) {
+        renderNotificationsUI();
+      }
+      if (e.key === USERS_DB_KEY && !AppState.isGuest && AppState.currentUserKey) {
+        const users = getUsersDB();
+        if (users[AppState.currentUserKey]) {
+          AppState.user = { ...AppState.user, ...users[AppState.currentUserKey] };
+          updateViewableProfileUI();
+        }
+      }
+    });
+
+    // ====================================================
+    // 22. TOAST NOTIFICATIONS
     // ----------------------------------------------------
     function showToast(message, type = 'info') {
       const container = $('toast-container');
@@ -3686,10 +5578,13 @@
     // Keyboard ESC listener
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
+        closeShopItemPreview();
+        closeUserProfilePreviewModal();
         closeEditProfileModal();
         closeAuthModal();
         closeBugReportModal();
         closeGearMenu();
+        closeDMChatDrawer();
       }
     });
 
@@ -3728,6 +5623,43 @@
     window.handleBugSubmit = handleBugSubmit;
     window.toggleAnimeWatchSession = toggleAnimeWatchSession;
     window.showToast = showToast;
+    // New Features & Engines
+    window.renderShopCatalog = renderShopCatalog;
+    window.openShopItemPreview = openShopItemPreview;
+    window.closeShopItemPreview = closeShopItemPreview;
+    window.filterShopCategory = filterShopCategory;
+    window.setShopOwnershipFilter = setShopOwnershipFilter;
+    window.handleShopSearchInput = handleShopSearchInput;
+    window.buyShopItem = buyShopItem;
+    window.equipShopItem = equipShopItem;
+    window.toggleGlobalChatPanel = toggleGlobalChatPanel;
+    window.closeGlobalChatPanel = closeGlobalChatPanel;
+    window.sendGlobalChatMessage = sendGlobalChatMessage;
+    window.renderGlobalChatMessages = renderGlobalChatMessages;
+    window.insertGlobalEmoji = insertGlobalEmoji;
+    window.toggleGlobalChatVisibilitySetting = toggleGlobalChatVisibilitySetting;
+    window.openUserProfilePreviewModal = openUserProfilePreviewModal;
+    window.closeUserProfilePreviewModal = closeUserProfilePreviewModal;
+    window.handlePreviewModalFriendAction = handlePreviewModalFriendAction;
+    window.handlePreviewModalDMAction = handlePreviewModalDMAction;
+    window.switchFriendsSubTab = switchFriendsSubTab;
+    window.renderFriendsUI = renderFriendsUI;
+    window.handleSendFriendRequest = handleSendFriendRequest;
+    window.sendFriendRequestTo = sendFriendRequestTo;
+    window.acceptFriendRequest = acceptFriendRequest;
+    window.declineFriendRequest = declineFriendRequest;
+    window.removeFriend = removeFriend;
+    window.openDMChat = openDMChat;
+    window.closeDMChatDrawer = closeDMChatDrawer;
+    window.sendDirectMessage = sendDirectMessage;
+    window.sendAnimeRecommendation = sendAnimeRecommendation;
+    window.toggleRecommendMenu = toggleRecommendMenu;
+    window.insertDMEmoji = insertDMEmoji;
+    window.toggleNotificationDropdown = toggleNotificationDropdown;
+    window.renderNotificationsUI = renderNotificationsUI;
+    window.markAllNotificationsRead = markAllNotificationsRead;
+    window.dismissNotification = dismissNotification;
+    window.SoranixAudio = SoranixAudio;
   </script>
 </body>
 </html>
