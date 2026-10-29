@@ -440,6 +440,90 @@
   <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2.5 pointer-events-none"></div>
 
   <!-- ========================================================== -->
+  <!-- GLOBAL ANNOUNCEMENT BANNER (Across All Views)             -->
+  <!-- ========================================================== -->
+  <div id="global-admin-announcement-banner" class="hidden relative z-40 w-full py-2.5 px-4 bg-gradient-to-r from-red-950/90 via-purple-950/90 to-indigo-950/90 border-b border-red-500/40 text-xs shadow-lg backdrop-blur-xl">
+    <div class="max-w-6xl mx-auto flex items-center justify-between gap-3">
+      <div class="flex items-center gap-2.5 min-w-0">
+        <span id="global-announcement-pill" class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-red-500/20 text-red-400 border border-red-500/40 shrink-0 animate-pulse flex items-center gap-1.5">
+          <i class="fa-solid fa-bullhorn text-[10px]"></i>
+          <span id="global-announcement-badge-text">System Alert</span>
+        </span>
+        <span id="global-announcement-text" class="font-semibold text-slate-100 truncate"></span>
+      </div>
+      <button onclick="dismissAnnouncementBanner()" class="text-slate-400 hover:text-white p-1 text-xs shrink-0 cursor-pointer" title="Dismiss Banner">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- ========================================================== -->
+  <!-- MAINTENANCE MODE GUARD OVERLAY (Non-Admins Blocked)        -->
+  <!-- ========================================================== -->
+  <div id="maintenance-mode-guard" class="hidden fixed inset-0 z-[99] bg-[#07050e]/95 backdrop-blur-2xl flex flex-col items-center justify-center p-6 text-center select-none">
+    <div class="w-20 h-20 rounded-3xl bg-red-950/70 border border-red-500/50 flex items-center justify-center text-red-400 text-3xl shadow-[0_0_35px_rgba(239,68,68,0.4)] mb-5 animate-pulse">
+      <i class="fa-solid fa-wrench"></i>
+    </div>
+    <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-red-950/60 border border-red-500/40 text-[11px] font-mono font-bold text-red-300 uppercase tracking-widest mb-3">
+      <span>Galactic Relay Maintenance</span>
+    </div>
+    <h2 class="text-2xl sm:text-4xl font-display font-black text-white mb-3">Platform Maintenance Active</h2>
+    <p id="maintenance-guard-reason" class="text-slate-300 text-xs sm:text-sm max-w-md mx-auto mb-6 leading-relaxed">
+      Soranix engineers are conducting scheduled upgrades across galactic relay nodes. Access will be restored shortly.
+    </p>
+    <div class="flex flex-wrap items-center justify-center gap-3">
+      <button onclick="checkMaintenanceBypass()" class="px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-bold text-white border border-white/10 transition-all cursor-pointer flex items-center gap-2">
+        <i class="fa-solid fa-rotate-right"></i>
+        <span>Refresh Status</span>
+      </button>
+      <button id="maintenance-admin-bypass-btn" onclick="bypassMaintenanceAsAdmin()" class="hidden px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-xs font-bold text-white shadow-lg transition-all cursor-pointer flex items-center gap-2">
+        <i class="fa-solid fa-shield-halved"></i>
+        <span>Owner Bypass &bull; Open Admin</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ========================================================== -->
+  <!-- MODAL: ACCESS DENIED GUARD (Unauthorized Admin Attempt)    -->
+  <!-- ========================================================== -->
+  <div id="admin-access-denied-modal" class="hidden fixed inset-0 z-50 items-center justify-center p-4 bg-black/85 backdrop-blur-xl">
+    <div class="w-full max-w-md glass-card rounded-3xl p-6 sm:p-8 relative shadow-2xl border border-red-500/40 text-center space-y-4">
+      <button onclick="closeAdminAccessDeniedModal()" class="absolute top-4 right-4 p-2 text-slate-400 hover:text-white transition-colors cursor-pointer">
+        <i class="fa-solid fa-xmark text-sm"></i>
+      </button>
+      <div class="w-16 h-16 rounded-2xl bg-red-950/70 border border-red-500/50 flex items-center justify-center text-red-400 text-3xl mx-auto shadow-[0_0_30px_rgba(239,68,68,0.35)]">
+        <i class="fa-solid fa-shield-halved"></i>
+      </div>
+      <div>
+        <h3 class="text-xl font-display font-extrabold text-white">Access Denied</h3>
+        <p class="text-[11px] text-red-300 font-mono font-bold uppercase tracking-wider mt-1">System Administrator Clearance Required</p>
+      </div>
+      <p class="text-xs text-slate-300 leading-relaxed">
+        The Admin Control Station is strictly restricted to verified platform administrators and the owner (<span class="text-accent font-semibold">jaydentorru4@gmail.com</span>). Your active session lacks administrative clearance.
+      </p>
+      <div class="p-3 rounded-2xl bg-white/[0.03] border border-white/5 text-left text-xs text-slate-400 space-y-1">
+        <div class="flex items-center justify-between text-[11px]">
+          <span>Current Session:</span>
+          <span id="access-denied-current-user" class="font-bold text-white">Guest Explorer</span>
+        </div>
+        <div class="flex items-center justify-between text-[11px]">
+          <span>Required Role:</span>
+          <span class="font-bold text-red-400">System Administrator / Owner</span>
+        </div>
+      </div>
+      <div class="pt-2 flex flex-col sm:flex-row items-center gap-2.5">
+        <button onclick="closeAdminAccessDeniedModal()" class="w-full sm:flex-1 py-2.5 rounded-xl text-xs font-semibold bg-white/10 hover:bg-white/20 text-white transition-all cursor-pointer">
+          Return to Dashboard
+        </button>
+        <button onclick="closeAdminAccessDeniedModal(); quickLoginAsOwner();" class="w-full sm:flex-1 py-2.5 rounded-xl text-xs font-bold text-white bg-red-600 hover:bg-red-500 shadow-md transition-all cursor-pointer flex items-center justify-center gap-1.5">
+          <i class="fa-solid fa-crown text-solarGold text-[11px]"></i>
+          <span>Log In as Owner</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================== -->
   <!-- VIEW 1: ANIMATED SPLASH / MAIN MENU SCREEN (STEP 1)        -->
   <!-- ========================================================== -->
   <div id="view-splash" class="relative z-20 min-h-screen w-full flex flex-col items-center justify-center p-6 text-center select-none transition-all duration-500">
@@ -649,6 +733,17 @@
           <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-electricCyan shadow-[0_0_6px_#06b6d4]"></span>
         </button>
 
+        <!-- Tab 7: Admin Control Panel (Owner Authority) -->
+        <button 
+          id="nav-tab-btn-admin"
+          onclick="openAdminTab()" 
+          class="sidebar-tab-btn w-11 h-11 rounded-2xl flex items-center justify-center text-red-400/70 hover:text-red-300 hover:bg-red-500/10 border border-transparent hover:border-red-500/30 transition-all cursor-pointer relative"
+          title="Admin & Owner Control Panel"
+        >
+          <i class="fa-solid fa-shield-halved text-base text-red-400"></i>
+          <span id="sidebar-admin-pulse" class="hidden absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-red-500 shadow-[0_0_6px_#ef4444] animate-ping"></span>
+        </button>
+
       </nav>
 
       <!-- Bottom Section: Gear Button & Pop-Down Flyout Menu -->
@@ -757,6 +852,17 @@
               <span>Customize Profile</span>
             </button>
 
+            <!-- Admin Control Panel in Gear Menu -->
+            <button 
+              id="gear-admin-btn"
+              onclick="openAdminTab(); toggleGearMenu();" 
+              class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-red-300 hover:text-white hover:bg-red-950/40 border border-transparent hover:border-red-500/30 transition-all cursor-pointer text-left"
+            >
+              <i class="fa-solid fa-shield-halved text-red-400 w-4 text-center"></i>
+              <span class="font-bold">Admin Control</span>
+              <span id="gear-admin-badge" class="ml-auto text-[9px] px-2 py-0.5 rounded-full bg-red-950/80 text-red-300 border border-red-500/40 font-mono font-bold">OWNER</span>
+            </button>
+
             <div class="h-px bg-white/10 my-1"></div>
 
             <button 
@@ -826,6 +932,17 @@
           <div id="header-user-status" class="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/[0.04] border border-white/10 text-xs font-semibold text-slate-300">
             <span class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]"></span>
             <span id="header-user-display" class="max-w-[120px] truncate">Guest Explorer</span>
+          </div>
+
+          <!-- Admin Status Indicator Pill (Shown for Authenticated Owner / Admin) -->
+          <div 
+            id="header-admin-pill" 
+            onclick="openAdminTab()" 
+            class="hidden items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-950/70 hover:bg-red-900/60 border border-red-500/40 text-xs font-bold text-red-300 shadow-[0_0_15px_rgba(239,68,68,0.25)] transition-all cursor-pointer"
+            title="System Administrator / Owner Console"
+          >
+            <i class="fa-solid fa-shield-halved text-red-400 text-[10px]"></i>
+            <span class="font-mono uppercase tracking-wider text-[11px]">Owner</span>
           </div>
 
           <!-- Account-Only Notification Bell & Pop-Down Tray (Strictly Hidden for Guests) -->
@@ -1590,6 +1707,557 @@
         </div>
       </section>
 
+      <!-- ====================================================== -->
+      <!-- VIEW 2 - TAB 7: ADMIN & OWNER CONTROL CENTER           -->
+      <!-- ====================================================== -->
+      <section id="tab-view-admin" class="p-4 sm:p-8 space-y-6 max-w-6xl w-full mx-auto hidden">
+        
+        <!-- Admin Console Banner & Clearance Header -->
+        <div class="glass-card rounded-3xl p-6 sm:p-8 border border-red-500/40 relative overflow-hidden bg-gradient-to-br from-red-950/40 via-purple-950/20 to-[#07050e] shadow-2xl">
+          <div class="absolute -top-24 -right-24 w-60 h-60 rounded-full bg-red-600/10 blur-[80px] pointer-events-none"></div>
+
+          <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative z-10">
+            <div class="flex items-center gap-4">
+              <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-red-900 via-red-600 to-amber-600 flex items-center justify-center text-white text-3xl shadow-[0_0_30px_rgba(239,68,68,0.4)] shrink-0 border border-white/20">
+                <i class="fa-solid fa-crown text-solarGold"></i>
+              </div>
+              <div>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <h2 class="text-2xl sm:text-3xl font-display font-black text-white tracking-wide">
+                    Soranix Admin Control Center
+                  </h2>
+                  <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-extrabold uppercase bg-red-500/20 text-red-300 border border-red-500/50 shadow-[0_0_10px_rgba(239,68,68,0.3)]">
+                    <i class="fa-solid fa-shield-halved mr-1"></i> Owner Authority
+                  </span>
+                </div>
+                <p class="text-xs text-slate-300 mt-1">
+                  Full moderation, real-time broadcasts, inventory granting, economy manipulation &bull; 
+                  <span class="text-solarGold font-semibold">jaydentorru4@gmail.com</span>
+                </p>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+              <button 
+                onclick="renderAdminDashboard()" 
+                class="px-4 py-2 rounded-xl text-xs font-bold text-white bg-white/10 hover:bg-white/20 border border-white/10 transition-all cursor-pointer flex items-center gap-2"
+                title="Refresh Admin Data"
+              >
+                <i class="fa-solid fa-rotate-right text-xs"></i>
+                <span>Refresh Data</span>
+              </button>
+              <button 
+                onclick="switchDashboardTab('home')" 
+                class="px-4 py-2 rounded-xl text-xs font-bold text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 transition-all cursor-pointer"
+              >
+                Exit Console
+              </button>
+            </div>
+          </div>
+
+          <!-- Quick Metrics Bar -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-6 border-t border-glassBorder text-center">
+            <div class="p-3 rounded-2xl bg-black/40 border border-white/5">
+              <span class="text-[10px] font-mono uppercase text-slate-400">Total Users</span>
+              <p id="admin-stat-total-users" class="text-lg font-display font-black text-white mt-0.5">0</p>
+            </div>
+            <div class="p-3 rounded-2xl bg-black/40 border border-white/5">
+              <span class="text-[10px] font-mono uppercase text-slate-400">Chat Messages</span>
+              <p id="admin-stat-total-msgs" class="text-lg font-display font-black text-electricCyan mt-0.5">0</p>
+            </div>
+            <div class="p-3 rounded-2xl bg-black/40 border border-white/5">
+              <span class="text-[10px] font-mono uppercase text-slate-400">Watch Multiplier</span>
+              <p id="admin-stat-multiplier" class="text-lg font-display font-black text-amber-300 mt-0.5">1.0x</p>
+            </div>
+            <div class="p-3 rounded-2xl bg-black/40 border border-white/5">
+              <span class="text-[10px] font-mono uppercase text-slate-400">Gateway Status</span>
+              <p id="admin-stat-maintenance" class="text-lg font-display font-black text-emerald-400 mt-0.5">Online</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Admin Sub-Navigation Tabs -->
+        <div class="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-thin">
+          <button 
+            id="admin-tab-btn-users"
+            onclick="switchAdminSubTab('users')" 
+            class="admin-subtab-btn px-4 py-2 rounded-2xl text-xs font-bold transition-all bg-red-600 text-white shadow-md cursor-pointer flex items-center gap-2 shrink-0"
+          >
+            <i class="fa-solid fa-users text-xs"></i>
+            <span>User &amp; Account Moderation</span>
+          </button>
+          <button 
+            id="admin-tab-btn-currency"
+            onclick="switchAdminSubTab('currency')" 
+            class="admin-subtab-btn px-4 py-2 rounded-2xl text-xs font-bold transition-all text-slate-400 hover:text-white bg-white/[0.04] hover:bg-white/10 cursor-pointer flex items-center gap-2 shrink-0"
+          >
+            <i class="fa-solid fa-coins text-xs text-solarGold"></i>
+            <span>Currency, Levels &amp; Items</span>
+          </button>
+          <button 
+            id="admin-tab-btn-broadcasts"
+            onclick="switchAdminSubTab('broadcasts')" 
+            class="admin-subtab-btn px-4 py-2 rounded-2xl text-xs font-bold transition-all text-slate-400 hover:text-white bg-white/[0.04] hover:bg-white/10 cursor-pointer flex items-center gap-2 shrink-0"
+          >
+            <i class="fa-solid fa-bullhorn text-xs text-pink-400"></i>
+            <span>Live Broadcasts &amp; Alerts</span>
+          </button>
+          <button 
+            id="admin-tab-btn-platform"
+            onclick="switchAdminSubTab('platform')" 
+            class="admin-subtab-btn px-4 py-2 rounded-2xl text-xs font-bold transition-all text-slate-400 hover:text-white bg-white/[0.04] hover:bg-white/10 cursor-pointer flex items-center gap-2 shrink-0"
+          >
+            <i class="fa-solid fa-sliders text-xs text-electricCyan"></i>
+            <span>Platform &amp; Maintenance</span>
+          </button>
+        </div>
+
+        <!-- ==================================================== -->
+        <!-- SUB-PANEL 1: USER & ACCOUNT MODERATION              -->
+        <!-- ==================================================== -->
+        <div id="admin-panel-users" class="space-y-4">
+          <!-- Search & Filter Controls -->
+          <div class="glass-panel rounded-2xl p-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+            <div class="relative flex-1 max-w-md">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+                <i class="fa-solid fa-magnifying-glass text-xs"></i>
+              </span>
+              <input 
+                id="admin-user-search-input" 
+                type="text" 
+                placeholder="Search registered accounts by username or email..." 
+                class="w-full pl-9 pr-4 py-2 text-xs bg-[#07050e] border border-purple-500/30 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-red-400 focus:ring-1 focus:ring-red-400 transition-all"
+                oninput="renderAdminUsersList()"
+              />
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="filterAdminUsersStatus('all')" id="admin-filter-status-all" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white/20 text-white cursor-pointer">
+                All Users
+              </button>
+              <button onclick="filterAdminUsersStatus('active')" id="admin-filter-status-active" class="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-400 hover:text-white bg-white/[0.04] cursor-pointer">
+                Active
+              </button>
+              <button onclick="filterAdminUsersStatus('muted')" id="admin-filter-status-muted" class="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-400 hover:text-white bg-white/[0.04] cursor-pointer">
+                Timed Out
+              </button>
+              <button onclick="filterAdminUsersStatus('banned')" id="admin-filter-status-banned" class="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-400 hover:text-white bg-white/[0.04] cursor-pointer">
+                Banned
+              </button>
+            </div>
+          </div>
+
+          <!-- Users List Container -->
+          <div id="admin-users-list-container" class="space-y-3">
+            <!-- Dynamically populated by renderAdminUsersList() -->
+          </div>
+        </div>
+
+        <!-- ==================================================== -->
+        <!-- SUB-PANEL 2: CURRENCY, LEVEL & INVENTORY EDITOR      -->
+        <!-- ==================================================== -->
+        <div id="admin-panel-currency" class="space-y-6 hidden">
+          <!-- User Selector -->
+          <div class="glass-panel rounded-2xl p-4 sm:p-6 space-y-3">
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-300">
+              Select Target Account to Modify
+            </label>
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+              <select 
+                id="admin-editor-user-select" 
+                class="flex-1 p-2.5 text-xs bg-[#07050e] border border-purple-500/40 rounded-xl text-white focus:outline-none focus:border-red-400 cursor-pointer"
+                onchange="handleAdminEditorUserChange()"
+              >
+                <!-- Populated dynamically -->
+              </select>
+              <button 
+                onclick="loadCurrentUserIntoEditor()" 
+                class="px-4 py-2.5 rounded-xl text-xs font-bold text-white bg-purple-600 hover:bg-purple-500 cursor-pointer transition-all shrink-0"
+              >
+                Select Myself (Active User)
+              </button>
+            </div>
+          </div>
+
+          <!-- Target User Profile Overview & Balance Card -->
+          <div id="admin-editor-target-card" class="glass-card rounded-3xl p-6 border border-glassBorder space-y-4">
+            <!-- Populated dynamically -->
+          </div>
+
+          <!-- Modifiers Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            <!-- 1. Stardust Currency Controls -->
+            <div class="glass-panel rounded-3xl p-6 border border-amber-500/30 space-y-4 bg-amber-950/10">
+              <div class="flex items-center gap-3 pb-3 border-b border-glassBorder">
+                <div class="w-10 h-10 rounded-2xl bg-amber-950/80 border border-amber-500/40 flex items-center justify-center text-solarGold text-lg">
+                  <i class="fa-solid fa-coins"></i>
+                </div>
+                <div>
+                  <h4 class="text-sm font-bold text-white font-display">Stardust Coin Modifier</h4>
+                  <p class="text-xs text-slate-400">Instantly grant, deduct, or set coins for selected voyager</p>
+                </div>
+              </div>
+
+              <div class="space-y-3">
+                <div>
+                  <label class="block text-[11px] font-bold uppercase text-slate-300 mb-1">Coin Amount</label>
+                  <input 
+                    id="admin-coin-amount-input" 
+                    type="number" 
+                    min="1" 
+                    value="1000" 
+                    class="w-full p-2.5 text-xs bg-[#07050e] border border-amber-500/40 rounded-xl text-white focus:outline-none focus:border-amber-400"
+                  />
+                </div>
+
+                <!-- Quick Presets -->
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="text-[10px] text-slate-400 uppercase font-mono mr-1">Presets:</span>
+                  <button onclick="$('admin-coin-amount-input').value = 500" class="px-2 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-[10px] text-amber-300 cursor-pointer">+500</button>
+                  <button onclick="$('admin-coin-amount-input').value = 5000" class="px-2 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-[10px] text-amber-300 cursor-pointer">+5,000</button>
+                  <button onclick="$('admin-coin-amount-input').value = 50000" class="px-2 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-[10px] text-amber-300 cursor-pointer">+50,000</button>
+                  <button onclick="$('admin-coin-amount-input').value = 1000000" class="px-2 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-[10px] text-amber-300 cursor-pointer">+1,000,000</button>
+                </div>
+
+                <!-- Actions -->
+                <div class="grid grid-cols-3 gap-2 pt-2">
+                  <button 
+                    onclick="adminModifyCoins('add')" 
+                    class="py-2.5 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-500 shadow-md cursor-pointer transition-all flex items-center justify-center gap-1.5"
+                  >
+                    <i class="fa-solid fa-plus text-[10px]"></i> Add
+                  </button>
+                  <button 
+                    onclick="adminModifyCoins('deduct')" 
+                    class="py-2.5 rounded-xl text-xs font-bold text-white bg-red-600 hover:bg-red-500 shadow-md cursor-pointer transition-all flex items-center justify-center gap-1.5"
+                  >
+                    <i class="fa-solid fa-minus text-[10px]"></i> Deduct
+                  </button>
+                  <button 
+                    onclick="adminModifyCoins('set')" 
+                    class="py-2.5 rounded-xl text-xs font-bold text-white bg-purple-600 hover:bg-purple-500 shadow-md cursor-pointer transition-all flex items-center justify-center gap-1.5"
+                  >
+                    <i class="fa-solid fa-equals text-[10px]"></i> Set Exact
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 2. Level & XP Override Controls -->
+            <div class="glass-panel rounded-3xl p-6 border border-purple-500/30 space-y-4 bg-purple-950/10">
+              <div class="flex items-center gap-3 pb-3 border-b border-glassBorder">
+                <div class="w-10 h-10 rounded-2xl bg-purple-950/80 border border-purple-500/40 flex items-center justify-center text-accent text-lg">
+                  <i class="fa-solid fa-trophy"></i>
+                </div>
+                <div>
+                  <h4 class="text-sm font-bold text-white font-display">Level &amp; XP Setter</h4>
+                  <p class="text-xs text-slate-400">Override level to 999 or any custom number with instant rank sync</p>
+                </div>
+              </div>
+
+              <div class="space-y-3">
+                <div>
+                  <label class="block text-[11px] font-bold uppercase text-slate-300 mb-1">Set Level (1 to 999)</label>
+                  <div class="flex items-center gap-2">
+                    <input 
+                      id="admin-level-override-input" 
+                      type="number" 
+                      min="1" 
+                      max="999" 
+                      value="50" 
+                      class="flex-1 p-2.5 text-xs bg-[#07050e] border border-purple-500/40 rounded-xl text-white focus:outline-none focus:border-purple-400"
+                    />
+                    <button 
+                      onclick="adminOverrideLevel()" 
+                      class="px-4 py-2.5 rounded-xl text-xs font-bold text-white bg-purple-600 hover:bg-purple-500 shadow-accent-glow cursor-pointer transition-all shrink-0"
+                    >
+                      Override Level
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <label class="block text-[11px] font-bold uppercase text-slate-300 mb-1">Add XP Amount</label>
+                  <div class="flex items-center gap-2">
+                    <input 
+                      id="admin-xp-add-input" 
+                      type="number" 
+                      min="1" 
+                      value="500" 
+                      class="flex-1 p-2.5 text-xs bg-[#07050e] border border-purple-500/40 rounded-xl text-white focus:outline-none focus:border-purple-400"
+                    />
+                    <button 
+                      onclick="adminAddXP()" 
+                      class="px-4 py-2.5 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-500 cursor-pointer transition-all shrink-0"
+                    >
+                      Add XP
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Quick Presets -->
+                <div class="flex items-center gap-2 flex-wrap pt-1">
+                  <span class="text-[10px] text-slate-400 uppercase font-mono mr-1">Ranks:</span>
+                  <button onclick="$('admin-level-override-input').value = 1; adminOverrideLevel();" class="px-2 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-[10px] text-slate-300 cursor-pointer">Lv 1</button>
+                  <button onclick="$('admin-level-override-input').value = 10; adminOverrideLevel();" class="px-2 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-[10px] text-slate-300 cursor-pointer">Lv 10</button>
+                  <button onclick="$('admin-level-override-input').value = 100; adminOverrideLevel();" class="px-2 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-[10px] text-accent cursor-pointer">Lv 100</button>
+                  <button onclick="$('admin-level-override-input').value = 999; adminOverrideLevel();" class="px-2 py-1 rounded-lg bg-red-950/60 border border-red-500/40 text-[10px] text-red-300 font-bold cursor-pointer">Lv 999 (Max)</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- 3. Free Item & Cosmetic Granter -->
+          <div class="glass-panel rounded-3xl p-6 border border-cyan-500/30 space-y-4 bg-cyan-950/10">
+            <div class="flex items-center gap-3 pb-3 border-b border-glassBorder">
+              <div class="w-10 h-10 rounded-2xl bg-cyan-950/80 border border-cyan-500/40 flex items-center justify-center text-cyan-300 text-lg">
+                <i class="fa-solid fa-gift"></i>
+              </div>
+              <div>
+                <h4 class="text-sm font-bold text-white font-display">Item &amp; Cosmetic Unlocker</h4>
+                <p class="text-xs text-slate-400">Grant any paid shop frame, banner, name glow, or badge directly to user inventory for free</p>
+              </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+              <select 
+                id="admin-grant-item-select" 
+                class="flex-1 p-2.5 text-xs bg-[#07050e] border border-cyan-500/40 rounded-xl text-white focus:outline-none focus:border-cyan-400 cursor-pointer"
+              >
+                <!-- Populated dynamically with all SHOP_CATALOG items -->
+              </select>
+              <button 
+                onclick="adminGrantSelectedItem()" 
+                class="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 shadow-md cursor-pointer transition-all flex items-center justify-center gap-2 shrink-0"
+              >
+                <i class="fa-solid fa-wand-magic-sparkles text-xs"></i>
+                <span>Grant Item to Account</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==================================================== -->
+        <!-- SUB-PANEL 3: LIVE BROADCASTS & CHAT ALERTS          -->
+        <!-- ==================================================== -->
+        <div id="admin-panel-broadcasts" class="space-y-6 hidden">
+          
+          <!-- 1. Global Announcement Banner Broadcast -->
+          <div class="glass-panel rounded-3xl p-6 border border-pink-500/30 space-y-4 bg-pink-950/10">
+            <div class="flex items-center justify-between pb-3 border-b border-glassBorder">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-pink-950/80 border border-pink-500/40 flex items-center justify-center text-neonPink text-lg">
+                  <i class="fa-solid fa-bullhorn"></i>
+                </div>
+                <div>
+                  <h4 class="text-sm font-bold text-white font-display">Site-Wide Announcement Banner</h4>
+                  <p class="text-xs text-slate-400">Transmits a real-time banner across browser tabs for all visitors</p>
+                </div>
+              </div>
+              <span id="admin-banner-active-pill" class="hidden px-2.5 py-1 rounded-full text-[10px] font-mono font-bold bg-pink-500/20 text-pink-300 border border-pink-500/40">
+                Banner Active
+              </span>
+            </div>
+
+            <div class="space-y-3">
+              <div>
+                <label class="block text-[11px] font-bold uppercase text-slate-300 mb-1">Announcement Message</label>
+                <textarea 
+                  id="admin-announcement-input" 
+                  rows="2" 
+                  placeholder="e.g. ⚡ 2x Stardust &amp; XP Event is now live! Watch anime to earn double rewards." 
+                  class="w-full p-3 text-xs bg-[#07050e] border border-pink-500/30 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-pink-400 resize-none"
+                ></textarea>
+              </div>
+
+              <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                <div class="flex items-center gap-2">
+                  <span class="text-xs text-slate-400">Style:</span>
+                  <select id="admin-announcement-type-select" class="p-2 text-xs bg-[#07050e] border border-white/10 rounded-xl text-white cursor-pointer">
+                    <option value="alert">Critical System Alert (Red)</option>
+                    <option value="event">Special Event / Bonus (Gold)</option>
+                    <option value="notice">General Transmission (Purple)</option>
+                    <option value="update">Galactic Patch Update (Cyan)</option>
+                  </select>
+                </div>
+                <div class="flex items-center gap-2">
+                  <button 
+                    onclick="adminClearAnnouncement()" 
+                    class="px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 transition-all cursor-pointer"
+                  >
+                    Clear Banner
+                  </button>
+                  <button 
+                    onclick="adminPublishAnnouncement()" 
+                    class="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 shadow-md transition-all cursor-pointer flex items-center gap-2"
+                  >
+                    <i class="fa-solid fa-satellite-dish text-xs"></i>
+                    <span>Broadcast Live Banner</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. System Broadcast in Global Chat -->
+          <div class="glass-panel rounded-3xl p-6 border border-electricCyan/30 space-y-4 bg-cyan-950/10">
+            <div class="flex items-center gap-3 pb-3 border-b border-glassBorder">
+              <div class="w-10 h-10 rounded-2xl bg-cyan-950/80 border border-electricCyan/40 flex items-center justify-center text-electricCyan text-lg">
+                <i class="fa-solid fa-comments"></i>
+              </div>
+              <div>
+                <h4 class="text-sm font-bold text-white font-display">Official Chat Broadcast [SYSTEM ADMIN]</h4>
+                <p class="text-xs text-slate-400">Injects an official glowing broadcast message into Global Chat</p>
+              </div>
+            </div>
+
+            <div class="space-y-3">
+              <div>
+                <label class="block text-[11px] font-bold uppercase text-slate-300 mb-1">Broadcast Message Body</label>
+                <textarea 
+                  id="admin-chat-broadcast-input" 
+                  rows="2" 
+                  placeholder="e.g. [Soranix Command] Server optimization complete. Enjoy buffer-free high-speed anime streaming!" 
+                  class="w-full p-3 text-xs bg-[#07050e] border border-cyan-500/30 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 resize-none"
+                ></textarea>
+              </div>
+
+              <div class="flex items-center justify-between gap-3 flex-wrap">
+                <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                  <span>Will be tagged as <strong class="text-red-400 font-mono">[SYSTEM ADMIN]</strong></span>
+                </div>
+                <button 
+                  onclick="adminSendChatBroadcast()" 
+                  class="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 shadow-md transition-all cursor-pointer flex items-center gap-2"
+                >
+                  <i class="fa-solid fa-paper-plane text-xs"></i>
+                  <span>Send Chat Broadcast</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ==================================================== -->
+        <!-- SUB-PANEL 4: PLATFORM SETTINGS & MAINTENANCE        -->
+        <!-- ==================================================== -->
+        <div id="admin-panel-platform" class="space-y-6 hidden">
+          
+          <!-- 1. Maintenance Mode Switch -->
+          <div class="glass-panel rounded-3xl p-6 border border-red-500/30 space-y-4 bg-red-950/10">
+            <div class="flex items-center justify-between pb-3 border-b border-glassBorder">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-red-950/80 border border-red-500/40 flex items-center justify-center text-red-400 text-lg">
+                  <i class="fa-solid fa-wrench"></i>
+                </div>
+                <div>
+                  <h4 class="text-sm font-bold text-white font-display">Platform Maintenance Mode</h4>
+                  <p class="text-xs text-slate-400">When enabled, non-admin visitors and guests see the full maintenance guard screen</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <span id="admin-maintenance-switch-label" class="text-xs font-bold font-mono text-emerald-400">NORMAL OPERATION</span>
+                <button 
+                  id="admin-maintenance-toggle-btn"
+                  onclick="adminToggleMaintenanceMode()" 
+                  class="px-4 py-2 rounded-xl text-xs font-bold transition-all bg-emerald-950 border border-emerald-500/40 text-emerald-300 hover:scale-105 cursor-pointer"
+                >
+                  Enable Maintenance
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-bold uppercase text-slate-300 mb-1">Maintenance Display Reason</label>
+              <input 
+                id="admin-maintenance-reason-input" 
+                type="text" 
+                value="Soranix engineers are conducting scheduled upgrades across galactic relay nodes. Access will be restored shortly." 
+                class="w-full p-2.5 text-xs bg-[#07050e] border border-red-500/30 rounded-xl text-white focus:outline-none focus:border-red-400"
+              />
+            </div>
+          </div>
+
+          <!-- 2. Watch-Time Rewards Multiplier -->
+          <div class="glass-panel rounded-3xl p-6 border border-amber-500/30 space-y-4 bg-amber-950/10">
+            <div class="flex items-center gap-3 pb-3 border-b border-glassBorder">
+              <div class="w-10 h-10 rounded-2xl bg-amber-950/80 border border-amber-500/40 flex items-center justify-center text-solarGold text-lg">
+                <i class="fa-solid fa-bolt"></i>
+              </div>
+              <div>
+                <h4 class="text-sm font-bold text-white font-display">Watch-Time Reward Multiplier</h4>
+                <p class="text-xs text-slate-400">Adjust the Stardust Coins and XP awarded every 5 minutes during anime watch sessions</p>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-3 flex-wrap">
+              <button 
+                id="admin-mult-1x" 
+                onclick="adminSetMultiplier(1)" 
+                class="flex-1 py-3 px-4 rounded-2xl text-xs font-bold border transition-all cursor-pointer text-center bg-purple-600 border-purple-400 text-white shadow-md"
+              >
+                <div class="text-sm font-display font-black">1.0x Standard</div>
+                <div class="text-[10px] opacity-80 mt-0.5">+50 Coins &bull; +50 XP</div>
+              </button>
+              <button 
+                id="admin-mult-2x" 
+                onclick="adminSetMultiplier(2)" 
+                class="flex-1 py-3 px-4 rounded-2xl text-xs font-bold border transition-all cursor-pointer text-center bg-white/5 border-white/10 text-slate-300 hover:text-white"
+              >
+                <div class="text-sm font-display font-black text-solarGold">2.0x Double</div>
+                <div class="text-[10px] opacity-80 mt-0.5">+100 Coins &bull; +100 XP</div>
+              </button>
+              <button 
+                id="admin-mult-3x" 
+                onclick="adminSetMultiplier(3)" 
+                class="flex-1 py-3 px-4 rounded-2xl text-xs font-bold border transition-all cursor-pointer text-center bg-white/5 border-white/10 text-slate-300 hover:text-white"
+              >
+                <div class="text-sm font-display font-black text-neonPink">3.0x Turbo</div>
+                <div class="text-[10px] opacity-80 mt-0.5">+150 Coins &bull; +150 XP</div>
+              </button>
+              <button 
+                id="admin-mult-5x" 
+                onclick="adminSetMultiplier(5)" 
+                class="flex-1 py-3 px-4 rounded-2xl text-xs font-bold border transition-all cursor-pointer text-center bg-white/5 border-white/10 text-slate-300 hover:text-white"
+              >
+                <div class="text-sm font-display font-black text-red-400">5.0x Ultra</div>
+                <div class="text-[10px] opacity-80 mt-0.5">+250 Coins &bull; +250 XP</div>
+              </button>
+            </div>
+          </div>
+
+          <!-- 3. One-Click Global Chat History Purge -->
+          <div class="glass-panel rounded-3xl p-6 border border-red-500/30 space-y-4 bg-red-950/15">
+            <div class="flex items-center justify-between pb-3 border-b border-glassBorder flex-wrap gap-3">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-red-950/80 border border-red-500/40 flex items-center justify-center text-red-400 text-lg">
+                  <i class="fa-solid fa-trash-can"></i>
+                </div>
+                <div>
+                  <h4 class="text-sm font-bold text-white font-display">One-Click Global Chat Purge</h4>
+                  <p class="text-xs text-slate-400">Instantly wipes all messages from the Cosmic Global Chat across all active tabs</p>
+                </div>
+              </div>
+              <button 
+                onclick="adminPurgeGlobalChat()" 
+                class="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-red-600 hover:bg-red-500 shadow-[0_0_20px_rgba(239,68,68,0.35)] hover:scale-105 active:scale-95 transition-all cursor-pointer flex items-center gap-2"
+              >
+                <i class="fa-solid fa-trash-can text-xs"></i>
+                <span>Purge All Global Chat</span>
+              </button>
+            </div>
+            <p class="text-[11px] text-slate-400">
+              Note: This action clears the shared message history immediately and transmits a storage update to keep global chat completely clean and synchronized.
+            </p>
+          </div>
+
+        </div>
+
+      </section>
+
       <!-- Bottom Footer -->
       <footer class="mt-auto w-full py-6 px-4 sm:px-8 border-t border-glassBorder glass-panel flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
         <div class="flex items-center gap-2">
@@ -2155,7 +2823,7 @@
       <button 
         type="button" 
         onclick="triggerFirebaseGoogleLogin()" 
-        class="w-full flex items-center justify-center gap-3 py-2.5 px-4 text-xs font-semibold text-slate-200 bg-[#07050e]/90 border border-slate-700/80 rounded-xl hover:bg-[#110B22] hover:border-purple-500/50 transition-all cursor-pointer shadow-md mb-4"
+        class="w-full flex items-center justify-center gap-3 py-2.5 px-4 text-xs font-semibold text-slate-200 bg-[#07050e]/90 border border-slate-700/80 rounded-xl hover:bg-[#110B22] hover:border-purple-500/50 transition-all cursor-pointer shadow-md mb-2.5"
       >
         <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24">
           <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -2164,6 +2832,17 @@
           <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
         </svg>
         <span>Sign in with Google</span>
+      </button>
+
+      <!-- Direct Owner Login Shortcut -->
+      <button 
+        type="button" 
+        onclick="quickLoginAsOwner()" 
+        class="w-full flex items-center justify-center gap-2 py-2 px-3 text-xs font-bold text-red-200 bg-red-950/40 hover:bg-red-950/70 border border-red-500/30 rounded-xl transition-all cursor-pointer shadow-sm mb-4"
+        title="Owner Clearance for jaydentorru4@gmail.com"
+      >
+        <i class="fa-solid fa-crown text-solarGold text-[11px]"></i>
+        <span>Log in as Owner (jaydentorru4@gmail.com)</span>
       </button>
 
       <!-- Guest Entry Option -->
@@ -2527,6 +3206,42 @@
     const GLOBAL_CHAT_KEY = 'soranix_global_chat';
     const DM_THREADS_KEY = 'soranix_dm_threads';
     const HIDE_GLOBAL_CHAT_KEY = 'soranix_hide_global_chat';
+    const ADMIN_CONFIG_KEY = 'soranix_admin_config';
+
+    // Administrator Whitelist & Privileges
+    const ADMIN_EMAILS = ['jaydentorru4@gmail.com'];
+    const ADMIN_USERNAMES = ['owner', 'admin', 'jaydentorru', 'jayden'];
+
+    function getAdminConfig() {
+      try {
+        const raw = localStorage.getItem(ADMIN_CONFIG_KEY);
+        if (raw) return JSON.parse(raw);
+      } catch (e) {}
+      return {
+        maintenanceMode: false,
+        maintenanceReason: 'Soranix engineers are conducting scheduled upgrades across galactic relay nodes. Access will be restored shortly.',
+        announcementBanner: null, // { text, type, active: true, time }
+        watchMultiplier: 1.0
+      };
+    }
+
+    function saveAdminConfig(cfg) {
+      try {
+        localStorage.setItem(ADMIN_CONFIG_KEY, JSON.stringify(cfg));
+      } catch (e) {
+        console.warn('Admin config save error:', e);
+      }
+    }
+
+    function checkIsAdmin(u) {
+      if (!u) return false;
+      if (u.isAdmin === true) return true;
+      const email = (u.email || '').trim().toLowerCase();
+      const username = (u.username || '').trim().toLowerCase();
+      if (ADMIN_EMAILS.includes(email)) return true;
+      if (ADMIN_USERNAMES.includes(username)) return true;
+      return false;
+    }
 
     function getUsersDB() {
       try {
@@ -2646,25 +3361,33 @@
       return `Level ${lvl} Galactic Champion`;
     }
 
-    // Default Starting User Factory (Zeroed Initial State)
+    // Default Starting User Factory (Zeroed Initial State, Admin/Owner Support)
     function createInitialUser(username, email = '', password = '') {
+      const isOwner = checkIsAdmin({ username, email });
       return {
         username: username,
         email: email,
         password: password,
-        level: 1,
-        xp: 0,
-        stardust: 0,
-        animeWatched: 0,
-        episodesWatched: 0,
+        level: isOwner ? 999 : 1,
+        xp: isOwner ? 99900 : 0,
+        stardust: isOwner ? 999999 : 0,
+        animeWatched: isOwner ? 150 : 0,
+        episodesWatched: isOwner ? 1420 : 0,
         favouritesCount: 0,
-        bio: 'Stargazing across infinite nebulae, collecting rare cyber soundtracks, and cataloging forgotten anime classics.',
-        title: 'Level 1 Novice Voyager',
-        equippedFrame: 'galaxy',
+        bio: isOwner ? 'System Administrator & Soranix Platform Owner. Overseeing deep space anime archives.' : 'Stargazing across infinite nebulae, collecting rare cyber soundtracks, and cataloging forgotten anime classics.',
+        title: isOwner ? 'System Administrator / Owner' : 'Level 1 Novice Voyager',
+        isAdmin: isOwner,
+        isBanned: false,
+        bannedReason: '',
+        mutedUntil: 0,
+        ipSessionLog: '192.168.1.104 • Linux Chrome • Active Session',
+        equippedFrame: isOwner ? 'void' : 'galaxy',
         equippedBanner: null,
-        equippedNameGlow: null,
-        equippedChatBadge: null,
-        inventory: ['frame_galaxy', 'theme_violet', 'audio_coin'],
+        equippedNameGlow: isOwner ? 'rainbow' : null,
+        equippedChatBadge: isOwner ? 'badge_soranix_admin' : null,
+        inventory: isOwner ? 
+          ['frame_galaxy', 'frame_void', 'frame_crown', 'frame_cybergrid', 'theme_violet', 'audio_coin', 'badge_soranix_admin'] : 
+          ['frame_galaxy', 'theme_violet', 'audio_coin'],
         avatarDataUrl: null,
         bannerDataUrl: null,
         watchSecondsTotal: 0,
@@ -2679,7 +3402,7 @@
     // Application Master State
     const AppState = {
       currentView: 'splash', // 'splash' or 'dashboard'
-      currentTab: 'home',    // 'home', 'profile', 'friends', 'favorites', 'rewards', 'shop'
+      currentTab: 'home',    // 'home', 'profile', 'friends', 'favorites', 'rewards', 'shop', 'admin'
       isGuest: true,
       currentUserKey: null,
       authModalMode: 'login', // 'login' or 'signup'
@@ -2702,6 +3425,10 @@
       shopCategory: 'all',
       shopOwnership: 'all',
       shopSearch: '',
+      // Admin Console State
+      adminSubTab: 'users',
+      adminUsersStatusFilter: 'all',
+      adminSelectedEditorUserKey: null,
       // Watch-time Reward Engine State
       isWatchingAnime: false,
       watch: {
@@ -2725,10 +3452,22 @@
       // Cleanse any stale mock/seeded dummy messages from global chat
       getGlobalChatMessages();
 
+      // Seed default Owner account if missing so owner can instantly log in
+      const users = getUsersDB();
+      if (!users['jaydentorru']) {
+        users['jaydentorru'] = createInitialUser('JaydenTorru', 'jaydentorru4@gmail.com', 'admin123');
+        users['jaydentorru'].isAdmin = true;
+        users['jaydentorru'].title = 'System Administrator / Owner';
+        saveUsersDB(users);
+      }
+
+      // Check active announcement banner & maintenance mode
+      renderAnnouncementBannerUI();
+      updateMaintenanceGuardUI();
+
       const activeSession = getActiveSession();
 
       if (activeSession && activeSession.username) {
-        const users = getUsersDB();
         const userKey = activeSession.username.toLowerCase();
 
         if (activeSession.isGuest) {
@@ -2740,6 +3479,12 @@
           AppState.isGuest = false;
           AppState.currentUserKey = userKey;
           AppState.user = { ...createInitialUser(users[userKey].username), ...users[userKey] };
+          
+          if (checkIsAdmin(AppState.user)) {
+            AppState.user.isAdmin = true;
+            AppState.user.title = 'System Administrator / Owner';
+          }
+
           if (AppState.user.theme) {
             setCosmicTheme(AppState.user.theme, false);
           }
@@ -2806,6 +3551,12 @@
     // 3. DASHBOARD TABS SWITCHER
     // ----------------------------------------------------
     function switchDashboardTab(tabName) {
+      // Access Guard: protect admin tab
+      if (tabName === 'admin' && (AppState.isGuest || !checkIsAdmin(AppState.user))) {
+        openAdminTab();
+        return;
+      }
+
       AppState.currentTab = tabName;
 
       const tabs = [
@@ -2814,7 +3565,8 @@
         { name: 'friends', el: $('tab-view-friends') },
         { name: 'favorites', el: $('tab-view-favorites') },
         { name: 'rewards', el: $('tab-view-rewards') },
-        { name: 'shop', el: $('tab-view-shop') }
+        { name: 'shop', el: $('tab-view-shop') },
+        { name: 'admin', el: $('tab-view-admin') }
       ];
 
       tabs.forEach(t => {
@@ -2834,7 +3586,8 @@
           friends: 'FRIENDS & TRANSMISSIONS',
           favorites: 'FAVOURITED ANIME',
           rewards: 'DAILY REWARDS TRACK',
-          shop: 'COSMIC SHOP'
+          shop: 'COSMIC SHOP',
+          admin: 'ADMIN & OWNER CONTROL CENTER'
         };
         breadcrumb.textContent = labels[tabName] || tabName.toUpperCase();
       }
@@ -2845,15 +3598,24 @@
         friends: $('nav-tab-btn-friends'),
         favorites: $('nav-tab-btn-favorites'),
         rewards: $('nav-tab-btn-rewards'),
-        shop: $('nav-tab-btn-shop')
+        shop: $('nav-tab-btn-shop'),
+        admin: $('nav-tab-btn-admin')
       };
 
       Object.entries(btnMap).forEach(([k, btn]) => {
         if (!btn) return;
         if (k === tabName) {
-          btn.className = 'sidebar-tab-btn w-11 h-11 rounded-2xl flex items-center justify-center text-white bg-purple-600 shadow-accent-glow transition-all cursor-pointer relative';
+          if (k === 'admin') {
+            btn.className = 'sidebar-tab-btn w-11 h-11 rounded-2xl flex items-center justify-center text-white bg-red-600 shadow-[0_0_20px_rgba(239,68,68,0.4)] transition-all cursor-pointer relative';
+          } else {
+            btn.className = 'sidebar-tab-btn w-11 h-11 rounded-2xl flex items-center justify-center text-white bg-purple-600 shadow-accent-glow transition-all cursor-pointer relative';
+          }
         } else {
-          btn.className = 'sidebar-tab-btn w-11 h-11 rounded-2xl flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all cursor-pointer relative';
+          if (k === 'admin') {
+            btn.className = 'sidebar-tab-btn w-11 h-11 rounded-2xl flex items-center justify-center text-red-400/70 hover:text-red-300 hover:bg-red-500/10 border border-transparent hover:border-red-500/30 transition-all cursor-pointer relative';
+          } else {
+            btn.className = 'sidebar-tab-btn w-11 h-11 rounded-2xl flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all cursor-pointer relative';
+          }
         }
       });
 
@@ -2865,9 +3627,147 @@
         renderDailyRewardsUI();
       } else if (tabName === 'shop') {
         renderShopCatalog();
+      } else if (tabName === 'admin') {
+        renderAdminDashboard();
       }
 
       window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function openAdminTab() {
+      if (AppState.isGuest || !checkIsAdmin(AppState.user)) {
+        // Show Access Denied Guard Modal!
+        const deniedModal = $('admin-access-denied-modal');
+        const userLabel = $('access-denied-current-user');
+        if (userLabel) {
+          userLabel.textContent = AppState.isGuest ? 'Guest Explorer' : AppState.user.username;
+        }
+        if (deniedModal) {
+          deniedModal.classList.remove('hidden');
+          deniedModal.classList.add('flex');
+        }
+        SoranixAudio.play('sword');
+        showToast('Access Denied: System Administrator privileges required.', 'error');
+        return;
+      }
+
+      if (AppState.currentView === 'splash') {
+        enterDashboard('admin');
+      } else {
+        switchDashboardTab('admin');
+      }
+      showToast('Admin Control Station active &bull; System Owner', 'success');
+    }
+
+    function closeAdminAccessDeniedModal() {
+      const modal = $('admin-access-denied-modal');
+      if (modal) {
+        modal.classList.remove('flex');
+        modal.classList.add('hidden');
+      }
+    }
+
+    function quickLoginAsOwner() {
+      closeAuthModal();
+      closeAdminAccessDeniedModal();
+      const users = getUsersDB();
+      let ownerUser = users['jaydentorru'];
+      if (!ownerUser) {
+        ownerUser = createInitialUser('JaydenTorru', 'jaydentorru4@gmail.com', 'admin123');
+        ownerUser.isAdmin = true;
+        ownerUser.title = 'System Administrator / Owner';
+        users['jaydentorru'] = ownerUser;
+        saveUsersDB(users);
+      }
+      ownerUser.isAdmin = true;
+      ownerUser.title = 'System Administrator / Owner';
+      users['jaydentorru'] = ownerUser;
+      saveUsersDB(users);
+
+      AppState.isGuest = false;
+      AppState.currentUserKey = 'jaydentorru';
+      AppState.user = ownerUser;
+      setActiveSession({ username: ownerUser.username, isGuest: false });
+
+      updateViewableProfileUI();
+      enterDashboard('admin');
+      showToast('Authenticated as Owner (jaydentorru4@gmail.com)! Administrator clearance granted.', 'success');
+    }
+
+    function renderAnnouncementBannerUI() {
+      const banner = $('global-admin-announcement-banner');
+      const textEl = $('global-announcement-text');
+      const badgeText = $('global-announcement-badge-text');
+      const cfg = getAdminConfig();
+
+      if (banner && textEl) {
+        if (cfg.announcementBanner && cfg.announcementBanner.active && cfg.announcementBanner.text) {
+          textEl.textContent = cfg.announcementBanner.text;
+          if (badgeText) {
+            const types = {
+              alert: 'System Alert',
+              event: 'Special Event',
+              notice: 'Notice',
+              update: 'Cosmic Update'
+            };
+            badgeText.textContent = types[cfg.announcementBanner.type] || 'System Alert';
+          }
+          banner.classList.remove('hidden');
+        } else {
+          banner.classList.add('hidden');
+        }
+      }
+    }
+
+    function dismissAnnouncementBanner() {
+      const banner = $('global-admin-announcement-banner');
+      if (banner) banner.classList.add('hidden');
+    }
+
+    function updateMaintenanceGuardUI() {
+      const cfg = getAdminConfig();
+      const guard = $('maintenance-mode-guard');
+      const bypassBtn = $('maintenance-admin-bypass-btn');
+      const reasonEl = $('maintenance-guard-reason');
+
+      if (reasonEl && cfg.maintenanceReason) {
+        reasonEl.textContent = cfg.maintenanceReason;
+      }
+
+      const isAdmin = !AppState.isGuest && checkIsAdmin(AppState.user);
+      if (bypassBtn) {
+        if (isAdmin) bypassBtn.classList.remove('hidden');
+        else bypassBtn.classList.add('hidden');
+      }
+
+      if (guard) {
+        if (cfg.maintenanceMode && !isAdmin) {
+          guard.classList.remove('hidden');
+          guard.classList.add('flex');
+        } else {
+          guard.classList.remove('flex');
+          guard.classList.add('hidden');
+        }
+      }
+    }
+
+    function checkMaintenanceBypass() {
+      const cfg = getAdminConfig();
+      updateMaintenanceGuardUI();
+      if (!cfg.maintenanceMode) {
+        showToast('Maintenance completed. Platform online!', 'success');
+      } else {
+        showToast('Platform maintenance is still ongoing.', 'info');
+      }
+    }
+
+    function bypassMaintenanceAsAdmin() {
+      const guard = $('maintenance-mode-guard');
+      if (guard) {
+        guard.classList.remove('flex');
+        guard.classList.add('hidden');
+      }
+      openAdminTab();
     }
 
     // ----------------------------------------------------
@@ -3014,9 +3914,20 @@
           showToast('No account found with this username. Please Sign Up.', 'error');
           return;
         }
+        if (existing.isBanned) {
+          showToast(`Account Suspended: This account has been banned by Administrator (${existing.bannedReason || 'Violation of terms'}).`, 'error');
+          return;
+        }
         if (existing.password && existing.password !== passwordInput) {
           showToast('Incorrect password for this account.', 'error');
           return;
+        }
+
+        if (checkIsAdmin(existing)) {
+          existing.isAdmin = true;
+          existing.title = 'System Administrator / Owner';
+          existing.level = Math.max(existing.level || 1, 999);
+          existing.stardust = Math.max(existing.stardust || 0, 999999);
         }
 
         AppState.isGuest = false;
@@ -3099,9 +4010,11 @@
         if (AppState.user.currentCycleSeconds >= 300) {
           AppState.user.currentCycleSeconds = 0;
 
-          // Award +50 Stardust Coins & +50 XP per 5-minute block
-          const earnedCoins = 50;
-          const earnedXP = 50;
+          // Award Stardust Coins & XP per 5-minute block with Admin Multiplier support
+          const cfg = getAdminConfig();
+          const mult = cfg.watchMultiplier || 1.0;
+          const earnedCoins = Math.round(50 * mult);
+          const earnedXP = Math.round(50 * mult);
 
           AppState.user.stardust = (AppState.user.stardust || 0) + earnedCoins;
           AppState.user.xp = (AppState.user.xp || 0) + earnedXP;
@@ -3363,6 +4276,40 @@
       if (profileFavCount) profileFavCount.textContent = 0;
       if (sidebarFavBadge) sidebarFavBadge.classList.add('hidden');
       if (flyoutFavBadge) flyoutFavBadge.textContent = '0';
+
+      // Admin & Owner Authority Badges & Pulse
+      const isAdmin = !AppState.isGuest && checkIsAdmin(AppState.user);
+      const headerAdminPill = $('header-admin-pill');
+      const sidebarAdminPulse = $('sidebar-admin-pulse');
+      const gearAdminBadge = $('gear-admin-badge');
+
+      if (headerAdminPill) {
+        if (isAdmin) {
+          headerAdminPill.classList.remove('hidden');
+          headerAdminPill.classList.add('flex');
+        } else {
+          headerAdminPill.classList.remove('flex');
+          headerAdminPill.classList.add('hidden');
+        }
+      }
+
+      if (sidebarAdminPulse) {
+        if (isAdmin) {
+          sidebarAdminPulse.classList.remove('hidden');
+        } else {
+          sidebarAdminPulse.classList.add('hidden');
+        }
+      }
+
+      if (gearAdminBadge) {
+        if (isAdmin) {
+          gearAdminBadge.textContent = 'OWNER';
+          gearAdminBadge.className = 'ml-auto text-[9px] px-2 py-0.5 rounded-full bg-red-950/80 text-red-300 border border-red-500/40 font-mono font-bold';
+        } else {
+          gearAdminBadge.textContent = 'LOCKED';
+          gearAdminBadge.className = 'ml-auto text-[9px] px-2 py-0.5 rounded-full bg-white/10 text-slate-400 font-mono';
+        }
+      }
 
       renderDailyRewardsUI();
       if (!AppState.isGuest) {
@@ -4667,8 +5614,33 @@
       }
 
       container.innerHTML = msgs.map(m => {
-        const isSelf = !AppState.isGuest && m.sender.toLowerCase() === AppState.user.username.toLowerCase();
         const safeText = parseSpoilers(m.message);
+
+        // Official System Broadcast Message
+        if (m.isSystemAdmin || m.sender === 'SYSTEM BROADCAST') {
+          return `
+            <div class="glass-card rounded-2xl p-3.5 border-2 border-red-500/60 bg-gradient-to-r from-red-950/40 via-purple-950/40 to-indigo-950/40 shadow-[0_0_25px_rgba(239,68,68,0.25)] space-y-2">
+              <div class="flex items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-red-400 shadow-[0_0_8px_#ef4444] animate-ping"></span>
+                  <span class="font-extrabold text-xs text-red-200 font-display uppercase tracking-wider flex items-center gap-1.5">
+                    <i class="fa-solid fa-crown text-solarGold text-[10px]"></i>
+                    <span>SYSTEM BROADCAST</span>
+                  </span>
+                  <span class="px-2 py-0.5 rounded-full text-[9px] font-mono font-black uppercase bg-red-600/40 text-red-200 border border-red-500/60 shadow-sm">
+                    ADMIN
+                  </span>
+                </div>
+                <span class="text-[10px] text-red-300/70 font-mono shrink-0">${m.timestamp || ''}</span>
+              </div>
+              <p class="text-xs text-white font-medium pl-3 border-l-2 border-red-500 leading-relaxed break-words">
+                ${safeText}
+              </p>
+            </div>
+          `;
+        }
+
+        const isSelf = !AppState.isGuest && m.sender.toLowerCase() === AppState.user.username.toLowerCase();
 
         return `
           <div class="glass-card rounded-2xl p-3 border border-white/5 hover:border-purple-500/30 transition-all space-y-1.5">
@@ -4697,6 +5669,16 @@
                       ${m.senderTitle}
                     </span>
                   ` : ''}
+                  ${m.isAdmin ? `
+                    <span class="text-[9px] px-1.5 py-0.2 rounded bg-red-950/80 text-red-300 border border-red-500/30 font-bold font-mono">
+                      ADMIN
+                    </span>
+                  ` : ''}
+                  ${m.isMuted ? `
+                    <span class="text-[9px] px-1.5 py-0.2 rounded bg-amber-950/80 text-amber-400 font-mono">
+                      MUTED
+                    </span>
+                  ` : ''}
                 </div>
               </div>
 
@@ -4721,20 +5703,33 @@
         return;
       }
 
+      if (AppState.user.isBanned) {
+        showToast('Chat Blocked: Your account has been suspended by Administrator.', 'error');
+        return;
+      }
+
+      if (AppState.user.mutedUntil && AppState.user.mutedUntil > Date.now()) {
+        const remainingMin = Math.ceil((AppState.user.mutedUntil - Date.now()) / 60000);
+        showToast(`Chat Muted: You are timed out by Administrator. (${remainingMin}m remaining)`, 'error');
+        return;
+      }
+
       const input = $('global-chat-input');
       if (!input) return;
       const text = input.value.trim();
       if (!text) return;
 
+      const isOwner = checkIsAdmin(AppState.user);
       const msgs = getGlobalChatMessages();
       const newMsg = {
         id: `msg_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
         sender: AppState.user.username,
-        senderTitle: AppState.user.equippedChatBadge || AppState.user.title || 'Novice Voyager',
+        senderTitle: isOwner ? 'System Administrator / Owner' : (AppState.user.equippedChatBadge || AppState.user.title || 'Novice Voyager'),
         senderLevel: AppState.user.level || 1,
         senderAvatar: AppState.user.avatarDataUrl || null,
         senderFrame: AppState.user.equippedFrame || 'galaxy',
         senderGlow: AppState.user.equippedNameGlow || null,
+        isAdmin: isOwner,
         message: text,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         time: Date.now()
@@ -5323,6 +6318,17 @@
       if (AppState.isGuest) return;
       if (!AppState.activeDMFriend) return;
 
+      if (AppState.user.isBanned) {
+        showToast('Direct Transmission Blocked: Your account has been suspended by Administrator.', 'error');
+        return;
+      }
+
+      if (AppState.user.mutedUntil && AppState.user.mutedUntil > Date.now()) {
+        const remainingMin = Math.ceil((AppState.user.mutedUntil - Date.now()) / 60000);
+        showToast(`Direct Transmission Muted: Timed out (${remainingMin}m remaining).`, 'error');
+        return;
+      }
+
       const input = $('dm-chat-input');
       if (!input) return;
       const text = input.value.trim();
@@ -5519,6 +6525,656 @@
     });
 
     // ====================================================
+    // 20. ADMIN & OWNER CONTROL CENTER ENGINE
+    // ====================================================
+    function switchAdminSubTab(tabName) {
+      AppState.adminSubTab = tabName;
+
+      const panels = {
+        users: $('admin-panel-users'),
+        currency: $('admin-panel-currency'),
+        broadcasts: $('admin-panel-broadcasts'),
+        platform: $('admin-panel-platform')
+      };
+
+      const btns = {
+        users: $('admin-tab-btn-users'),
+        currency: $('admin-tab-btn-currency'),
+        broadcasts: $('admin-tab-btn-broadcasts'),
+        platform: $('admin-tab-btn-platform')
+      };
+
+      Object.entries(panels).forEach(([k, panel]) => {
+        if (!panel) return;
+        if (k === tabName) panel.classList.remove('hidden');
+        else panel.classList.add('hidden');
+      });
+
+      Object.entries(btns).forEach(([k, btn]) => {
+        if (!btn) return;
+        if (k === tabName) {
+          btn.className = 'admin-subtab-btn px-4 py-2 rounded-2xl text-xs font-bold transition-all bg-red-600 text-white shadow-md cursor-pointer flex items-center gap-2 shrink-0';
+        } else {
+          btn.className = 'admin-subtab-btn px-4 py-2 rounded-2xl text-xs font-bold transition-all text-slate-400 hover:text-white bg-white/[0.04] hover:bg-white/10 cursor-pointer flex items-center gap-2 shrink-0';
+        }
+      });
+
+      if (tabName === 'users') {
+        renderAdminUsersList();
+      } else if (tabName === 'currency') {
+        initAdminCurrencyEditor();
+      } else if (tabName === 'broadcasts') {
+        initAdminBroadcastsUI();
+      } else if (tabName === 'platform') {
+        initAdminPlatformUI();
+      }
+    }
+
+    function renderAdminDashboard() {
+      const users = getUsersDB();
+      const msgs = getGlobalChatMessages();
+      const cfg = getAdminConfig();
+
+      const totalUsersEl = $('admin-stat-total-users');
+      const totalMsgsEl = $('admin-stat-total-msgs');
+      const multEl = $('admin-stat-multiplier');
+      const maintEl = $('admin-stat-maintenance');
+
+      if (totalUsersEl) totalUsersEl.textContent = Object.keys(users).length;
+      if (totalMsgsEl) totalMsgsEl.textContent = msgs.length;
+      if (multEl) multEl.textContent = `${cfg.watchMultiplier || 1.0}x`;
+      if (maintEl) {
+        maintEl.textContent = cfg.maintenanceMode ? 'Maintenance Active' : 'Online';
+        maintEl.className = cfg.maintenanceMode ? 'text-lg font-display font-black text-red-400 mt-0.5' : 'text-lg font-display font-black text-emerald-400 mt-0.5';
+      }
+
+      switchAdminSubTab(AppState.adminSubTab || 'users');
+    }
+
+    function renderAdminUsersList() {
+      const container = $('admin-users-list-container');
+      if (!container) return;
+
+      const users = getUsersDB();
+      const searchInput = $('admin-user-search-input');
+      const query = (searchInput?.value || '').toLowerCase().trim();
+      const filterStatus = AppState.adminUsersStatusFilter || 'all';
+
+      let userList = Object.values(users);
+
+      if (query) {
+        userList = userList.filter(u => {
+          const uname = (u.username || '').toLowerCase();
+          const uemail = (u.email || '').toLowerCase();
+          const utitle = (u.title || '').toLowerCase();
+          return uname.includes(query) || uemail.includes(query) || utitle.includes(query);
+        });
+      }
+
+      if (filterStatus === 'active') {
+        userList = userList.filter(u => !u.isBanned && (!u.mutedUntil || u.mutedUntil <= Date.now()));
+      } else if (filterStatus === 'muted') {
+        userList = userList.filter(u => u.mutedUntil && u.mutedUntil > Date.now());
+      } else if (filterStatus === 'banned') {
+        userList = userList.filter(u => u.isBanned);
+      }
+
+      if (userList.length === 0) {
+        container.innerHTML = `
+          <div class="glass-card rounded-2xl p-8 text-center text-slate-400 space-y-2">
+            <i class="fa-solid fa-user-slash text-2xl text-slate-500"></i>
+            <h4 class="text-sm font-bold text-white">No accounts found</h4>
+            <p class="text-xs text-slate-400">Try adjusting your search query or status filter.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = userList.map(u => {
+        const isOwner = checkIsAdmin(u);
+        const isMuted = u.mutedUntil && u.mutedUntil > Date.now();
+        const remainingMins = isMuted ? Math.ceil((u.mutedUntil - Date.now()) / 60000) : 0;
+        const isBanned = !!u.isBanned;
+
+        let statusPill = `<span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-950 text-emerald-400 border border-emerald-500/40">Active</span>`;
+        if (isBanned) {
+          statusPill = `<span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-red-950 text-red-400 border border-red-500/40">Banned</span>`;
+        } else if (isMuted) {
+          statusPill = `<span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-amber-950 text-amber-300 border border-amber-500/40">Muted (${remainingMins}m left)</span>`;
+        }
+
+        return `
+          <div class="glass-card rounded-2xl p-4 border border-white/5 hover:border-purple-500/30 transition-all flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            
+            <div class="flex items-center gap-3.5 min-w-0">
+              <div class="pfp-frame-container frame-${u.equippedFrame || 'galaxy'} p-0.5 shrink-0 rounded-full">
+                <div class="w-11 h-11 rounded-full bg-gradient-to-tr from-purple-800 to-indigo-600 flex items-center justify-center text-white font-black text-sm overflow-hidden">
+                  ${u.avatarDataUrl ? `<img src="${u.avatarDataUrl}" class="w-full h-full object-cover rounded-full" alt="Avatar" />` : `<span>${(u.username || 'U')[0].toUpperCase()}</span>`}
+                </div>
+              </div>
+
+              <div class="min-w-0">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <h4 class="text-sm font-bold text-white truncate ${u.equippedNameGlow || ''}">${u.username}</h4>
+                  ${isOwner ? `<span class="px-2 py-0.2 rounded-full text-[9px] font-mono font-extrabold bg-red-950 text-red-300 border border-red-500/40">OWNER</span>` : ''}
+                  ${statusPill}
+                </div>
+                <div class="text-[11px] text-slate-400 flex items-center gap-2 mt-0.5 flex-wrap">
+                  <span class="text-slate-300">${u.email || 'No email attached'}</span>
+                  <span>&bull;</span>
+                  <span class="text-purple-300 font-mono">Lv ${u.level || 1}</span>
+                  <span>&bull;</span>
+                  <span class="text-amber-300 font-mono">${(u.stardust || 0).toLocaleString()} Stardust</span>
+                </div>
+                <div class="text-[10px] text-slate-500 font-mono mt-1">
+                  <i class="fa-solid fa-network-wired text-[9px] mr-1"></i> ${u.ipSessionLog || '192.168.1.104 • Linux Chrome • Active'}
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2 flex-wrap w-full md:w-auto justify-end">
+              <button 
+                onclick="adminSelectUserForEditor('${u.username}')" 
+                class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-white/5 hover:bg-white/10 text-slate-200 hover:text-white border border-white/10 transition-all cursor-pointer flex items-center gap-1.5"
+                title="Edit Coins, XP & Level"
+              >
+                <i class="fa-solid fa-pen-to-square text-[11px] text-accent"></i>
+                <span>Edit</span>
+              </button>
+
+              <!-- Timeout / Mute Actions -->
+              ${isMuted ? `
+                <button 
+                  onclick="adminUnmuteUser('${u.username}')" 
+                  class="px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-950/60 hover:bg-amber-950 text-amber-300 border border-amber-500/40 transition-all cursor-pointer flex items-center gap-1.5"
+                >
+                  <i class="fa-solid fa-volume-high text-[11px]"></i>
+                  <span>Unmute</span>
+                </button>
+              ` : `
+                <select 
+                  onchange="if(this.value) { adminMuteUser('${u.username}', parseInt(this.value)); this.value=''; }" 
+                  class="px-2.5 py-1.5 rounded-xl text-xs font-semibold bg-[#07050e] border border-amber-500/30 text-amber-300 focus:outline-none cursor-pointer"
+                >
+                  <option value="" selected disabled>Timeout...</option>
+                  <option value="1">1 Min</option>
+                  <option value="5">5 Mins</option>
+                  <option value="15">15 Mins</option>
+                  <option value="60">1 Hour</option>
+                  <option value="1440">24 Hours</option>
+                </select>
+              `}
+
+              <!-- Ban / Unban Action -->
+              ${!isOwner ? `
+                <button 
+                  onclick="adminToggleBanUser('${u.username}')" 
+                  class="px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${isBanned ? 'bg-emerald-600 hover:bg-emerald-500 text-white' : 'bg-red-950/60 hover:bg-red-900/60 text-red-300 border border-red-500/40'}"
+                >
+                  <i class="fa-solid ${isBanned ? 'fa-user-check' : 'fa-ban'} text-[11px]"></i>
+                  <span>${isBanned ? 'Unban' : 'Ban'}</span>
+                </button>
+              ` : `
+                <span class="px-2.5 py-1 text-[10px] font-mono text-slate-500 italic">Protected</span>
+              `}
+            </div>
+
+          </div>
+        `;
+      }).join('');
+    }
+
+    function filterAdminUsersStatus(status) {
+      AppState.adminUsersStatusFilter = status;
+      ['all', 'active', 'muted', 'banned'].forEach(s => {
+        const btn = $(`admin-filter-status-${s}`);
+        if (!btn) return;
+        if (s === status) {
+          btn.className = 'px-3 py-1.5 rounded-xl text-xs font-bold bg-white/20 text-white cursor-pointer';
+        } else {
+          btn.className = 'px-3 py-1.5 rounded-xl text-xs font-bold text-slate-400 hover:text-white bg-white/[0.04] cursor-pointer';
+        }
+      });
+      renderAdminUsersList();
+    }
+
+    function adminToggleBanUser(username) {
+      const users = getUsersDB();
+      const key = username.toLowerCase();
+      const u = users[key];
+      if (!u) return;
+
+      if (checkIsAdmin(u)) {
+        showToast('System Administrator / Owner accounts cannot be banned.', 'error');
+        return;
+      }
+
+      u.isBanned = !u.isBanned;
+      if (u.isBanned) {
+        u.bannedReason = 'Administrative action by Platform Owner.';
+      } else {
+        u.bannedReason = '';
+      }
+
+      users[key] = u;
+      saveUsersDB(users);
+      renderAdminUsersList();
+      SoranixAudio.play('sword');
+      showToast(`${username} is now ${u.isBanned ? 'BANNED from Soranix' : 'UNBANNED'}.`, u.isBanned ? 'error' : 'success');
+    }
+
+    function adminMuteUser(username, minutes) {
+      const users = getUsersDB();
+      const key = username.toLowerCase();
+      const u = users[key];
+      if (!u) return;
+
+      if (checkIsAdmin(u)) {
+        showToast('System Administrator / Owner cannot be muted.', 'error');
+        return;
+      }
+
+      u.mutedUntil = Date.now() + (minutes * 60 * 1000);
+      users[key] = u;
+      saveUsersDB(users);
+      renderAdminUsersList();
+      SoranixAudio.play('laser');
+      showToast(`${username} has been timed out for ${minutes} minute(s). Chat & DMs suppressed.`, 'info');
+    }
+
+    function adminUnmuteUser(username) {
+      const users = getUsersDB();
+      const key = username.toLowerCase();
+      const u = users[key];
+      if (!u) return;
+
+      u.mutedUntil = 0;
+      users[key] = u;
+      saveUsersDB(users);
+      renderAdminUsersList();
+      showToast(`${username} timeout cleared. Transmission restored.`, 'success');
+    }
+
+    function adminSelectUserForEditor(username) {
+      AppState.adminSelectedEditorUserKey = username.toLowerCase();
+      switchAdminSubTab('currency');
+    }
+
+    function initAdminCurrencyEditor() {
+      const select = $('admin-editor-user-select');
+      const itemSelect = $('admin-grant-item-select');
+      const users = getUsersDB();
+
+      if (select) {
+        select.innerHTML = Object.values(users).map(u => {
+          const isSelected = (AppState.adminSelectedEditorUserKey || AppState.currentUserKey || 'jaydentorru') === u.username.toLowerCase();
+          return `<option value="${u.username.toLowerCase()}" ${isSelected ? 'selected' : ''}>${u.username} (${u.email || 'No email'}) - Lv ${u.level || 1} &bull; ${(u.stardust || 0).toLocaleString()} Coins</option>`;
+        }).join('');
+      }
+
+      if (itemSelect) {
+        itemSelect.innerHTML = SHOP_CATALOG.map(item => {
+          return `<option value="${item.id}">[${item.category.toUpperCase()}] ${item.name} (${item.cost === 0 ? 'FREE' : `${item.cost} Coins`})</option>`;
+        }).join('');
+      }
+
+      handleAdminEditorUserChange();
+    }
+
+    function handleAdminEditorUserChange() {
+      const select = $('admin-editor-user-select');
+      const targetKey = select?.value || AppState.currentUserKey || 'jaydentorru';
+      AppState.adminSelectedEditorUserKey = targetKey;
+      const users = getUsersDB();
+      const targetUser = users[targetKey] || AppState.user;
+      renderAdminEditorTargetCard(targetUser);
+    }
+
+    function loadCurrentUserIntoEditor() {
+      if (AppState.isGuest) {
+        showToast('Guest mode has no persistent account.', 'info');
+        return;
+      }
+      AppState.adminSelectedEditorUserKey = AppState.user.username.toLowerCase();
+      initAdminCurrencyEditor();
+    }
+
+    function renderAdminEditorTargetCard(u) {
+      const container = $('admin-editor-target-card');
+      if (!container || !u) return;
+
+      const isOwner = checkIsAdmin(u);
+      const inventoryCount = (u.inventory || []).length;
+
+      container.innerHTML = `
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div class="flex items-center gap-3.5">
+            <div class="pfp-frame-container frame-${u.equippedFrame || 'galaxy'} p-0.5 shrink-0 rounded-full">
+              <div class="w-14 h-14 rounded-full bg-gradient-to-tr from-purple-800 to-indigo-600 flex items-center justify-center text-white font-black text-base overflow-hidden">
+                ${u.avatarDataUrl ? `<img src="${u.avatarDataUrl}" class="w-full h-full object-cover rounded-full" alt="Avatar" />` : `<span>${(u.username || 'U')[0].toUpperCase()}</span>`}
+              </div>
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h3 class="text-base font-bold text-white ${u.equippedNameGlow || ''}">${u.username}</h3>
+                ${isOwner ? `<span class="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-red-950 text-red-300 border border-red-500/40">OWNER</span>` : ''}
+              </div>
+              <p class="text-xs text-accent font-semibold mt-0.5">${u.title || 'Novice Voyager'}</p>
+              <p class="text-[11px] text-slate-400">${u.email || 'No email attached'}</p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3 text-center w-full sm:w-auto justify-end">
+            <div class="px-3.5 py-2 rounded-xl bg-white/[0.03] border border-white/5">
+              <span class="text-[10px] uppercase font-mono text-slate-400 block">Stardust</span>
+              <span class="text-sm font-bold text-amber-300">${(u.stardust || 0).toLocaleString()}</span>
+            </div>
+            <div class="px-3.5 py-2 rounded-xl bg-white/[0.03] border border-white/5">
+              <span class="text-[10px] uppercase font-mono text-slate-400 block">Level</span>
+              <span class="text-sm font-bold text-purple-300">Lv ${u.level || 1}</span>
+            </div>
+            <div class="px-3.5 py-2 rounded-xl bg-white/[0.03] border border-white/5">
+              <span class="text-[10px] uppercase font-mono text-slate-400 block">Inventory</span>
+              <span class="text-sm font-bold text-cyan-300">${inventoryCount} Items</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function adminModifyCoins(action) {
+      const select = $('admin-editor-user-select');
+      const targetKey = select?.value || AppState.adminSelectedEditorUserKey || 'jaydentorru';
+      const amountInput = $('admin-coin-amount-input');
+      const amount = parseInt(amountInput?.value, 10) || 0;
+
+      const users = getUsersDB();
+      const targetUser = users[targetKey];
+      if (!targetUser) {
+        showToast('Please select a valid user.', 'error');
+        return;
+      }
+
+      if (action === 'add') {
+        targetUser.stardust = (targetUser.stardust || 0) + amount;
+      } else if (action === 'deduct') {
+        targetUser.stardust = Math.max(0, (targetUser.stardust || 0) - amount);
+      } else if (action === 'set') {
+        targetUser.stardust = Math.max(0, amount);
+      }
+
+      users[targetKey] = targetUser;
+      saveUsersDB(users);
+
+      if (!AppState.isGuest && AppState.currentUserKey === targetKey) {
+        AppState.user.stardust = targetUser.stardust;
+        updateViewableProfileUI();
+      }
+
+      renderAdminEditorTargetCard(targetUser);
+      renderAdminUsersList();
+      SoranixAudio.play('coin');
+      showToast(`Stardust coins updated for ${targetUser.username}: ${targetUser.stardust.toLocaleString()} Stardust.`, 'success');
+    }
+
+    function adminOverrideLevel() {
+      const select = $('admin-editor-user-select');
+      const targetKey = select?.value || AppState.adminSelectedEditorUserKey || 'jaydentorru';
+      const lvlInput = $('admin-level-override-input');
+      const newLvl = Math.max(1, Math.min(999, parseInt(lvlInput?.value, 10) || 1));
+
+      const users = getUsersDB();
+      const targetUser = users[targetKey];
+      if (!targetUser) return;
+
+      targetUser.level = newLvl;
+      targetUser.xp = (newLvl - 1) * 100;
+      if (!checkIsAdmin(targetUser)) {
+        targetUser.title = getTitleForLevel(newLvl);
+      } else {
+        targetUser.title = 'System Administrator / Owner';
+      }
+
+      users[targetKey] = targetUser;
+      saveUsersDB(users);
+
+      if (!AppState.isGuest && AppState.currentUserKey === targetKey) {
+        AppState.user.level = targetUser.level;
+        AppState.user.xp = targetUser.xp;
+        AppState.user.title = targetUser.title;
+        updateViewableProfileUI();
+      }
+
+      renderAdminEditorTargetCard(targetUser);
+      renderAdminUsersList();
+      SoranixAudio.play('level_up');
+      showToast(`Level overridden for ${targetUser.username}: Level ${newLvl} (${targetUser.title})!`, 'success');
+    }
+
+    function adminAddXP() {
+      const select = $('admin-editor-user-select');
+      const targetKey = select?.value || AppState.adminSelectedEditorUserKey || 'jaydentorru';
+      const xpInput = $('admin-xp-add-input');
+      const addAmount = Math.max(1, parseInt(xpInput?.value, 10) || 0);
+
+      const users = getUsersDB();
+      const targetUser = users[targetKey];
+      if (!targetUser) return;
+
+      targetUser.xp = (targetUser.xp || 0) + addAmount;
+      const calcLvl = Math.floor(targetUser.xp / 100) + 1;
+      targetUser.level = Math.max(targetUser.level || 1, calcLvl);
+      if (!checkIsAdmin(targetUser)) {
+        targetUser.title = getTitleForLevel(targetUser.level);
+      }
+
+      users[targetKey] = targetUser;
+      saveUsersDB(users);
+
+      if (!AppState.isGuest && AppState.currentUserKey === targetKey) {
+        AppState.user.level = targetUser.level;
+        AppState.user.xp = targetUser.xp;
+        AppState.user.title = targetUser.title;
+        updateViewableProfileUI();
+      }
+
+      renderAdminEditorTargetCard(targetUser);
+      renderAdminUsersList();
+      SoranixAudio.play('level_up');
+      showToast(`Added +${addAmount} XP to ${targetUser.username}! Current Level: ${targetUser.level}.`, 'success');
+    }
+
+    function adminGrantSelectedItem() {
+      const select = $('admin-editor-user-select');
+      const targetKey = select?.value || AppState.adminSelectedEditorUserKey || 'jaydentorru';
+      const itemSelect = $('admin-grant-item-select');
+      const itemId = itemSelect?.value;
+      if (!itemId) {
+        showToast('Please select an item from catalog to grant.', 'error');
+        return;
+      }
+
+      const users = getUsersDB();
+      const targetUser = users[targetKey];
+      if (!targetUser) return;
+
+      if (!targetUser.inventory) targetUser.inventory = [];
+      if (targetUser.inventory.includes(itemId)) {
+        showToast(`${targetUser.username} already owns "${itemId}".`, 'info');
+        return;
+      }
+
+      targetUser.inventory.push(itemId);
+      users[targetKey] = targetUser;
+      saveUsersDB(users);
+
+      if (!AppState.isGuest && AppState.currentUserKey === targetKey) {
+        AppState.user.inventory = targetUser.inventory;
+        updateViewableProfileUI();
+      }
+
+      renderAdminEditorTargetCard(targetUser);
+      SoranixAudio.play('power_up');
+      showToast(`✨ Granted item "${itemId}" to ${targetUser.username} for free!`, 'success');
+    }
+
+    function initAdminBroadcastsUI() {
+      const cfg = getAdminConfig();
+      const pill = $('admin-banner-active-pill');
+      const input = $('admin-announcement-input');
+      const select = $('admin-announcement-type-select');
+
+      if (pill) {
+        if (cfg.announcementBanner && cfg.announcementBanner.active) pill.classList.remove('hidden');
+        else pill.classList.add('hidden');
+      }
+
+      if (cfg.announcementBanner && input) {
+        input.value = cfg.announcementBanner.text || '';
+      }
+      if (cfg.announcementBanner && select) {
+        select.value = cfg.announcementBanner.type || 'alert';
+      }
+    }
+
+    function adminPublishAnnouncement() {
+      const input = $('admin-announcement-input');
+      const select = $('admin-announcement-type-select');
+      const text = input?.value.trim();
+
+      if (!text) {
+        showToast('Please enter an announcement message.', 'error');
+        return;
+      }
+
+      const type = select?.value || 'alert';
+      const cfg = getAdminConfig();
+      cfg.announcementBanner = {
+        text: text,
+        type: type,
+        active: true,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+      saveAdminConfig(cfg);
+      renderAnnouncementBannerUI();
+      initAdminBroadcastsUI();
+      SoranixAudio.play('level_up');
+      showToast('Global Announcement Banner broadcasted across all sessions!', 'success');
+    }
+
+    function adminClearAnnouncement() {
+      const cfg = getAdminConfig();
+      cfg.announcementBanner = null;
+      saveAdminConfig(cfg);
+      renderAnnouncementBannerUI();
+      initAdminBroadcastsUI();
+      showToast('Announcement banner cleared.', 'info');
+    }
+
+    function adminSendChatBroadcast() {
+      const input = $('admin-chat-broadcast-input');
+      if (!input) return;
+      const text = input.value.trim();
+      if (!text) {
+        showToast('Please type a broadcast message body.', 'error');
+        return;
+      }
+
+      const msgs = getGlobalChatMessages();
+      msgs.push({
+        id: `broadcast_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
+        sender: 'SYSTEM BROADCAST',
+        senderTitle: 'System Administrator / Owner',
+        isSystemAdmin: true,
+        message: text,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        time: Date.now()
+      });
+      saveGlobalChatMessages(msgs);
+
+      input.value = '';
+      SoranixAudio.play('level_up');
+      showToast('Official System Broadcast transmitted to Global Chat!', 'success');
+      renderGlobalChatMessages();
+      const countEl = $('admin-stat-total-msgs');
+      if (countEl) countEl.textContent = msgs.length;
+    }
+
+    function initAdminPlatformUI() {
+      const cfg = getAdminConfig();
+      const label = $('admin-maintenance-switch-label');
+      const btn = $('admin-maintenance-toggle-btn');
+      const reasonInput = $('admin-maintenance-reason-input');
+
+      if (label && btn) {
+        if (cfg.maintenanceMode) {
+          label.textContent = 'MAINTENANCE ACTIVE';
+          label.className = 'text-xs font-bold font-mono text-red-400';
+          btn.textContent = 'Disable Maintenance';
+          btn.className = 'px-4 py-2 rounded-xl text-xs font-bold transition-all bg-red-950 border border-red-500/50 text-red-300 hover:scale-105 cursor-pointer';
+        } else {
+          label.textContent = 'NORMAL OPERATION';
+          label.className = 'text-xs font-bold font-mono text-emerald-400';
+          btn.textContent = 'Enable Maintenance';
+          btn.className = 'px-4 py-2 rounded-xl text-xs font-bold transition-all bg-emerald-950 border border-emerald-500/40 text-emerald-300 hover:scale-105 cursor-pointer';
+        }
+      }
+
+      if (reasonInput && cfg.maintenanceReason) {
+        reasonInput.value = cfg.maintenanceReason;
+      }
+
+      // Highlight active multiplier button
+      const activeMult = cfg.watchMultiplier || 1.0;
+      [1, 2, 3, 5].forEach(m => {
+        const multBtn = $(`admin-mult-${m}x`);
+        if (!multBtn) return;
+        if (m === activeMult) {
+          multBtn.className = 'flex-1 py-3 px-4 rounded-2xl text-xs font-bold border transition-all cursor-pointer text-center bg-purple-600 border-purple-400 text-white shadow-md';
+        } else {
+          multBtn.className = 'flex-1 py-3 px-4 rounded-2xl text-xs font-bold border transition-all cursor-pointer text-center bg-white/5 border-white/10 text-slate-300 hover:text-white';
+        }
+      });
+    }
+
+    function adminToggleMaintenanceMode() {
+      const cfg = getAdminConfig();
+      cfg.maintenanceMode = !cfg.maintenanceMode;
+      const reasonInput = $('admin-maintenance-reason-input');
+      if (reasonInput && reasonInput.value.trim()) {
+        cfg.maintenanceReason = reasonInput.value.trim();
+      }
+      saveAdminConfig(cfg);
+      updateMaintenanceGuardUI();
+      initAdminPlatformUI();
+      showToast(`Maintenance Mode ${cfg.maintenanceMode ? 'ENABLED (Platform guarded for non-admins)' : 'DISABLED (Platform restored)'}`, cfg.maintenanceMode ? 'error' : 'success');
+    }
+
+    function adminSetMultiplier(mult) {
+      const cfg = getAdminConfig();
+      cfg.watchMultiplier = mult;
+      saveAdminConfig(cfg);
+      AppState.watch.multiplier = mult;
+      initAdminPlatformUI();
+      const multDisplay = $('admin-stat-multiplier');
+      if (multDisplay) multDisplay.textContent = `${mult}x`;
+      showToast(`Watch-Time Reward Multiplier updated to ${mult}x!`, 'success');
+      SoranixAudio.play('coin');
+    }
+
+    function adminPurgeGlobalChat() {
+      if (!confirm('Are you sure you want to permanently purge all Global Chat history? This will clear the chatroom for everyone immediately.')) {
+        return;
+      }
+      saveGlobalChatMessages([]);
+      renderGlobalChatMessages();
+      const countEl = $('admin-stat-total-msgs');
+      if (countEl) countEl.textContent = '0';
+      showToast('Global chat wiped clean by Administrator.', 'success');
+      SoranixAudio.play('sword');
+    }
+
+    // ====================================================
     // 21. REAL-TIME CROSS-TAB SYNC EVENT LISTENER
     // ====================================================
     window.addEventListener('storage', (e) => {
@@ -5536,6 +7192,13 @@
         if (users[AppState.currentUserKey]) {
           AppState.user = { ...AppState.user, ...users[AppState.currentUserKey] };
           updateViewableProfileUI();
+        }
+      }
+      if (e.key === ADMIN_CONFIG_KEY) {
+        renderAnnouncementBannerUI();
+        updateMaintenanceGuardUI();
+        if (AppState.currentTab === 'admin') {
+          renderAdminDashboard();
         }
       }
     });
@@ -5585,6 +7248,7 @@
         closeBugReportModal();
         closeGearMenu();
         closeDMChatDrawer();
+        closeAdminAccessDeniedModal();
       }
     });
 
@@ -5660,6 +7324,39 @@
     window.markAllNotificationsRead = markAllNotificationsRead;
     window.dismissNotification = dismissNotification;
     window.SoranixAudio = SoranixAudio;
+    // Admin & Owner Control Station
+    window.openAdminTab = openAdminTab;
+    window.closeAdminAccessDeniedModal = closeAdminAccessDeniedModal;
+    window.quickLoginAsOwner = quickLoginAsOwner;
+    window.renderAnnouncementBannerUI = renderAnnouncementBannerUI;
+    window.dismissAnnouncementBanner = dismissAnnouncementBanner;
+    window.updateMaintenanceGuardUI = updateMaintenanceGuardUI;
+    window.checkMaintenanceBypass = checkMaintenanceBypass;
+    window.bypassMaintenanceAsAdmin = bypassMaintenanceAsAdmin;
+    window.switchAdminSubTab = switchAdminSubTab;
+    window.renderAdminDashboard = renderAdminDashboard;
+    window.renderAdminUsersList = renderAdminUsersList;
+    window.filterAdminUsersStatus = filterAdminUsersStatus;
+    window.adminToggleBanUser = adminToggleBanUser;
+    window.adminMuteUser = adminMuteUser;
+    window.adminUnmuteUser = adminUnmuteUser;
+    window.adminSelectUserForEditor = adminSelectUserForEditor;
+    window.initAdminCurrencyEditor = initAdminCurrencyEditor;
+    window.handleAdminEditorUserChange = handleAdminEditorUserChange;
+    window.loadCurrentUserIntoEditor = loadCurrentUserIntoEditor;
+    window.renderAdminEditorTargetCard = renderAdminEditorTargetCard;
+    window.adminModifyCoins = adminModifyCoins;
+    window.adminOverrideLevel = adminOverrideLevel;
+    window.adminAddXP = adminAddXP;
+    window.adminGrantSelectedItem = adminGrantSelectedItem;
+    window.initAdminBroadcastsUI = initAdminBroadcastsUI;
+    window.adminPublishAnnouncement = adminPublishAnnouncement;
+    window.adminClearAnnouncement = adminClearAnnouncement;
+    window.adminSendChatBroadcast = adminSendChatBroadcast;
+    window.initAdminPlatformUI = initAdminPlatformUI;
+    window.adminToggleMaintenanceMode = adminToggleMaintenanceMode;
+    window.adminSetMultiplier = adminSetMultiplier;
+    window.adminPurgeGlobalChat = adminPurgeGlobalChat;
   </script>
 </body>
 </html>
