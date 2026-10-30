@@ -436,6 +436,377 @@
     <div id="blob-tertiary" class="absolute -bottom-32 left-1/4 w-[30rem] h-[30rem] rounded-full bg-cyan-600/10 blur-[130px] transition-colors duration-700"></div>
   </div>
 
+  <!-- ========================================================== -->
+  <!-- MODAL 4: ANIME DETAIL & TRAILER PREVIEW MODAL              -->
+  <!-- ========================================================== -->
+  <div id="anime-detail-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-3 sm:p-6 bg-black/85 backdrop-blur-2xl overflow-y-auto">
+    <div class="w-full max-w-4xl glass-card rounded-3xl overflow-hidden relative shadow-2xl border border-glassBorder my-auto transition-all duration-300">
+      
+      <!-- Close Button -->
+      <button onclick="closeAnimeDetailModal()" class="absolute top-4 right-4 z-30 w-10 h-10 rounded-full bg-black/60 hover:bg-black/90 border border-white/20 text-white flex items-center justify-center transition-all cursor-pointer backdrop-blur-md" title="Close Details">
+        <i class="fa-solid fa-xmark text-sm"></i>
+      </button>
+
+      <!-- Banner Header Backdrop -->
+      <div class="relative h-48 sm:h-64 w-full bg-[#0d0a1a] overflow-hidden">
+        <img id="detail-banner-img" src="" alt="Anime Banner" class="w-full h-full object-cover object-center filter brightness-[0.7] transition-all duration-500" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=1600&q=80';" />
+        <div class="absolute inset-0 bg-gradient-to-t from-[#07050e] via-[#07050e]/60 to-transparent"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-[#07050e]/80 via-transparent to-transparent"></div>
+      </div>
+
+      <!-- Main Body Content -->
+      <div class="p-6 sm:p-8 -mt-20 relative z-10 space-y-6">
+        <div class="flex flex-col md:flex-row gap-6 items-start">
+          
+          <!-- Poster Column with Fallback Handler -->
+          <div class="w-36 sm:w-48 shrink-0 mx-auto md:mx-0 shadow-2xl rounded-2xl overflow-hidden border border-white/20 relative group bg-[#07050e]">
+            <img id="detail-poster-img" src="" alt="Poster" class="w-full h-56 sm:h-72 object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=600&q=80';" />
+            <div id="detail-score-badge" class="absolute top-2.5 right-2.5 px-2.5 py-1 rounded-xl bg-black/70 backdrop-blur-md border border-amber-500/40 text-amber-300 text-xs font-mono font-bold flex items-center gap-1 shadow-md">
+              <i class="fa-solid fa-star text-[10px]"></i>
+              <span id="detail-score-val">8.8</span>
+            </div>
+          </div>
+
+          <!-- Metadata & Details Column -->
+          <div class="flex-1 space-y-3 min-w-0">
+            <div class="flex flex-wrap items-center gap-2">
+              <span id="detail-status-pill" class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider bg-emerald-950/80 text-emerald-300 border border-emerald-500/40">
+                FINISHED AIRING
+              </span>
+              <span id="detail-episodes-pill" class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-white/10 text-slate-300 border border-white/10">
+                24 Episodes
+              </span>
+              <span id="detail-studio-pill" class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-purple-950/80 text-purple-300 border border-purple-500/30">
+                Madhouse
+              </span>
+            </div>
+
+            <div>
+              <h2 id="detail-title-english" class="text-xl sm:text-2xl lg:text-3xl font-display font-black text-white leading-tight">
+                Anime Title English
+              </h2>
+              <p id="detail-title-romaji" class="text-xs sm:text-sm text-purple-300/80 font-display font-medium mt-0.5">
+                Japanese / Romaji Title
+              </p>
+            </div>
+
+            <!-- Genres Chips -->
+            <div id="detail-genres-container" class="flex flex-wrap items-center gap-1.5 pt-1">
+              <!-- Injected dynamically -->
+            </div>
+
+            <!-- Action Buttons: Play Series & Add to Favorites -->
+            <div class="flex flex-wrap items-center gap-3 pt-3">
+              <button 
+                id="btn-detail-play-now"
+                onclick="launchAnimePlayerFromDetail()" 
+                class="px-6 py-3 rounded-2xl bg-gradient-to-r from-purple-600 via-fuchsia-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-xs font-extrabold uppercase tracking-wider text-white shadow-accent-strong cursor-pointer hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
+              >
+                <i class="fa-solid fa-play text-xs"></i>
+                <span>Stream Episode 1</span>
+              </button>
+              <button 
+                id="btn-detail-toggle-fav"
+                onclick="toggleFavoriteFromDetail()" 
+                class="px-4 py-3 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/15 text-xs font-semibold text-slate-200 transition-all cursor-pointer flex items-center gap-2"
+              >
+                <i id="detail-fav-btn-icon" class="fa-regular fa-heart text-pink-400"></i>
+                <span id="detail-fav-btn-label">Add to Favourites</span>
+              </button>
+              <button 
+                onclick="copyShareAnimeLink()" 
+                class="p-3 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-400 hover:text-white transition-all cursor-pointer"
+                title="Share Anime Transmission"
+              >
+                <i class="fa-solid fa-share-nodes text-xs"></i>
+              </button>
+            </div>
+
+            <!-- Description -->
+            <div class="pt-2">
+              <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Synopsis</h4>
+              <p id="detail-synopsis" class="text-xs text-slate-300 leading-relaxed max-h-36 overflow-y-auto pr-2">
+                Synopsis text loading...
+              </p>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- Embedded YouTube Trailer Section -->
+        <div id="detail-trailer-section" class="border-t border-glassBorder pt-5 space-y-3">
+          <div class="flex items-center justify-between">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
+              <i class="fa-brands fa-youtube text-red-500 text-sm"></i>
+              <span>Official Trailer Preview</span>
+            </h4>
+            <span class="text-[10px] text-slate-500 font-mono">Streamed from Jikan / YouTube</span>
+          </div>
+
+          <div class="rounded-2xl overflow-hidden border border-white/10 aspect-video w-full bg-black/60 shadow-xl relative">
+            <iframe 
+              id="detail-trailer-iframe"
+              class="w-full h-full"
+              src="" 
+              title="Anime Trailer" 
+              frameborder="0" 
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+              allowfullscreen
+            ></iframe>
+            <div id="detail-trailer-placeholder" class="hidden absolute inset-0 flex flex-col items-center justify-center p-6 text-center text-slate-400 space-y-2">
+              <i class="fa-regular fa-circle-play text-4xl text-slate-600"></i>
+              <p class="text-xs">Official video trailer preview unavailable for this archive record.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================================== -->
+  <!-- MODAL 5: CUSTOM CINEMA ANIME VIDEO PLAYER MODAL             -->
+  <!-- ========================================================== -->
+  <div id="anime-video-player-modal" class="fixed inset-0 z-50 hidden bg-[#05030a]/98 backdrop-blur-3xl flex-col select-none overflow-hidden transition-all duration-300">
+    
+    <!-- Top Player Header Bar (Auto-hides with controls) -->
+    <div id="player-header-bar" class="w-full px-4 sm:px-8 py-3.5 border-b border-white/10 bg-gradient-to-b from-black/80 to-transparent flex items-center justify-between z-30 transition-opacity duration-300 shrink-0">
+      <div class="flex items-center gap-3 min-w-0">
+        <button onclick="closeAnimePlayerModal()" class="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all cursor-pointer text-xs shrink-0" title="Back to Soranix">
+          <i class="fa-solid fa-arrow-left"></i>
+        </button>
+        <div class="min-w-0">
+          <div class="flex items-center gap-2">
+            <h3 id="player-anime-title" class="text-sm sm:text-base font-display font-bold text-white truncate">Anime Title</h3>
+            <span id="player-episode-tag" class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-purple-950/80 text-purple-300 border border-purple-500/40 shrink-0">Ep 1</span>
+          </div>
+          <p id="player-episode-title" class="text-[11px] text-slate-400 truncate">Episode 1: The Departure</p>
+        </div>
+      </div>
+
+      <!-- Right Header Actions: Watch-Time Reward Glowing Pill & Close -->
+      <div class="flex items-center gap-3 shrink-0">
+        <!-- Live Watch-Time Reward Indicator Pill -->
+        <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-purple-950/70 border border-purple-500/40 text-xs font-mono text-purple-200 shadow-[0_0_15px_rgba(168,85,247,0.25)]">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399] animate-pulse"></span>
+          <span class="hidden sm:inline text-[11px]">Watch Rewards:</span>
+          <span id="player-reward-timer-pill" class="text-amber-300 font-bold">+50 Stardust / 5m</span>
+        </div>
+
+        <button onclick="togglePlayerBrowserFullscreen()" class="w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white flex items-center justify-center transition-all cursor-pointer text-xs" title="Toggle Fullscreen (F)">
+          <i id="player-fullscreen-header-icon" class="fa-solid fa-expand"></i>
+        </button>
+
+        <button onclick="closeAnimePlayerModal()" class="w-9 h-9 rounded-xl bg-red-950/60 hover:bg-red-900/60 border border-red-500/40 text-red-300 hover:text-white flex items-center justify-center transition-all cursor-pointer text-xs" title="Exit Cinema Mode (Esc)">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Center Cinema Video Screen Container -->
+    <div id="player-viewport-container" class="relative flex-1 flex items-center justify-center bg-black overflow-hidden group">
+      
+      <!-- Native HTML5 Video Element -->
+      <video 
+        id="soranix-html5-video" 
+        class="w-full h-full object-contain cursor-pointer"
+        playsinline
+        preload="metadata"
+        poster="https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=1600&q=80"
+        onclick="toggleVideoPlayback()"
+      >
+        <source id="video-source-mp4" src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4" />
+        Your browser does not support high-definition video playback.
+      </video>
+
+      <!-- Center Big Play Button Overlay (when paused) -->
+      <div 
+        id="player-center-play-overlay" 
+        onclick="toggleVideoPlayback()" 
+        class="absolute inset-0 flex items-center justify-center bg-black/40 cursor-pointer transition-opacity duration-300"
+      >
+        <div class="w-20 h-20 rounded-full bg-purple-600/90 hover:bg-purple-500 text-white flex items-center justify-center text-3xl shadow-accent-strong hover:scale-110 active:scale-95 transition-all">
+          <i class="fa-solid fa-play ml-1"></i>
+        </div>
+      </div>
+
+      <!-- Quick Skip Intro Button (+85s) Overlay in Bottom Left -->
+      <button 
+        id="player-skip-intro-btn" 
+        onclick="skipAnimeIntro()" 
+        class="absolute bottom-24 left-6 z-30 px-4 py-2 rounded-xl bg-black/80 hover:bg-purple-600/90 border border-white/20 hover:border-purple-400 text-xs font-bold text-white shadow-2xl backdrop-blur-md cursor-pointer transition-all flex items-center gap-2 group"
+      >
+        <i class="fa-solid fa-forward-step text-purple-400 group-hover:text-white"></i>
+        <span>Skip Intro (+85s)</span>
+      </button>
+
+      <!-- Next Episode Auto-Progression Toast Countdown -->
+      <div 
+        id="player-next-ep-toast" 
+        class="hidden absolute top-16 right-6 z-30 px-4 py-3 rounded-2xl bg-purple-950/90 border border-purple-500/50 text-xs text-white shadow-2xl backdrop-blur-xl flex items-center gap-3 animate-bounce"
+      >
+        <i class="fa-solid fa-forward text-solarGold text-sm"></i>
+        <div>
+          <span class="font-bold">Next Episode Ready</span>
+          <p id="player-next-ep-toast-text" class="text-[10px] text-purple-200">Playing Episode 2 in 5s...</p>
+        </div>
+        <button onclick="playNextEpisode()" class="px-2.5 py-1 rounded-lg bg-purple-600 hover:bg-purple-500 font-bold text-[10px] cursor-pointer">Play Now</button>
+      </div>
+
+      <!-- Media Control Overlay Bar (Autohides during playback, shows on hover or pause) -->
+      <div 
+        id="player-control-bar" 
+        class="absolute bottom-0 inset-x-0 p-4 sm:p-6 bg-gradient-to-t from-black/95 via-black/80 to-transparent z-30 flex flex-col space-y-3 transition-opacity duration-300"
+      >
+        <!-- Interactive Progress / Scrub Timeline -->
+        <div class="relative w-full flex items-center group/scrub">
+          <input 
+            id="player-timeline-slider" 
+            type="range" 
+            min="0" 
+            max="100" 
+            value="0" 
+            step="0.1"
+            class="w-full h-1.5 bg-white/20 rounded-lg appearance-none cursor-pointer accent-purple-500 hover:h-2.5 transition-all"
+            oninput="handleVideoSeek(this.value)"
+          />
+        </div>
+
+        <!-- Controls Row -->
+        <div class="flex items-center justify-between gap-3 flex-wrap">
+          
+          <!-- Left Controls: Play, Prev, Next, Seek -10s/+10s, Timestamps, Volume -->
+          <div class="flex items-center gap-2 sm:gap-3">
+            <!-- Play/Pause Toggle -->
+            <button 
+              id="player-btn-play"
+              onclick="toggleVideoPlayback()" 
+              class="w-10 h-10 rounded-xl bg-white/10 hover:bg-purple-600 text-white flex items-center justify-center transition-all cursor-pointer text-sm shadow-md"
+              title="Play/Pause (Space)"
+            >
+              <i id="player-btn-play-icon" class="fa-solid fa-play"></i>
+            </button>
+
+            <!-- Previous Episode -->
+            <button 
+              onclick="playPreviousEpisode()" 
+              class="w-8 h-8 rounded-xl bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white flex items-center justify-center transition-all cursor-pointer text-xs"
+              title="Previous Episode (|<<)"
+            >
+              <i class="fa-solid fa-backward-step"></i>
+            </button>
+
+            <!-- Next Episode -->
+            <button 
+              onclick="playNextEpisode()" 
+              class="w-8 h-8 rounded-xl bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white flex items-center justify-center transition-all cursor-pointer text-xs"
+              title="Next Episode (>>|)"
+            >
+              <i class="fa-solid fa-forward-step"></i>
+            </button>
+
+            <!-- Seek -10s / +10s -->
+            <button 
+              onclick="seekVideoRelative(-10)" 
+              class="hidden sm:flex w-8 h-8 rounded-xl bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white items-center justify-center transition-all cursor-pointer text-[10px]"
+              title="Rewind 10s (Left Arrow)"
+            >
+              -10s
+            </button>
+            <button 
+              onclick="seekVideoRelative(10)" 
+              class="hidden sm:flex w-8 h-8 rounded-xl bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white items-center justify-center transition-all cursor-pointer text-[10px]"
+              title="Forward 10s (Right Arrow)"
+            >
+              +10s
+            </button>
+
+            <!-- Volume Mute Toggle & Slider -->
+            <div class="flex items-center gap-2 group/vol">
+              <button 
+                id="player-btn-mute"
+                onclick="toggleVideoMute()" 
+                class="w-8 h-8 rounded-xl bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white flex items-center justify-center transition-all cursor-pointer text-xs"
+                title="Mute / Unmute (M)"
+              >
+                <i id="player-vol-icon" class="fa-solid fa-volume-high"></i>
+              </button>
+              <input 
+                id="player-vol-slider" 
+                type="range" 
+                min="0" 
+                max="1" 
+                step="0.05" 
+                value="1" 
+                class="w-16 sm:w-20 h-1 bg-white/20 rounded-lg appearance-none cursor-pointer accent-purple-500"
+                oninput="setVideoVolume(this.value)"
+              />
+            </div>
+
+            <!-- Current Time / Duration Timestamp -->
+            <div class="text-[11px] font-mono text-slate-300 shrink-0">
+              <span id="player-time-current">00:00</span> / <span id="player-time-total">23:55</span>
+            </div>
+          </div>
+
+          <!-- Right Controls: Episode Selector, Quality Switcher, Audio Track, Fullscreen -->
+          <div class="flex items-center gap-2 sm:gap-3">
+            
+            <!-- Episode Quick-Selector Dropdown -->
+            <div class="relative">
+              <select 
+                id="player-episode-select" 
+                onchange="selectPlayerEpisode(parseInt(this.value))" 
+                class="px-2.5 py-1.5 text-xs bg-black/60 border border-white/20 rounded-xl text-white focus:outline-none focus:border-purple-400 cursor-pointer font-mono"
+              >
+                <option value="1">Ep 1: The Departure</option>
+                <option value="2">Ep 2: Celestial Stardust</option>
+                <option value="3">Ep 3: Beyond the Galaxy</option>
+                <option value="4">Ep 4: Echoes of Eternity</option>
+                <option value="5">Ep 5: The Grand Stargate</option>
+                <option value="6">Ep 6: Lightyears Ahead</option>
+                <option value="7">Ep 7: Nebula Secrets</option>
+                <option value="8">Ep 8: The Cosmic Core</option>
+                <option value="9">Ep 9: Starlight Requiem</option>
+                <option value="10">Ep 10: Infinite Horizons</option>
+                <option value="11">Ep 11: Dark Matter Rift</option>
+                <option value="12">Ep 12: Supernova Climax</option>
+              </select>
+            </div>
+
+            <!-- Quality Switcher (1080p / 720p / 480p) -->
+            <div class="flex items-center p-0.5 bg-black/60 border border-white/15 rounded-xl text-[10px] font-mono font-bold">
+              <button onclick="setPlayerQuality('1080p')" id="quality-btn-1080" class="px-2 py-1 rounded-lg bg-purple-600 text-white cursor-pointer">1080p</button>
+              <button onclick="setPlayerQuality('720p')" id="quality-btn-720" class="px-2 py-1 rounded-lg text-slate-400 hover:text-white cursor-pointer">720p</button>
+              <button onclick="setPlayerQuality('480p')" id="quality-btn-480" class="px-2 py-1 rounded-lg text-slate-400 hover:text-white cursor-pointer">480p</button>
+            </div>
+
+            <!-- Audio/Sub Track Switcher (SUB / DUB) -->
+            <div class="flex items-center p-0.5 bg-black/60 border border-white/15 rounded-xl text-[10px] font-mono font-bold">
+              <button onclick="setPlayerTrack('SUB')" id="track-btn-sub" class="px-2 py-1 rounded-lg bg-cyan-600 text-white cursor-pointer">SUB</button>
+              <button onclick="setPlayerTrack('DUB')" id="track-btn-dub" class="px-2 py-1 rounded-lg text-slate-400 hover:text-white cursor-pointer">DUB</button>
+            </div>
+
+            <!-- Fullscreen Toggle Button -->
+            <button 
+              onclick="togglePlayerBrowserFullscreen()" 
+              class="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all cursor-pointer text-xs"
+              title="Fullscreen (F)"
+            >
+              <i id="player-btn-fullscreen-icon" class="fa-solid fa-expand"></i>
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
   <!-- Toast Notification Container -->
   <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2.5 pointer-events-none"></div>
 
@@ -515,9 +886,9 @@
         <button onclick="closeAdminAccessDeniedModal()" class="w-full sm:flex-1 py-2.5 rounded-xl text-xs font-semibold bg-white/10 hover:bg-white/20 text-white transition-all cursor-pointer">
           Return to Dashboard
         </button>
-        <button onclick="closeAdminAccessDeniedModal(); quickLoginAsOwner();" class="w-full sm:flex-1 py-2.5 rounded-xl text-xs font-bold text-white bg-red-600 hover:bg-red-500 shadow-md transition-all cursor-pointer flex items-center justify-center gap-1.5">
-          <i class="fa-solid fa-crown text-solarGold text-[11px]"></i>
-          <span>Log In as Owner</span>
+        <button onclick="closeAdminAccessDeniedModal(); triggerFirebaseGoogleLogin();" class="w-full sm:flex-1 py-2.5 rounded-xl text-xs font-bold text-white bg-red-600 hover:bg-red-500 shadow-md transition-all cursor-pointer flex items-center justify-center gap-1.5">
+          <i class="fa-brands fa-google text-[11px]"></i>
+          <span>Sign In with Owner Google</span>
         </button>
       </div>
     </div>
@@ -733,11 +1104,11 @@
           <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-electricCyan shadow-[0_0_6px_#06b6d4]"></span>
         </button>
 
-        <!-- Tab 7: Admin Control Panel (Owner Authority) -->
+        <!-- Tab 7: Admin Control Panel (Owner Authority) - Hidden by default, shown ONLY for owner/staff -->
         <button 
           id="nav-tab-btn-admin"
           onclick="openAdminTab()" 
-          class="sidebar-tab-btn w-11 h-11 rounded-2xl flex items-center justify-center text-red-400/70 hover:text-red-300 hover:bg-red-500/10 border border-transparent hover:border-red-500/30 transition-all cursor-pointer relative"
+          class="sidebar-tab-btn hidden w-11 h-11 rounded-2xl items-center justify-center text-red-400/70 hover:text-red-300 hover:bg-red-500/10 border border-transparent hover:border-red-500/30 transition-all cursor-pointer relative"
           title="Admin & Owner Control Panel"
         >
           <i class="fa-solid fa-shield-halved text-base text-red-400"></i>
@@ -852,11 +1223,11 @@
               <span>Customize Profile</span>
             </button>
 
-            <!-- Admin Control Panel in Gear Menu -->
+            <!-- Admin Control Panel in Gear Menu - Hidden by default, shown ONLY for owner/staff -->
             <button 
               id="gear-admin-btn"
               onclick="openAdminTab(); toggleGearMenu();" 
-              class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-red-300 hover:text-white hover:bg-red-950/40 border border-transparent hover:border-red-500/30 transition-all cursor-pointer text-left"
+              class="hidden w-full items-center gap-2.5 px-3 py-2 rounded-xl text-red-300 hover:text-white hover:bg-red-950/40 border border-transparent hover:border-red-500/30 transition-all cursor-pointer text-left"
             >
               <i class="fa-solid fa-shield-halved text-red-400 w-4 text-center"></i>
               <span class="font-bold">Admin Control</span>
@@ -1114,15 +1485,207 @@
             </div>
           </div>
 
-          <!-- Plain Dashboard Blank Container for Future Anime Grids -->
-          <div class="glass-panel rounded-3xl p-12 text-center border border-dashed border-white/10 flex flex-col items-center justify-center space-y-3">
-            <div class="w-14 h-14 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-center text-slate-400 text-2xl">
-              <i class="fa-solid fa-layer-group"></i>
+          <!-- Featured Anime Hero Showcase Banner -->
+          <div id="anime-hero-banner" class="relative rounded-3xl overflow-hidden border border-purple-500/30 glass-card shadow-2xl transition-all duration-500 min-h-[260px] sm:min-h-[320px] flex items-end">
+            <!-- Background Artwork -->
+            <img id="anime-hero-bg" src="https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=1600&q=80" alt="Hero Banner" class="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.6] transition-all duration-700" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=1600&q=80';" />
+            <div class="absolute inset-0 bg-gradient-to-t from-[#07050e] via-[#07050e]/60 to-transparent"></div>
+            <div class="absolute inset-0 bg-gradient-to-r from-[#07050e]/90 via-[#07050e]/40 to-transparent"></div>
+
+            <div class="relative z-10 p-6 sm:p-8 space-y-3 max-w-2xl">
+              <div class="flex items-center gap-2">
+                <span id="anime-hero-badge" class="px-3 py-1 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider bg-purple-600/90 text-white shadow-accent-glow">
+                  Featured Starlight
+                </span>
+                <span id="anime-hero-score" class="px-2.5 py-1 rounded-full text-[10px] font-mono font-bold bg-amber-950/70 text-amber-300 border border-amber-500/40">
+                  <i class="fa-solid fa-star text-[9px] mr-1"></i>8.9
+                </span>
+                <span id="anime-hero-episodes" class="px-2.5 py-1 rounded-full text-[10px] font-mono text-slate-300 bg-white/10 border border-white/10 hidden sm:inline-block">
+                  28 Episodes
+                </span>
+              </div>
+
+              <h3 id="anime-hero-title" class="text-2xl sm:text-3xl lg:text-4xl font-display font-black text-white leading-tight">
+                Frieren: Beyond Journey's End
+              </h3>
+
+              <p id="anime-hero-desc" class="text-xs sm:text-sm text-slate-300 line-clamp-2 max-w-xl leading-relaxed">
+                An elf mage embarks on a poignant quest across the galaxy to understand the fleeting lives of mortals and the comrades she left behind.
+              </p>
+
+              <div class="flex flex-wrap items-center gap-3 pt-2">
+                <button 
+                  id="anime-hero-btn-play"
+                  onclick="playFeaturedHeroAnime()" 
+                  class="px-6 py-3 rounded-2xl bg-gradient-to-r from-purple-600 via-fuchsia-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-xs font-extrabold uppercase tracking-wider text-white shadow-accent-strong cursor-pointer hover:scale-105 active:scale-95 transition-all flex items-center gap-2.5"
+                >
+                  <i class="fa-solid fa-circle-play text-sm"></i>
+                  <span>Stream Series</span>
+                </button>
+                <button 
+                  id="anime-hero-btn-info"
+                  onclick="openFeaturedHeroAnimeDetail()" 
+                  class="px-5 py-3 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/10 text-xs font-semibold text-white transition-all cursor-pointer flex items-center gap-2"
+                >
+                  <i class="fa-solid fa-circle-info text-accent text-xs"></i>
+                  <span>Details &amp; Trailer</span>
+                </button>
+                <button 
+                  id="anime-hero-btn-fav"
+                  onclick="toggleFeaturedHeroFavorite()" 
+                  class="p-3 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 text-pink-400 hover:text-pink-300 transition-all cursor-pointer"
+                  title="Bookmark to Favourites"
+                >
+                  <i id="anime-hero-fav-icon" class="fa-regular fa-heart text-base"></i>
+                </button>
+              </div>
             </div>
-            <h3 class="text-base font-bold text-white">Plain Dashboard (Clean State)</h3>
-            <p class="text-xs text-slate-400 max-w-md mx-auto">
-              Anime video player and media cards are kept unpopulated for modular addition. Click <strong>"Watch Anime"</strong> above to start streaming and earning watch-time Stardust &amp; XP.
+          </div>
+
+          <!-- Catalog Search Bar & Category Filter Engine -->
+          <div class="space-y-4">
+            
+            <!-- Global Catalog Search Bar (300ms Debounce) -->
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+              <div class="relative flex-1">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
+                  <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                </span>
+                <input 
+                  id="anime-catalog-search" 
+                  type="text" 
+                  placeholder="Search over 10,000+ anime titles across the galaxy (Naruto, Frieren, Bleach, Steins;Gate...)" 
+                  class="w-full pl-10 pr-10 py-3 text-xs bg-[#07050e]/95 border border-purple-500/30 rounded-2xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400 transition-all shadow-inner"
+                  oninput="handleAnimeCatalogSearchInput(this.value)"
+                />
+                <button 
+                  id="anime-search-clear-btn"
+                  onclick="clearAnimeCatalogSearch()" 
+                  class="hidden absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-white transition-colors cursor-pointer"
+                  title="Clear Search"
+                >
+                  <i class="fa-solid fa-circle-xmark text-sm"></i>
+                </button>
+              </div>
+
+              <!-- API Engine Indicator & Refresh -->
+              <div class="flex items-center gap-2 shrink-0">
+                <div class="px-3 py-2 rounded-xl bg-purple-950/60 border border-purple-500/30 text-[11px] font-mono text-purple-300 flex items-center gap-2">
+                  <span id="api-status-pulse" class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_6px_#34d399]"></span>
+                  <span id="api-status-label">AniList Live API</span>
+                </div>
+                <button 
+                  onclick="refreshAnimeCatalog()" 
+                  class="p-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white transition-all cursor-pointer text-xs"
+                  title="Reload Latest Releases"
+                >
+                  <i id="btn-refresh-catalog-icon" class="fa-solid fa-arrows-rotate"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Category & Genre Filter Chips -->
+            <div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none text-xs">
+              <button 
+                id="filter-chip-trending"
+                onclick="setAnimeCatalogCategory('trending')" 
+                class="catalog-filter-btn px-4 py-2 rounded-xl font-bold bg-purple-600 text-white shadow-accent-glow cursor-pointer transition-all shrink-0 flex items-center gap-1.5"
+              >
+                <i class="fa-solid fa-fire text-solarGold"></i>
+                <span>Trending Now</span>
+              </button>
+              <button 
+                id="filter-chip-top"
+                onclick="setAnimeCatalogCategory('top')" 
+                class="catalog-filter-btn px-4 py-2 rounded-xl font-semibold bg-white/[0.04] text-slate-400 hover:text-white hover:bg-white/10 cursor-pointer transition-all shrink-0 flex items-center gap-1.5"
+              >
+                <i class="fa-solid fa-star text-amber-400"></i>
+                <span>Top Rated</span>
+              </button>
+              <button 
+                id="filter-chip-popular"
+                onclick="setAnimeCatalogCategory('popular')" 
+                class="catalog-filter-btn px-4 py-2 rounded-xl font-semibold bg-white/[0.04] text-slate-400 hover:text-white hover:bg-white/10 cursor-pointer transition-all shrink-0 flex items-center gap-1.5"
+              >
+                <i class="fa-solid fa-rocket text-cyan-400"></i>
+                <span>Popular</span>
+              </button>
+              <button 
+                id="filter-chip-action"
+                onclick="setAnimeCatalogGenre('Action')" 
+                class="catalog-filter-btn px-4 py-2 rounded-xl font-semibold bg-white/[0.04] text-slate-400 hover:text-white hover:bg-white/10 cursor-pointer transition-all shrink-0 flex items-center gap-1.5"
+              >
+                <i class="fa-solid fa-bolt text-red-400"></i>
+                <span>Action</span>
+              </button>
+              <button 
+                id="filter-chip-scifi"
+                onclick="setAnimeCatalogGenre('Sci-Fi')" 
+                class="catalog-filter-btn px-4 py-2 rounded-xl font-semibold bg-white/[0.04] text-slate-400 hover:text-white hover:bg-white/10 cursor-pointer transition-all shrink-0 flex items-center gap-1.5"
+              >
+                <i class="fa-solid fa-atom text-purple-400"></i>
+                <span>Sci-Fi</span>
+              </button>
+              <button 
+                id="filter-chip-fantasy"
+                onclick="setAnimeCatalogGenre('Fantasy')" 
+                class="catalog-filter-btn px-4 py-2 rounded-xl font-semibold bg-white/[0.04] text-slate-400 hover:text-white hover:bg-white/10 cursor-pointer transition-all shrink-0 flex items-center gap-1.5"
+              >
+                <i class="fa-solid fa-wand-sparkles text-emerald-400"></i>
+                <span>Fantasy</span>
+              </button>
+              <button 
+                id="filter-chip-romance"
+                onclick="setAnimeCatalogGenre('Romance')" 
+                class="catalog-filter-btn px-4 py-2 rounded-xl font-semibold bg-white/[0.04] text-slate-400 hover:text-white hover:bg-white/10 cursor-pointer transition-all shrink-0 flex items-center gap-1.5"
+              >
+                <i class="fa-solid fa-heart text-pink-400"></i>
+                <span>Romance</span>
+              </button>
+              <button 
+                id="filter-chip-comedy"
+                onclick="setAnimeCatalogGenre('Comedy')" 
+                class="catalog-filter-btn px-4 py-2 rounded-xl font-semibold bg-white/[0.04] text-slate-400 hover:text-white hover:bg-white/10 cursor-pointer transition-all shrink-0 flex items-center gap-1.5"
+              >
+                <i class="fa-solid fa-face-laugh-squint text-amber-300"></i>
+                <span>Comedy</span>
+              </button>
+            </div>
+
+          </div>
+
+          <!-- Section Heading & Results Counter -->
+          <div class="flex items-center justify-between pt-2">
+            <div>
+              <h4 id="anime-catalog-heading" class="text-lg font-display font-bold text-white flex items-center gap-2">
+                <span>Trending Releases</span>
+                <span id="anime-catalog-count-pill" class="text-xs font-mono font-bold text-purple-300 px-2 py-0.5 rounded-full bg-purple-950/80 border border-purple-500/30">24 Series</span>
+              </h4>
+              <p id="anime-catalog-subheading" class="text-xs text-slate-400">Official artwork &amp; metadata streamed from AniList GraphQL &amp; Jikan API</p>
+            </div>
+            <div id="anime-catalog-loading-indicator" class="hidden items-center gap-2 text-xs text-purple-300 font-mono">
+              <i class="fa-solid fa-circle-notch animate-spin text-purple-400"></i>
+              <span>Scanning Galaxy...</span>
+            </div>
+          </div>
+
+          <!-- Dynamic Anime Grid -->
+          <div id="anime-cards-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3.5 sm:gap-4 transition-all duration-300">
+            <!-- Anime cards injected dynamically by renderAnimeGrid() -->
+          </div>
+
+          <!-- Empty Search State -->
+          <div id="anime-empty-search-state" class="glass-panel rounded-3xl p-12 text-center border border-dashed border-white/10 hidden space-y-3">
+            <div class="w-14 h-14 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-center text-slate-400 text-2xl mx-auto">
+              <i class="fa-solid fa-compass text-purple-400"></i>
+            </div>
+            <h3 class="text-base font-bold text-white">No Anime Found in this Sector</h3>
+            <p class="text-xs text-slate-400 max-w-sm mx-auto">
+              We couldn't locate any series matching your search query. Try checking spelling or search for classics like "Naruto", "Bleach", "One Piece", or "Frieren".
             </p>
+            <button onclick="clearAnimeCatalogSearch()" class="mt-2 px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-xs font-bold text-white shadow-sm cursor-pointer">
+              Reset Search Filter
+            </button>
           </div>
         </div>
 
@@ -1573,19 +2136,28 @@
         <div class="flex items-center justify-between pb-4 border-b border-glassBorder">
           <div>
             <h2 class="text-2xl font-display font-extrabold text-white">Favourited Anime (<span id="view-fav-count">0</span>)</h2>
-            <p class="text-xs text-slate-400">Your curated collection of galaxy-class series</p>
+            <p class="text-xs text-slate-400">Your curated collection of galaxy-class series &bull; Saved to local storage</p>
           </div>
-          <button onclick="switchDashboardTab('profile')" class="text-xs font-bold text-accent hover:underline">
+          <button onclick="switchDashboardTab('profile')" class="text-xs font-bold text-accent hover:underline cursor-pointer">
             View in Profile &rarr;
           </button>
         </div>
         
-        <div class="glass-panel rounded-3xl p-12 text-center border border-dashed border-white/10">
+        <!-- Favourites Cards Grid -->
+        <div id="favorites-cards-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3.5 sm:gap-4 transition-all duration-300">
+          <!-- Injected dynamically by renderFavoritesUI() -->
+        </div>
+
+        <!-- Empty Favourites State -->
+        <div id="favorites-empty-vault" class="glass-panel rounded-3xl p-12 text-center border border-dashed border-white/10 hidden space-y-3">
           <i class="fa-regular fa-heart text-4xl text-pink-400/40 mb-3"></i>
           <h3 class="text-base font-bold text-white">Your Favourites Vault is Empty</h3>
           <p class="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
-            You currently have 0 favourited series. As anime cards are added to the modular dashboard, you can click the heart icon to save them here.
+            You currently have 0 favourited series. Browse the anime catalog and click the heart icon on any series card to save it here.
           </p>
+          <button onclick="switchDashboardTab('home')" class="mt-3 px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-xs font-bold text-white shadow-accent-glow cursor-pointer transition-all">
+            Explore Anime Catalog
+          </button>
         </div>
       </section>
 
@@ -1816,6 +2388,60 @@
         <!-- SUB-PANEL 1: USER & ACCOUNT MODERATION              -->
         <!-- ==================================================== -->
         <div id="admin-panel-users" class="space-y-4">
+          
+          <!-- Staff Roles & Title Delegation Station (Developer, Tester, Moderator) -->
+          <div class="glass-panel rounded-3xl p-5 sm:p-6 border border-purple-500/30 space-y-4 bg-purple-950/20">
+            <div class="flex items-center gap-3 pb-3 border-b border-glassBorder">
+              <div class="w-10 h-10 rounded-2xl bg-purple-950/80 border border-purple-500/40 flex items-center justify-center text-accent text-lg">
+                <i class="fa-solid fa-id-badge"></i>
+              </div>
+              <div>
+                <h4 class="text-sm font-bold text-white font-display">Staff Roles &amp; Title Delegation</h4>
+                <p class="text-xs text-slate-400">Grant custom staff titles (Developer, Tester, Moderator) with abilities to chat ban, ban users, set levels, and modify coins</p>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div>
+                <label class="block text-[11px] font-bold uppercase text-slate-300 mb-1">Target Account</label>
+                <select id="admin-staff-user-select" class="w-full p-2.5 text-xs bg-[#07050e] border border-purple-500/40 rounded-xl text-white focus:outline-none focus:border-purple-400 cursor-pointer">
+                  <!-- Populated dynamically with registered accounts -->
+                </select>
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold uppercase text-slate-300 mb-1">Staff Role Preset</label>
+                <select id="admin-staff-role-select" onchange="handleStaffRolePresetChange(this.value)" class="w-full p-2.5 text-xs bg-[#07050e] border border-purple-500/40 rounded-xl text-white focus:outline-none focus:border-purple-400 cursor-pointer">
+                  <option value="developer">Developer (Title: Cosmic Developer)</option>
+                  <option value="tester">Tester (Title: Quality Tester)</option>
+                  <option value="moderator">Moderator (Title: Cosmic Moderator)</option>
+                  <option value="admin">Administrator (Title: System Administrator)</option>
+                  <option value="custom">Custom Title...</option>
+                  <option value="member">Regular Member (Revoke Staff Privileges)</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold uppercase text-slate-300 mb-1">Custom Title Label</label>
+                <input id="admin-staff-custom-title" type="text" placeholder="e.g. Lead Core Developer" value="Cosmic Developer" class="w-full p-2.5 text-xs bg-[#07050e] border border-purple-500/40 rounded-xl text-white focus:outline-none focus:border-purple-400" />
+              </div>
+            </div>
+
+            <!-- Privileges unlocked preview -->
+            <div class="p-3 rounded-2xl bg-white/[0.02] border border-white/5 flex flex-wrap items-center gap-2 text-[11px] text-slate-300">
+              <span class="text-slate-400 font-bold uppercase font-mono mr-1">Staff Privileges:</span>
+              <span class="px-2 py-0.5 rounded-lg bg-red-950/60 text-red-300 border border-red-500/30 flex items-center gap-1"><i class="fa-solid fa-ban text-[10px]"></i> Ban / Unban</span>
+              <span class="px-2 py-0.5 rounded-lg bg-amber-950/60 text-amber-300 border border-amber-500/30 flex items-center gap-1"><i class="fa-solid fa-comment-slash text-[10px]"></i> Chat Mute</span>
+              <span class="px-2 py-0.5 rounded-lg bg-purple-950/60 text-purple-300 border border-purple-500/30 flex items-center gap-1"><i class="fa-solid fa-shield-halved text-[10px]"></i> Override Levels</span>
+              <span class="px-2 py-0.5 rounded-lg bg-cyan-950/60 text-cyan-300 border border-cyan-500/30 flex items-center gap-1"><i class="fa-solid fa-coins text-[10px]"></i> Modify Coins</span>
+            </div>
+
+            <div class="flex items-center justify-end gap-2 pt-1">
+              <button onclick="adminAssignStaffRole()" class="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 shadow-accent-glow cursor-pointer transition-all flex items-center gap-2">
+                <i class="fa-solid fa-shield-check text-xs"></i>
+                <span>Grant Staff Role &amp; Title</span>
+              </button>
+            </div>
+          </div>
+
           <!-- Search & Filter Controls -->
           <div class="glass-panel rounded-2xl p-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
             <div class="relative flex-1 max-w-md">
@@ -2315,6 +2941,15 @@
         >
           <i class="fa-solid fa-eye-slash"></i>
         </button>
+        <!-- Fullscreen Chat Toggle button -->
+        <button 
+          id="btn-global-chat-fullscreen"
+          onclick="toggleGlobalChatFullscreen()" 
+          class="p-2 text-slate-400 hover:text-white hover:bg-white/5 rounded-xl transition-all cursor-pointer text-xs"
+          title="Toggle Fullscreen Chat"
+        >
+          <i id="global-chat-fullscreen-icon" class="fa-solid fa-expand"></i>
+        </button>
         <!-- Close / Minimize panel button -->
         <button 
           onclick="closeGlobalChatPanel()" 
@@ -2456,6 +3091,16 @@
             </button>
           </div>
         </div>
+
+        <!-- Fullscreen DM Toggle button -->
+        <button 
+          id="btn-dm-chat-fullscreen"
+          onclick="toggleDMChatFullscreen()" 
+          class="p-2 text-slate-400 hover:text-white hover:bg-white/5 rounded-xl transition-all cursor-pointer text-xs"
+          title="Toggle Fullscreen Transmission"
+        >
+          <i id="dm-chat-fullscreen-icon" class="fa-solid fa-expand"></i>
+        </button>
 
         <!-- Close DM Drawer Button -->
         <button 
@@ -2834,17 +3479,6 @@
         <span>Sign in with Google</span>
       </button>
 
-      <!-- Direct Owner Login Shortcut -->
-      <button 
-        type="button" 
-        onclick="quickLoginAsOwner()" 
-        class="w-full flex items-center justify-center gap-2 py-2 px-3 text-xs font-bold text-red-200 bg-red-950/40 hover:bg-red-950/70 border border-red-500/30 rounded-xl transition-all cursor-pointer shadow-sm mb-4"
-        title="Owner Clearance for jaydentorru4@gmail.com"
-      >
-        <i class="fa-solid fa-crown text-solarGold text-[11px]"></i>
-        <span>Log in as Owner (jaydentorru4@gmail.com)</span>
-      </button>
-
       <!-- Guest Entry Option -->
       <div class="text-center">
         <button 
@@ -3208,10 +3842,6 @@
     const HIDE_GLOBAL_CHAT_KEY = 'soranix_hide_global_chat';
     const ADMIN_CONFIG_KEY = 'soranix_admin_config';
 
-    // Administrator Whitelist & Privileges
-    const ADMIN_EMAILS = ['jaydentorru4@gmail.com'];
-    const ADMIN_USERNAMES = ['owner', 'admin', 'jaydentorru', 'jayden'];
-
     function getAdminConfig() {
       try {
         const raw = localStorage.getItem(ADMIN_CONFIG_KEY);
@@ -3233,13 +3863,21 @@
       }
     }
 
-    function checkIsAdmin(u) {
-      if (!u) return false;
-      if (u.isAdmin === true) return true;
+    // Administrator & Owner Clearance (Strictly jaydentorru4@gmail.com upon Google Login)
+    const OWNER_EMAIL = 'jaydentorru4@gmail.com';
+
+    function isOwner(u) {
+      if (!u || AppState.isGuest) return false;
       const email = (u.email || '').trim().toLowerCase();
-      const username = (u.username || '').trim().toLowerCase();
-      if (ADMIN_EMAILS.includes(email)) return true;
-      if (ADMIN_USERNAMES.includes(username)) return true;
+      return email === OWNER_EMAIL || u.isOwner === true;
+    }
+
+    function checkIsAdmin(u) {
+      if (!u || AppState.isGuest) return false;
+      if (isOwner(u)) return true;
+      // Staff roles with administrative/staff powers assigned by the owner
+      if (u.staffRole && ['developer', 'tester', 'moderator', 'admin'].includes(u.staffRole)) return true;
+      if (u.isAdmin === true && u.email && u.email.trim().toLowerCase() === OWNER_EMAIL) return true;
       return false;
     }
 
@@ -3452,14 +4090,7 @@
       // Cleanse any stale mock/seeded dummy messages from global chat
       getGlobalChatMessages();
 
-      // Seed default Owner account if missing so owner can instantly log in
       const users = getUsersDB();
-      if (!users['jaydentorru']) {
-        users['jaydentorru'] = createInitialUser('JaydenTorru', 'jaydentorru4@gmail.com', 'admin123');
-        users['jaydentorru'].isAdmin = true;
-        users['jaydentorru'].title = 'System Administrator / Owner';
-        saveUsersDB(users);
-      }
 
       // Check active announcement banner & maintenance mode
       renderAnnouncementBannerUI();
@@ -3621,6 +4252,12 @@
 
       if (tabName === 'profile') {
         updateViewableProfileUI();
+      } else if (tabName === 'home') {
+        if (!AppState.catalogInitialised) {
+          fetchAniListCatalog();
+        }
+      } else if (tabName === 'favorites') {
+        renderFavoritesUI();
       } else if (tabName === 'friends') {
         renderFriendsUI();
       } else if (tabName === 'rewards') {
@@ -3670,28 +4307,7 @@
     function quickLoginAsOwner() {
       closeAuthModal();
       closeAdminAccessDeniedModal();
-      const users = getUsersDB();
-      let ownerUser = users['jaydentorru'];
-      if (!ownerUser) {
-        ownerUser = createInitialUser('JaydenTorru', 'jaydentorru4@gmail.com', 'admin123');
-        ownerUser.isAdmin = true;
-        ownerUser.title = 'System Administrator / Owner';
-        users['jaydentorru'] = ownerUser;
-        saveUsersDB(users);
-      }
-      ownerUser.isAdmin = true;
-      ownerUser.title = 'System Administrator / Owner';
-      users['jaydentorru'] = ownerUser;
-      saveUsersDB(users);
-
-      AppState.isGuest = false;
-      AppState.currentUserKey = 'jaydentorru';
-      AppState.user = ownerUser;
-      setActiveSession({ username: ownerUser.username, isGuest: false });
-
-      updateViewableProfileUI();
-      enterDashboard('admin');
-      showToast('Authenticated as Owner (jaydentorru4@gmail.com)! Administrator clearance granted.', 'success');
+      triggerFirebaseGoogleLogin();
     }
 
     function renderAnnouncementBannerUI() {
@@ -4264,7 +4880,8 @@
         if (statsLevel) statsLevel.textContent = levelVal;
         if (statsAnime) statsAnime.textContent = u.animeWatched || 0;
         if (statsEpisodes) statsEpisodes.textContent = u.episodesWatched || 0;
-        if (statsFav) statsFav.textContent = 0;
+        const favCount = AppState.isGuest ? 0 : (typeof getFavoritesList === 'function' ? getFavoritesList().length : 0);
+        if (statsFav) statsFav.textContent = favCount;
         if (statsStardust) statsStardust.textContent = stardustVal.toLocaleString();
         if (shopStardust) shopStardust.textContent = `${stardustVal.toLocaleString()} Stardust Available`;
         if (headerNotifContainer) headerNotifContainer.classList.remove('hidden');
@@ -4272,21 +4889,54 @@
         if (friendsUnlockedContent) friendsUnlockedContent.classList.remove('hidden');
       }
 
-      if (viewFavCount) viewFavCount.textContent = 0;
-      if (profileFavCount) profileFavCount.textContent = 0;
-      if (sidebarFavBadge) sidebarFavBadge.classList.add('hidden');
-      if (flyoutFavBadge) flyoutFavBadge.textContent = '0';
+      const totalFavs = AppState.isGuest ? 0 : (typeof getFavoritesList === 'function' ? getFavoritesList().length : 0);
+      if (viewFavCount) viewFavCount.textContent = totalFavs;
+      if (profileFavCount) profileFavCount.textContent = totalFavs;
+      if (sidebarFavBadge) {
+        if (totalFavs > 0) {
+          sidebarFavBadge.textContent = totalFavs;
+          sidebarFavBadge.classList.remove('hidden');
+        } else {
+          sidebarFavBadge.classList.add('hidden');
+        }
+      }
+      if (flyoutFavBadge) flyoutFavBadge.textContent = totalFavs;
 
-      // Admin & Owner Authority Badges & Pulse
+      // Admin & Owner Authority Badges & Pulse (Strictly visible ONLY for owner / verified staff)
       const isAdmin = !AppState.isGuest && checkIsAdmin(AppState.user);
+      const isPlatformOwner = !AppState.isGuest && isOwner(AppState.user);
+      const navTabAdmin = $('nav-tab-btn-admin');
+      const gearAdminBtn = $('gear-admin-btn');
       const headerAdminPill = $('header-admin-pill');
       const sidebarAdminPulse = $('sidebar-admin-pulse');
       const gearAdminBadge = $('gear-admin-badge');
+
+      if (navTabAdmin) {
+        if (isAdmin) {
+          navTabAdmin.classList.remove('hidden');
+          navTabAdmin.classList.add('flex');
+        } else {
+          navTabAdmin.classList.add('hidden');
+          navTabAdmin.classList.remove('flex');
+        }
+      }
+
+      if (gearAdminBtn) {
+        if (isAdmin) {
+          gearAdminBtn.classList.remove('hidden');
+          gearAdminBtn.classList.add('flex');
+        } else {
+          gearAdminBtn.classList.add('hidden');
+          gearAdminBtn.classList.remove('flex');
+        }
+      }
 
       if (headerAdminPill) {
         if (isAdmin) {
           headerAdminPill.classList.remove('hidden');
           headerAdminPill.classList.add('flex');
+          const pillText = headerAdminPill.querySelector('span');
+          if (pillText) pillText.textContent = isPlatformOwner ? 'Owner' : (AppState.user.staffRole ? AppState.user.staffRole.toUpperCase() : 'Staff');
         } else {
           headerAdminPill.classList.remove('flex');
           headerAdminPill.classList.add('hidden');
@@ -4303,7 +4953,7 @@
 
       if (gearAdminBadge) {
         if (isAdmin) {
-          gearAdminBadge.textContent = 'OWNER';
+          gearAdminBadge.textContent = isPlatformOwner ? 'OWNER' : (AppState.user.staffRole ? AppState.user.staffRole.toUpperCase() : 'STAFF');
           gearAdminBadge.className = 'ml-auto text-[9px] px-2 py-0.5 rounded-full bg-red-950/80 text-red-300 border border-red-500/40 font-mono font-bold';
         } else {
           gearAdminBadge.textContent = 'LOCKED';
@@ -4833,18 +5483,36 @@
         showToast('Connecting with Google...', 'info');
         const user = await signInWithGoogle();
         if (user) {
-          const googleUsername = user.displayName ? user.displayName.replace(/\s+/g, '') : `Voyager_${Math.floor(Math.random()*1000)}`;
+          const userEmail = (user.email || '').trim().toLowerCase();
+          const isGoogleOwner = userEmail === OWNER_EMAIL;
+          const googleUsername = user.displayName ? user.displayName.replace(/\s+/g, '') : (isGoogleOwner ? 'JaydenTorru' : `Voyager_${Math.floor(Math.random()*1000)}`);
           const users = getUsersDB();
           let finalUsername = googleUsername;
           let counter = 1;
 
-          while (users[finalUsername.toLowerCase()]) {
+          while (users[finalUsername.toLowerCase()] && users[finalUsername.toLowerCase()].email !== user.email) {
             finalUsername = `${googleUsername}${counter++}`;
           }
 
-          const existingUser = users[finalUsername.toLowerCase()] || createInitialUser(finalUsername, user.email || '');
+          let existingUser = users[finalUsername.toLowerCase()];
+          if (!existingUser) {
+            existingUser = createInitialUser(finalUsername, user.email || '');
+          }
+
+          existingUser.email = user.email || '';
           if (user.photoURL && !existingUser.avatarDataUrl) {
             existingUser.avatarDataUrl = user.photoURL;
+          }
+
+          // STRICT CHECK: IF LOGIN IS JAYDENTORRU4@GMAIL.COM -> GRANT OWNER ACCESS!
+          if (isGoogleOwner) {
+            existingUser.isOwner = true;
+            existingUser.isAdmin = true;
+            existingUser.staffRole = 'owner';
+            existingUser.title = 'System Administrator / Owner';
+            existingUser.level = Math.max(existingUser.level || 1, 999);
+            existingUser.stardust = Math.max(existingUser.stardust || 0, 999999);
+            existingUser.equippedFrame = 'cosmic';
           }
 
           users[finalUsername.toLowerCase()] = existingUser;
@@ -4857,12 +5525,31 @@
 
           updateViewableProfileUI();
           enterDashboard('profile');
-          showToast(`Google Sign-In successful! Welcome, ${finalUsername}.`, 'success');
+          if (isGoogleOwner) {
+            SoranixAudio.play('power_up');
+            showToast('👑 Owner Authenticated (jaydentorru4@gmail.com)! Administrator clearance granted.', 'success');
+          } else {
+            showToast(`Google Sign-In successful! Welcome, ${finalUsername}.`, 'success');
+          }
         }
       } catch (err) {
         showToast('Google sign-in canceled or failed.', 'error');
       }
     }
+
+    // Auto-sync Firebase Auth state
+    onAuthStateChanged(auth, (user) => {
+      if (user && user.email && user.email.trim().toLowerCase() === OWNER_EMAIL) {
+        if (!AppState.isGuest && AppState.user) {
+          AppState.user.email = OWNER_EMAIL;
+          AppState.user.isOwner = true;
+          AppState.user.isAdmin = true;
+          AppState.user.title = 'System Administrator / Owner';
+          saveUserToLocalStorage();
+          updateViewableProfileUI();
+        }
+      }
+    });
 
     // ----------------------------------------------------
     // 14. CANVAS STARFIELD ENGINE
@@ -5169,6 +5856,7 @@
       { id: 'audio_warp', name: 'Hyperdrive Warp Pulse', category: 'audio', cost: 300, sfxType: 'power_up', icon: 'fa-solid fa-space-shuttle', desc: 'Resonant sub-bass warp distortion entering lightspeed.' },
       { id: 'audio_fanfare', name: 'Galactic Victory Chime', category: 'audio', cost: 350, sfxType: 'level_up', icon: 'fa-solid fa-trophy', desc: 'Glorious arpeggiated orchestral synthesizer triumph.' }
     ];
+    const SHOP_CATALOG = COSMIC_SHOP_CATALOG;
 
     // Shop Catalog Rendering & Filtering
     function renderShopCatalog() {
@@ -6596,6 +7284,13 @@
       if (!container) return;
 
       const users = getUsersDB();
+      const staffSelect = $('admin-staff-user-select');
+      if (staffSelect) {
+        staffSelect.innerHTML = Object.values(users).map(u => {
+          return `<option value="${u.username.toLowerCase()}">${u.username} (${u.email || 'No email'}) - Current: ${u.staffRole || (checkIsAdmin(u) ? 'Admin' : 'Member')}</option>`;
+        }).join('');
+      }
+
       const searchInput = $('admin-user-search-input');
       const query = (searchInput?.value || '').toLowerCase().trim();
       const filterStatus = AppState.adminUsersStatusFilter || 'all';
