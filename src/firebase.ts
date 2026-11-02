@@ -3,6 +3,7 @@ import {
   getAuth, 
   GoogleAuthProvider, 
   signInWithPopup, 
+  signInAnonymously,
   signOut as fbSignOut, 
   onAuthStateChanged,
   type User 
@@ -16,6 +17,7 @@ import {
   onSnapshot, 
   getDocFromServer,
   collection,
+  getDocs,
   type Unsubscribe
 } from 'firebase/firestore';
 import firebaseConfig from '../firebase-applet-config.json';
@@ -76,23 +78,21 @@ export function handleFirestoreError(error: unknown, operationType: OperationTyp
   throw new Error(JSON.stringify(errInfo));
 }
 
-// Fast test connection on boot with 2500ms timeout
+// Fast test connection on boot with timeout
 export async function testConnection(): Promise<boolean> {
   try {
-    const fetchPromise = getDocFromServer(doc(db, 'test', 'connection'));
-    const timeoutPromise = new Promise<null>((resolve) => setTimeout(() => resolve(null), 2500));
+    const fetchPromise = getDoc(doc(db, 'test', 'connection'));
+    const timeoutPromise = new Promise<null>((resolve) => setTimeout(() => resolve(null), 3000));
     await Promise.race([fetchPromise, timeoutPromise]);
     return true;
   } catch (error) {
-    if (error instanceof Error && error.message.includes('the client is offline')) {
-      console.warn("Firebase client is currently offline or connecting in background.");
-    }
+    console.warn("Firebase client connection notice:", error);
     return false;
   }
 }
 
 // Sign in with Google Popup
-export async function signInWithGoogle() {
+export async function signInWithGoogle(): Promise<User | null> {
   try {
     const result = await signInWithPopup(auth, googleProvider);
     return result.user;
@@ -106,8 +106,20 @@ export async function signInWithGoogle() {
   }
 }
 
+// Sign in anonymously for local accounts to link with Firestore
+export async function signInAnonymouslyUser(): Promise<User | null> {
+  try {
+    if (auth.currentUser) return auth.currentUser;
+    const cred = await signInAnonymously(auth);
+    return cred.user;
+  } catch (error) {
+    console.warn('Anonymous sign-in notice (will use local fallback):', error);
+    return null;
+  }
+}
+
 // Sign out
-export async function signOutUser() {
+export async function signOutUser(): Promise<void> {
   try {
     await fbSignOut(auth);
   } catch (error) {
@@ -120,12 +132,20 @@ export async function signOutUser() {
 export interface UserProfileData {
   id: string;
   displayName: string;
+  username?: string;
   email: string;
   stardust: number;
   streak: number;
+  level?: number;
+  xp?: number;
   lastClaimedDate?: string;
   equippedBorder?: string;
+  equippedFrame?: string;
   bio?: string;
+  staffRole?: string;
+  isBanned?: boolean;
+  mutedUntil?: number;
+  ipSessionLog?: string;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -138,23 +158,87 @@ export async function syncUserProfile(user: User): Promise<UserProfileData> {
     if (snap.exists()) {
       return snap.data() as UserProfileData;
     } else {
+      const isOwner = (user.email || '').trim().toLowerCase() === 'jaydentorru4@gmail.com';
       const newProfile: UserProfileData = {
         id: user.uid,
-        displayName: user.displayName || 'Starlight Voyager',
+        displayName: user.displayName || (isOwner ? 'JaydenTorru' : 'Starlight Voyager'),
+        username: user.displayName ? user.displayName.replace(/\s+/g, '') : (isOwner ? 'JaydenTorru' : 'Voyager'),
         email: user.email || '',
-        stardust: 1450,
-        streak: 5,
+        stardust: isOwner ? 999999 : 100,
+        streak: isOwner ? 99 : 1,
+        level: isOwner ? 999 : 1,
+        xp: isOwner ? 99900 : 0,
+        staffRole: isOwner ? 'owner' : '',
         lastClaimedDate: '',
-        equippedBorder: 'Standard Voyager Frame',
-        bio: 'Stargazing through infinite space, collecting rare celestial soundtracks, and indexing deep universe cyberpunk archives.',
+        equippedBorder: isOwner ? 'void' : 'Standard Voyager Frame',
+        equippedFrame: isOwner ? 'void' : 'galaxy',
+        bio: isOwner ? 'System Administrator & Soranix Platform Owner.' : 'Stargazing through infinite space, collecting rare celestial soundtracks, and indexing deep universe cyberpunk archives.',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
-      await setDoc(userRef, newProfile);
+      await setDoc(userRef, newProfile, { merge: true });
       return newProfile;
     }
   } catch (error) {
-    handleFirestoreError(error, OperationType.WRITE, `users/${user.uid}`);
+    console.warn('Sync profile notice:', error);
+    return {
+      id: user.uid,
+      displayName: user.displayName || 'Voyager',
+      username: user.displayName ? user.displayName.replace(/\s+/g, '') : 'Voyager',
+      email: user.email || '',
+      stardust: 100,
+      streak: 1
+    };
+  }
+}
+
+// Save any user profile to Firestore so admin can see new registrations across devices
+export async function saveUserToFirestore(userData: any): Promise<void> {
+  try {
+    const currentUid = auth.currentUser?.uid;
+    const cleanUsername = (userData.username || userData.displayName || 'user').toLowerCase().replace(/[^a-zA-Z0-9_-]/g, '_');
+    const docId = userData.uid || userData.id || (cleanUsername !== 'user' ? cleanUsername : null) || currentUid || ('user_' + Date.now());
+    const userRef = doc(db, 'users', docId);
+
+    const payload: UserProfileData = {
+      id: docId,
+      displayName: userData.username || userData.displayName || 'Voyager',
+      username: userData.username || userData.displayName || 'Voyager',
+      email: userData.email || '',
+      stardust: typeof userData.stardust === 'number' ? userData.stardust : 0,
+      streak: typeof userData.streakDays === 'number' ? userData.streakDays : (userData.streak || 0),
+      level: userData.level || 1,
+      xp: userData.xp || 0,
+      bio: (userData.bio || '').slice(0, 250),
+      equippedBorder: userData.equippedFrame || 'galaxy',
+      equippedFrame: userData.equippedFrame || 'galaxy',
+      staffRole: userData.staffRole || '',
+      isBanned: !!userData.isBanned,
+      mutedUntil: userData.mutedUntil || 0,
+      ipSessionLog: userData.ipSessionLog || 'Web Session • Active',
+      createdAt: userData.createdAt || new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+
+    await setDoc(userRef, payload, { merge: true });
+  } catch (error) {
+    console.warn('saveUserToFirestore notice:', error);
+  }
+}
+
+// Fetch all registered users from Firestore for the Admin Panel
+export async function fetchAllUsers(): Promise<UserProfileData[]> {
+  try {
+    const usersCol = collection(db, 'users');
+    const snap = await getDocs(usersCol);
+    const users: UserProfileData[] = [];
+    snap.forEach((d) => {
+      users.push(d.data() as UserProfileData);
+    });
+    return users;
+  } catch (error) {
+    console.warn('fetchAllUsers notice (admin clearance required or network):', error);
+    return [];
   }
 }
 
@@ -167,7 +251,7 @@ export async function updateUserProfile(userId: string, data: Partial<UserProfil
       updatedAt: new Date().toISOString()
     });
   } catch (error) {
-    handleFirestoreError(error, OperationType.UPDATE, `users/${userId}`);
+    console.warn(`updateUserProfile notice for users/${userId}:`, error);
   }
 }
 
@@ -179,6 +263,6 @@ export function subscribeToUserProfile(userId: string, onUpdate: (data: UserProf
       onUpdate(docSnap.data() as UserProfileData);
     }
   }, (error) => {
-    handleFirestoreError(error, OperationType.GET, `users/${userId}`);
+    console.warn(`subscribeToUserProfile notice for users/${userId}:`, error);
   });
 }
