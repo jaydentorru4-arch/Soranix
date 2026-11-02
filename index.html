@@ -54,6 +54,9 @@
     }
   </script>
 
+  <!-- HLS.js CDN for Direct M3U8 Streaming -->
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
   <!-- FontAwesome 6 Icons CDN -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
@@ -67,6 +70,77 @@
       --glass-border: rgba(255, 255, 255, 0.08);
       --bg-void: #05030B;
       --bg-dark: #0B0615;
+    }
+
+    [data-theme="violet"] {
+      --accent-color: #8500FF;
+      --accent-secondary: #5700C9;
+      --accent-glow: rgba(133, 0, 255, 0.45);
+      --accent-glow-strong: rgba(133, 0, 255, 0.8);
+      --accent-rgb: 133, 0, 255;
+    }
+    [data-theme="pink"] {
+      --accent-color: #EC4899;
+      --accent-secondary: #BE185D;
+      --accent-glow: rgba(236, 72, 153, 0.45);
+      --accent-glow-strong: rgba(236, 72, 153, 0.8);
+      --accent-rgb: 236, 72, 153;
+    }
+    [data-theme="cyan"] {
+      --accent-color: #06B6D4;
+      --accent-secondary: #0891B2;
+      --accent-glow: rgba(6, 182, 212, 0.45);
+      --accent-glow-strong: rgba(6, 182, 212, 0.8);
+      --accent-rgb: 6, 182, 212;
+    }
+    [data-theme="gold"] {
+      --accent-color: #F59E0B;
+      --accent-secondary: #D97706;
+      --accent-glow: rgba(245, 158, 11, 0.45);
+      --accent-glow-strong: rgba(245, 158, 11, 0.8);
+      --accent-rgb: 245, 158, 11;
+    }
+    [data-theme="emerald"] {
+      --accent-color: #10B981;
+      --accent-secondary: #059669;
+      --accent-glow: rgba(16, 185, 129, 0.45);
+      --accent-glow-strong: rgba(16, 185, 129, 0.8);
+      --accent-rgb: 16, 185, 129;
+    }
+    [data-theme="crimson"] {
+      --accent-color: #EF4444;
+      --accent-secondary: #B91C1C;
+      --accent-glow: rgba(239, 68, 68, 0.45);
+      --accent-glow-strong: rgba(239, 68, 68, 0.8);
+      --accent-rgb: 239, 68, 68;
+    }
+    [data-theme="ice"] {
+      --accent-color: #38BDF8;
+      --accent-secondary: #0284C7;
+      --accent-glow: rgba(56, 189, 248, 0.45);
+      --accent-glow-strong: rgba(56, 189, 248, 0.8);
+      --accent-rgb: 56, 189, 248;
+    }
+    [data-theme="amber"] {
+      --accent-color: #F97316;
+      --accent-secondary: #C2410C;
+      --accent-glow: rgba(249, 115, 22, 0.45);
+      --accent-glow-strong: rgba(249, 115, 22, 0.8);
+      --accent-rgb: 249, 115, 22;
+    }
+    [data-theme="lavender"] {
+      --accent-color: #A78BFA;
+      --accent-secondary: #7C3AED;
+      --accent-glow: rgba(167, 139, 250, 0.45);
+      --accent-glow-strong: rgba(167, 139, 250, 0.8);
+      --accent-rgb: 167, 139, 250;
+    }
+    [data-theme="lime"] {
+      --accent-color: #84CC16;
+      --accent-secondary: #65A30D;
+      --accent-glow: rgba(132, 204, 22, 0.45);
+      --accent-glow-strong: rgba(132, 204, 22, 0.8);
+      --accent-rgb: 132, 204, 22;
     }
 
     body {
@@ -477,9 +551,21 @@
             <!-- Description -->
             <div class="pt-2">
               <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Synopsis</h4>
-              <p id="detail-synopsis" class="text-xs text-slate-300 leading-relaxed max-h-36 overflow-y-auto pr-2">
+              <p id="detail-synopsis" class="text-xs text-slate-300 leading-relaxed max-h-32 overflow-y-auto pr-2">
                 Synopsis text loading...
               </p>
+            </div>
+
+            <!-- Episodes Quick-Select Grid -->
+            <div id="detail-episodes-section" class="border-t border-glassBorder pt-3 space-y-2">
+              <div class="flex items-center justify-between">
+                <h4 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+                  <i class="fa-solid fa-layer-group text-accent text-xs"></i>
+                  <span>Episode Stargates</span>
+                </h4>
+                <span id="detail-episodes-count-label" class="text-[10px] text-purple-300 font-mono">12 Episodes Available</span>
+              </div>
+              <div id="detail-episodes-grid" class="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto pr-1"></div>
             </div>
 
           </div>
@@ -524,9 +610,9 @@
   <div id="anime-video-player-modal" class="fixed inset-0 z-50 hidden bg-[#05030a]/98 backdrop-blur-3xl flex-col select-none overflow-hidden transition-all duration-300">
     
     <!-- Top Player Header Bar (Auto-hides with controls) -->
-    <div id="player-header-bar" class="w-full px-4 sm:px-8 py-3.5 border-b border-white/10 bg-gradient-to-b from-black/80 to-transparent flex items-center justify-between z-30 transition-opacity duration-300 shrink-0">
-      <div class="flex items-center gap-3 min-w-0">
-        <button onclick="closeAnimePlayerModal()" class="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all cursor-pointer text-xs shrink-0" title="Back to Soranix">
+    <div id="player-header-bar" class="w-full px-3 sm:px-6 py-3 border-b border-white/10 bg-gradient-to-b from-black/95 via-black/80 to-transparent flex items-center justify-between z-30 transition-opacity duration-300 shrink-0 gap-2">
+      <div class="flex items-center gap-2.5 min-w-0">
+        <button onclick="closeAnimePlayerModal()" class="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all cursor-pointer text-xs shrink-0" title="Back to Soranix (Esc)">
           <i class="fa-solid fa-arrow-left"></i>
         </button>
         <div class="min-w-0">
@@ -534,17 +620,39 @@
             <h3 id="player-anime-title" class="text-sm sm:text-base font-display font-bold text-white truncate">Anime Title</h3>
             <span id="player-episode-tag" class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-purple-950/80 text-purple-300 border border-purple-500/40 shrink-0">Ep 1</span>
           </div>
-          <p id="player-episode-title" class="text-[11px] text-slate-400 truncate">Episode 1: The Departure</p>
+          <p id="player-episode-title" class="text-[11px] text-slate-400 truncate">Now Playing: Episode 1</p>
         </div>
       </div>
 
-      <!-- Right Header Actions: Watch-Time Reward Glowing Pill & Close -->
-      <div class="flex items-center gap-3 shrink-0">
-        <!-- Live Watch-Time Reward Indicator Pill -->
-        <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-purple-950/70 border border-purple-500/40 text-xs font-mono text-purple-200 shadow-[0_0_15px_rgba(168,85,247,0.25)]">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399] animate-pulse"></span>
-          <span class="hidden sm:inline text-[11px]">Watch Rewards:</span>
-          <span id="player-reward-timer-pill" class="text-amber-300 font-bold">+50 Stardust / 5m</span>
+      <!-- Right Header Actions: Multi-Server Switcher, Active Stardust Tracker & Close -->
+      <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+        
+        <!-- Multi-Server Fallback Switcher -->
+        <div class="flex items-center gap-1.5">
+          <span class="hidden md:inline text-[10px] font-mono uppercase tracking-wider text-slate-400">Server:</span>
+          <select 
+            id="player-server-select" 
+            onchange="handlePlayerServerChange(this.value)" 
+            class="px-2.5 py-1.5 text-xs bg-purple-950/80 border border-purple-500/40 rounded-xl text-purple-200 focus:outline-none focus:border-purple-400 cursor-pointer font-mono font-semibold"
+            title="Switch Stream Source Mirror"
+          >
+            <option value="server1">Server 1 (Primary HD)</option>
+            <option value="server2">Server 2 (Backup Stream)</option>
+            <option value="server3">Server 3 (Official Trailer / PV)</option>
+            <option value="hls">Server 4 (HLS Direct)</option>
+          </select>
+        </div>
+
+        <!-- Active Stardust Watch-Time Reward Glowing Status Indicator -->
+        <div 
+          id="player-reward-tracker-status" 
+          class="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 rounded-xl bg-purple-950/70 border border-purple-500/40 text-xs font-mono text-purple-200 shadow-[0_0_15px_rgba(168,85,247,0.25)]"
+          title="Stardust Coins Watch-Time Reward Tracker"
+        >
+          <span id="player-reward-pulse-dot" class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399] animate-pulse"></span>
+          <i class="fa-solid fa-stopwatch text-amber-400 text-xs"></i>
+          <span id="player-reward-status-label" class="hidden sm:inline text-amber-300 font-bold">Stardust Tracker: Active</span>
+          <span id="player-reward-timer-pill" class="text-purple-300 font-semibold text-[10px] sm:text-[11px] font-mono">(+50 Stardust/5m)</span>
         </div>
 
         <button onclick="togglePlayerBrowserFullscreen()" class="w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white flex items-center justify-center transition-all cursor-pointer text-xs" title="Toggle Fullscreen (F)">
@@ -560,7 +668,30 @@
     <!-- Center Cinema Video Screen Container -->
     <div id="player-viewport-container" class="relative flex-1 flex items-center justify-center bg-black overflow-hidden group">
       
-      <!-- Native HTML5 Video Element -->
+      <!-- Multi-Server Fallback / Connection Status Banner -->
+      <div 
+        id="player-server-status-banner" 
+        class="hidden absolute top-4 inset-x-4 max-w-md mx-auto z-40 px-4 py-2.5 rounded-2xl bg-amber-950/95 border border-amber-500/60 text-amber-200 text-xs flex items-center justify-between gap-3 shadow-2xl backdrop-blur-xl animate-bounce"
+      >
+        <div class="flex items-center gap-2.5">
+          <i class="fa-solid fa-triangle-exclamation text-amber-400"></i>
+          <span id="player-server-status-text">Server connection failed. Switching to backup server...</span>
+        </div>
+        <button onclick="$(player-server-status-banner)?.classList.add(hidden)" class="text-amber-400 hover:text-white text-xs cursor-pointer">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Transmission Loading Satellite Spinner -->
+      <div 
+        id="player-loading-spinner" 
+        class="hidden absolute inset-0 flex flex-col items-center justify-center bg-black/75 z-25 pointer-events-none transition-opacity duration-300"
+      >
+        <div class="w-12 h-12 rounded-full border-3 border-purple-500/20 border-t-purple-500 animate-spin mb-3"></div>
+        <span class="text-xs font-mono font-semibold text-purple-300 tracking-wider">Establishing stream transmission...</span>
+      </div>
+
+      <!-- 1. Native HTML5 Video Element (HLS.js Direct Streaming / MP4) -->
       <video 
         id="soranix-html5-video" 
         class="w-full h-full object-contain cursor-pointer"
@@ -573,13 +704,23 @@
         Your browser does not support high-definition video playback.
       </video>
 
-      <!-- Center Big Play Button Overlay (when paused) -->
+      <!-- 2. IFrame Embed Player (Primary HD, Backup Stream & Trailer Embeds) -->
+      <iframe 
+        id="soranix-embed-player" 
+        class="w-full h-full border-0 hidden bg-black" 
+        allowfullscreen 
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+        referrerpolicy="origin"
+        title="Anime Stream Player"
+      ></iframe>
+
+      <!-- Center Big Play Button Overlay (when paused in HTML5 video mode) -->
       <div 
         id="player-center-play-overlay" 
         onclick="toggleVideoPlayback()" 
-        class="absolute inset-0 flex items-center justify-center bg-black/40 cursor-pointer transition-opacity duration-300"
+        class="absolute inset-0 flex items-center justify-center bg-black/40 cursor-pointer transition-opacity duration-300 pointer-events-none opacity-0"
       >
-        <div class="w-20 h-20 rounded-full bg-purple-600/90 hover:bg-purple-500 text-white flex items-center justify-center text-3xl shadow-accent-strong hover:scale-110 active:scale-95 transition-all">
+        <div class="w-20 h-20 rounded-full bg-purple-600/90 hover:bg-purple-500 text-white flex items-center justify-center text-3xl shadow-accent-strong hover:scale-110 active:scale-95 transition-all pointer-events-auto">
           <i class="fa-solid fa-play ml-1"></i>
         </div>
       </div>
@@ -597,14 +738,17 @@
       <!-- Next Episode Auto-Progression Toast Countdown -->
       <div 
         id="player-next-ep-toast" 
-        class="hidden absolute top-16 right-6 z-30 px-4 py-3 rounded-2xl bg-purple-950/90 border border-purple-500/50 text-xs text-white shadow-2xl backdrop-blur-xl flex items-center gap-3 animate-bounce"
+        class="hidden absolute top-16 right-6 z-30 px-4 py-3 rounded-2xl bg-purple-950/95 border border-purple-500/60 text-xs text-white shadow-2xl backdrop-blur-xl flex items-center gap-3 animate-bounce"
       >
-        <i class="fa-solid fa-forward text-solarGold text-sm"></i>
+        <i class="fa-solid fa-forward text-amber-400 text-sm"></i>
         <div>
           <span class="font-bold">Next Episode Ready</span>
           <p id="player-next-ep-toast-text" class="text-[10px] text-purple-200">Playing Episode 2 in 5s...</p>
         </div>
-        <button onclick="playNextEpisode()" class="px-2.5 py-1 rounded-lg bg-purple-600 hover:bg-purple-500 font-bold text-[10px] cursor-pointer">Play Now</button>
+        <div class="flex items-center gap-1.5">
+          <button onclick="playNextEpisode()" class="px-2.5 py-1 rounded-lg bg-purple-600 hover:bg-purple-500 font-bold text-[10px] cursor-pointer">Play Now</button>
+          <button onclick="cancelNextEpisodeCountdown()" class="px-2 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-slate-300 text-[10px] cursor-pointer">Cancel</button>
+        </div>
       </div>
 
       <!-- Media Control Overlay Bar (Autohides during playback, shows on hover or pause) -->
@@ -1082,10 +1226,10 @@
     <!-- -------------------------------------------------------- -->
     <!-- 1. LEFT SIDEBAR WITH GEAR / PROFILE POP-DOWN MENU        -->
     <!-- -------------------------------------------------------- -->
-    <aside class="w-full md:w-20 lg:w-24 md:min-h-screen glass-panel border-r border-glassBorder flex md:flex-col items-center justify-between p-3 md:py-6 shrink-0 z-30 sticky top-0 md:h-screen">
+    <aside class="fixed bottom-0 inset-x-0 z-40 h-16 w-full bg-[#0B0615]/95 backdrop-blur-2xl border-t border-glassBorder flex flex-row items-center justify-around px-2 py-1 md:static md:w-20 lg:w-24 md:h-screen md:min-h-screen md:border-r md:border-t-0 md:flex-col md:justify-between md:py-6 md:px-0 md:sticky md:top-0 shrink-0 shadow-2xl">
       
-      <!-- Top Logo Button -->
-      <div class="flex items-center gap-2">
+      <!-- Top Logo Button (Hidden on mobile bottom bar to maximize space) -->
+      <div class="hidden md:flex items-center gap-2">
         <button 
           onclick="returnToSplash()" 
           class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-purple-800 to-indigo-600 flex items-center justify-center text-white shadow-[0_0_20px_var(--accent-glow)] hover:scale-105 active:scale-95 transition-all cursor-pointer group"
@@ -1095,14 +1239,14 @@
         </button>
       </div>
 
-      <!-- Middle Navigation Icons -->
-      <nav class="flex md:flex-col items-center gap-2 sm:gap-3">
+      <!-- Navigation Icons Bar -->
+      <nav class="flex flex-row md:flex-col items-center justify-around md:justify-center w-full md:w-auto gap-1 sm:gap-2 md:gap-3">
         
         <!-- Tab 1: Dashboard Home -->
         <button 
           id="nav-tab-btn-home"
           onclick="switchDashboardTab('home')" 
-          class="sidebar-tab-btn w-11 h-11 rounded-2xl flex items-center justify-center text-white bg-purple-600 shadow-sm transition-all cursor-pointer"
+          class="sidebar-tab-btn w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center text-white bg-purple-600 shadow-sm transition-all cursor-pointer"
           title="Dashboard Home"
         >
           <i class="fa-solid fa-house text-base"></i>
@@ -1112,7 +1256,7 @@
         <button 
           id="nav-tab-btn-profile"
           onclick="switchDashboardTab('profile')" 
-          class="sidebar-tab-btn w-11 h-11 rounded-2xl flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all cursor-pointer relative"
+          class="sidebar-tab-btn w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all cursor-pointer relative"
           title="My Profile (Profile Management Hub)"
         >
           <i class="fa-solid fa-user-astronaut text-base"></i>
@@ -1122,7 +1266,7 @@
         <button 
           id="nav-tab-btn-friends"
           onclick="switchDashboardTab('friends')" 
-          class="sidebar-tab-btn w-11 h-11 rounded-2xl flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all cursor-pointer relative"
+          class="sidebar-tab-btn w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all cursor-pointer relative"
           title="Friends & Transmissions"
         >
           <i class="fa-solid fa-user-group text-base text-purple-400"></i>
@@ -1133,7 +1277,7 @@
         <button 
           id="nav-tab-btn-favorites"
           onclick="switchDashboardTab('favorites')" 
-          class="sidebar-tab-btn w-11 h-11 rounded-2xl flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all cursor-pointer relative"
+          class="sidebar-tab-btn w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all cursor-pointer relative"
           title="Favourited Anime"
         >
           <i class="fa-solid fa-heart text-base text-pink-400"></i>
@@ -1144,7 +1288,7 @@
         <button 
           id="nav-tab-btn-rewards"
           onclick="switchDashboardTab('rewards')" 
-          class="sidebar-tab-btn w-11 h-11 rounded-2xl flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all cursor-pointer relative"
+          class="sidebar-tab-btn w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all cursor-pointer relative"
           title="Daily Login Rewards"
         >
           <i class="fa-solid fa-calendar-check text-base text-amber-400"></i>
@@ -1155,7 +1299,7 @@
         <button 
           id="nav-tab-btn-shop"
           onclick="switchDashboardTab('shop')" 
-          class="sidebar-tab-btn w-11 h-11 rounded-2xl flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all cursor-pointer"
+          class="sidebar-tab-btn w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all cursor-pointer"
           title="Cosmic Shop"
         >
           <i class="fa-solid fa-store text-base text-cyan-400"></i>
@@ -1165,7 +1309,7 @@
         <button 
           id="nav-tab-btn-globalchat"
           onclick="toggleGlobalChatPanel()" 
-          class="sidebar-tab-btn w-11 h-11 rounded-2xl flex items-center justify-center text-slate-400 hover:text-electricCyan hover:bg-white/10 transition-all cursor-pointer relative"
+          class="sidebar-tab-btn w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center text-slate-400 hover:text-electricCyan hover:bg-white/10 transition-all cursor-pointer relative"
           title="Toggle Cosmic Global Chat"
         >
           <i class="fa-solid fa-comments text-base text-electricCyan"></i>
@@ -1209,7 +1353,7 @@
         <!-- POP-DOWN / FLYOUT GEAR MENU (#gear-dropdown) -->
         <div 
           id="gear-dropdown" 
-          class="hidden absolute bottom-14 left-0 md:bottom-2 md:left-16 w-72 glass-card rounded-3xl p-4 shadow-2xl border border-glassBorder z-50 transition-all duration-200"
+          class="hidden absolute bottom-20 left-2 right-2 sm:left-auto sm:right-4 md:bottom-2 md:left-16 md:right-auto w-auto sm:w-72 glass-card rounded-3xl p-4 shadow-2xl border border-glassBorder z-50 transition-all duration-200"
         >
           <!-- User Mini-Profile Header -->
           <div class="flex items-center gap-3 pb-3 border-b border-glassBorder mb-3">
@@ -1330,24 +1474,27 @@
     <!-- -------------------------------------------------------- -->
     <!-- 2. MAIN DASHBOARD CONTENT AREA                           -->
     <!-- -------------------------------------------------------- -->
-    <div class="flex-1 flex flex-col min-h-screen overflow-y-auto">
+    <div class="flex-1 flex flex-col min-h-screen overflow-y-auto pb-24 md:pb-6">
       
       <!-- Top Bar Header -->
-      <header class="w-full h-16 border-b border-glassBorder glass-panel sticky top-0 z-20 px-4 sm:px-8 flex items-center justify-between">
+      <header class="w-full h-16 border-b border-glassBorder glass-panel sticky top-0 z-20 px-3 sm:px-6 md:px-8 flex items-center justify-between gap-2">
         
         <!-- Left: Title & Active Breadcrumb -->
-        <div class="flex items-center gap-3">
-          <div class="font-display font-extrabold text-sm sm:text-base tracking-wider text-white">
-            SORANIX<span class="text-accent transition-colors duration-300">.DASH</span>
+        <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+          <div class="font-display font-extrabold text-base sm:text-lg tracking-wider text-white">
+            SORANIX
           </div>
-          <span class="text-slate-600">/</span>
-          <span id="header-breadcrumb" class="text-xs font-bold uppercase tracking-wider text-accent font-mono">
+          <span class="text-slate-600 hidden md:inline">/</span>
+          <span id="header-breadcrumb" class="hidden md:inline text-xs font-bold uppercase tracking-wider text-accent font-mono truncate max-w-[140px] lg:max-w-none">
             DASHBOARD HOME
           </span>
         </div>
 
-        <!-- Right: Currency Counters, Level & User Status -->
-        <div class="flex items-center gap-2 sm:gap-3.5">
+        <!-- Right: Grouped Badges & Action Toolbar -->
+        <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+          
+          <!-- User Stats Group (Level, Coins, Streak) -->
+          <div class="flex items-center gap-1.5 sm:gap-2">
           
           <!-- Stardust Coins Pill -->
           <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-950/40 border border-amber-500/30 text-xs font-semibold text-amber-300 shadow-sm">
@@ -1407,12 +1554,29 @@
                   <h4 class="text-xs font-bold text-white">Cosmic Notifications</h4>
                   <span id="notif-count-badge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-950/80 text-purple-300 border border-purple-500/30">0 New</span>
                 </div>
-                <button 
-                  onclick="markAllNotificationsRead()" 
-                  class="text-[11px] font-semibold text-purple-300 hover:text-white transition-colors cursor-pointer"
-                >
-                  Mark all as read
-                </button>
+                <div class="flex items-center gap-1.5">
+                  <button 
+                    onclick="markAllNotificationsRead()" 
+                    class="text-[11px] font-semibold text-purple-300 hover:text-white transition-colors cursor-pointer mr-1"
+                  >
+                    Mark all
+                  </button>
+                  <button 
+                    id="btn-notification-fullscreen"
+                    onclick="toggleNotificationsFullscreen(event)" 
+                    class="p-1.5 text-slate-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors cursor-pointer text-xs" 
+                    title="Toggle Fullscreen Notifications"
+                  >
+                    <i id="notifications-fullscreen-icon" class="fa-solid fa-expand"></i>
+                  </button>
+                  <button 
+                    onclick="closeNotificationDropdown()" 
+                    class="p-1.5 text-slate-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors cursor-pointer text-xs" 
+                    title="Close Notifications"
+                  >
+                    <i class="fa-solid fa-xmark"></i>
+                  </button>
+                </div>
               </div>
 
               <!-- Notification items container -->
@@ -1448,41 +1612,76 @@
                 <span>Select Theme</span>
                 <i class="fa-solid fa-wand-magic-sparkles text-accent"></i>
               </div>
-              <div class="space-y-1">
+              <div class="space-y-1 max-h-80 overflow-y-auto pr-1">
                 <button onclick="setCosmicTheme('violet'); toggleDashboardThemeMenu(event);" class="w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl hover:bg-white/10 text-xs text-slate-200 transition-colors cursor-pointer text-left">
                   <div class="flex items-center gap-2">
-                    <span class="w-3 h-3 rounded-full bg-purple-500 shadow-[0_0_6px_#a855f7]"></span>
+                    <span class="w-3 h-3 rounded-full bg-[#8500FF] shadow-[0_0_6px_#8500FF]"></span>
                     <span>Cosmic Violet</span>
                   </div>
                   <i class="fa-solid fa-check text-xs text-purple-400 theme-check-icon" data-theme-check="violet"></i>
                 </button>
                 <button onclick="setCosmicTheme('pink'); toggleDashboardThemeMenu(event);" class="w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl hover:bg-white/10 text-xs text-slate-200 transition-colors cursor-pointer text-left">
                   <div class="flex items-center gap-2">
-                    <span class="w-3 h-3 rounded-full bg-pink-500 shadow-[0_0_6px_#ec4899]"></span>
+                    <span class="w-3 h-3 rounded-full bg-[#EC4899] shadow-[0_0_6px_#ec4899]"></span>
                     <span>Neon Pink</span>
                   </div>
                   <i class="fa-solid fa-check text-xs text-pink-400 hidden theme-check-icon" data-theme-check="pink"></i>
                 </button>
                 <button onclick="setCosmicTheme('cyan'); toggleDashboardThemeMenu(event);" class="w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl hover:bg-white/10 text-xs text-slate-200 transition-colors cursor-pointer text-left">
                   <div class="flex items-center gap-2">
-                    <span class="w-3 h-3 rounded-full bg-cyan-500 shadow-[0_0_6px_#06b6d4]"></span>
+                    <span class="w-3 h-3 rounded-full bg-[#06B6D4] shadow-[0_0_6px_#06b6d4]"></span>
                     <span>Electric Cyan</span>
                   </div>
                   <i class="fa-solid fa-check text-xs text-cyan-400 hidden theme-check-icon" data-theme-check="cyan"></i>
                 </button>
                 <button onclick="setCosmicTheme('gold'); toggleDashboardThemeMenu(event);" class="w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl hover:bg-white/10 text-xs text-slate-200 transition-colors cursor-pointer text-left">
                   <div class="flex items-center gap-2">
-                    <span class="w-3 h-3 rounded-full bg-amber-500 shadow-[0_0_6px_#f59e0b]"></span>
+                    <span class="w-3 h-3 rounded-full bg-[#F59E0B] shadow-[0_0_6px_#f59e0b]"></span>
                     <span>Solar Gold</span>
                   </div>
                   <i class="fa-solid fa-check text-xs text-amber-400 hidden theme-check-icon" data-theme-check="gold"></i>
                 </button>
                 <button onclick="setCosmicTheme('emerald'); toggleDashboardThemeMenu(event);" class="w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl hover:bg-white/10 text-xs text-slate-200 transition-colors cursor-pointer text-left">
                   <div class="flex items-center gap-2">
-                    <span class="w-3 h-3 rounded-full bg-emerald-500 shadow-[0_0_6px_#10b981]"></span>
+                    <span class="w-3 h-3 rounded-full bg-[#10B981] shadow-[0_0_6px_#10b981]"></span>
                     <span>Emerald Green</span>
                   </div>
                   <i class="fa-solid fa-check text-xs text-emerald-400 hidden theme-check-icon" data-theme-check="emerald"></i>
+                </button>
+                <button onclick="setCosmicTheme('crimson'); toggleDashboardThemeMenu(event);" class="w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl hover:bg-white/10 text-xs text-slate-200 transition-colors cursor-pointer text-left">
+                  <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-[#EF4444] shadow-[0_0_6px_#ef4444]"></span>
+                    <span>Blood Crimson</span>
+                  </div>
+                  <i class="fa-solid fa-check text-xs text-red-400 hidden theme-check-icon" data-theme-check="crimson"></i>
+                </button>
+                <button onclick="setCosmicTheme('ice'); toggleDashboardThemeMenu(event);" class="w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl hover:bg-white/10 text-xs text-slate-200 transition-colors cursor-pointer text-left">
+                  <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-[#38BDF8] shadow-[0_0_6px_#38bdf8]"></span>
+                    <span>Glacial Ice</span>
+                  </div>
+                  <i class="fa-solid fa-check text-xs text-sky-400 hidden theme-check-icon" data-theme-check="ice"></i>
+                </button>
+                <button onclick="setCosmicTheme('amber'); toggleDashboardThemeMenu(event);" class="w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl hover:bg-white/10 text-xs text-slate-200 transition-colors cursor-pointer text-left">
+                  <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-[#F97316] shadow-[0_0_6px_#f97316]"></span>
+                    <span>Inferno Amber</span>
+                  </div>
+                  <i class="fa-solid fa-check text-xs text-orange-400 hidden theme-check-icon" data-theme-check="amber"></i>
+                </button>
+                <button onclick="setCosmicTheme('lavender'); toggleDashboardThemeMenu(event);" class="w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl hover:bg-white/10 text-xs text-slate-200 transition-colors cursor-pointer text-left">
+                  <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-[#A78BFA] shadow-[0_0_6px_#a78bfa]"></span>
+                    <span>Starlight Lavender</span>
+                  </div>
+                  <i class="fa-solid fa-check text-xs text-purple-300 hidden theme-check-icon" data-theme-check="lavender"></i>
+                </button>
+                <button onclick="setCosmicTheme('lime'); toggleDashboardThemeMenu(event);" class="w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl hover:bg-white/10 text-xs text-slate-200 transition-colors cursor-pointer text-left">
+                  <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-[#84CC16] shadow-[0_0_6px_#84cc16]"></span>
+                    <span>Matrix Lime</span>
+                  </div>
+                  <i class="fa-solid fa-check text-xs text-lime-400 hidden theme-check-icon" data-theme-check="lime"></i>
                 </button>
               </div>
             </div>
@@ -1613,15 +1812,66 @@
             </div>
           </div>
 
-          <!-- Featured Anime Hero Showcase Banner -->
-          <div id="anime-hero-banner" class="relative rounded-3xl overflow-hidden border border-purple-500/30 glass-card shadow-2xl transition-all duration-500 min-h-[260px] sm:min-h-[320px] flex items-end">
-            <!-- Background Artwork -->
-            <img id="anime-hero-bg" src="https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=1600&q=80" alt="Hero Banner" class="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.6] transition-all duration-700" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=1600&q=80';" />
-            <div class="absolute inset-0 bg-gradient-to-t from-[#07050e] via-[#07050e]/60 to-transparent"></div>
-            <div class="absolute inset-0 bg-gradient-to-r from-[#07050e]/90 via-[#07050e]/40 to-transparent"></div>
+          <!-- Featured Anime Hero Showcase Banner (3-Second Auto-Preview Carousel) -->
+          <div 
+            id="anime-hero-banner" 
+            class="relative rounded-3xl overflow-hidden border border-purple-500/30 glass-card shadow-2xl transition-all duration-500 min-h-[280px] sm:min-h-[340px] flex items-end group"
+            onmouseenter="stopFeaturedHeroCarousel()"
+            onmouseleave="startFeaturedHeroCarousel()"
+          >
+            <!-- Background Artwork (Real Official Artwork) -->
+            <img 
+              id="anime-hero-bg" 
+              src="https://s4.anilist.co/file/anilistcdn/media/anime/banner/154587-ivXNJ23SM1xB.jpg" 
+              alt="Hero Anime Banner" 
+              class="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.65] transition-all duration-700 select-none" 
+              onerror="this.onerror=null; this.src='https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx154587-qQTzQnEJJ3oB.jpg';" 
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-[#05030B] via-[#05030B]/70 to-transparent"></div>
+            <div class="absolute inset-0 bg-gradient-to-r from-[#05030B]/95 via-[#05030B]/60 to-transparent"></div>
 
-            <div class="relative z-10 p-6 sm:p-8 space-y-3 max-w-2xl">
+            <!-- Carousel Next / Previous Nav Controls -->
+            <button 
+              type="button"
+              onclick="prevFeaturedHeroAnime()" 
+              class="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-black/60 hover:bg-purple-600/80 border border-white/20 text-white flex items-center justify-center transition-all cursor-pointer backdrop-blur-md shadow-md opacity-75 hover:opacity-100" 
+              title="Previous Anime (3s Auto-Preview)"
+            >
+              <i class="fa-solid fa-chevron-left text-xs"></i>
+            </button>
+            <button 
+              type="button"
+              onclick="nextFeaturedHeroAnime()" 
+              class="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-black/60 hover:bg-purple-600/80 border border-white/20 text-white flex items-center justify-center transition-all cursor-pointer backdrop-blur-md shadow-md opacity-75 hover:opacity-100" 
+              title="Next Anime (3s Auto-Preview)"
+            >
+              <i class="fa-solid fa-chevron-right text-xs"></i>
+            </button>
 
+            <!-- Top Indicator Bar with Score & 3-Second Countdown Dots -->
+            <div class="absolute top-4 right-4 sm:right-6 z-20 flex items-center gap-3">
+              <span id="anime-hero-score" class="px-2.5 py-1 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-500/40 text-xs font-mono font-bold flex items-center gap-1 shadow-sm backdrop-blur-md">
+                <i class="fa-solid fa-star text-[10px] text-amber-400"></i>
+                <span>9.1</span>
+              </span>
+              <div id="hero-carousel-dots" class="flex items-center gap-1.5 p-1 rounded-full bg-black/50 backdrop-blur-md border border-white/10">
+                <span onclick="renderFeaturedHeroShowcase(0)" class="hero-carousel-dot w-6 h-1.5 rounded-full bg-accent transition-all cursor-pointer"></span>
+                <span onclick="renderFeaturedHeroShowcase(1)" class="hero-carousel-dot w-2 h-1.5 rounded-full bg-white/20 hover:bg-white/40 transition-all cursor-pointer"></span>
+                <span onclick="renderFeaturedHeroShowcase(2)" class="hero-carousel-dot w-2 h-1.5 rounded-full bg-white/20 hover:bg-white/40 transition-all cursor-pointer"></span>
+                <span onclick="renderFeaturedHeroShowcase(3)" class="hero-carousel-dot w-2 h-1.5 rounded-full bg-white/20 hover:bg-white/40 transition-all cursor-pointer"></span>
+                <span onclick="renderFeaturedHeroShowcase(4)" class="hero-carousel-dot w-2 h-1.5 rounded-full bg-white/20 hover:bg-white/40 transition-all cursor-pointer"></span>
+              </div>
+            </div>
+
+            <!-- Hero Banner Content -->
+            <div class="relative z-10 p-6 sm:p-8 space-y-3 max-w-2xl pl-12 sm:pl-16">
+              
+              <!-- Genre Tags -->
+              <div id="anime-hero-genres" class="flex items-center gap-1.5 flex-wrap">
+                <span class="px-2 py-0.5 rounded-md bg-purple-950/80 border border-purple-500/30 text-[10px] font-mono text-purple-300">Adventure</span>
+                <span class="px-2 py-0.5 rounded-md bg-purple-950/80 border border-purple-500/30 text-[10px] font-mono text-purple-300">Drama</span>
+                <span class="px-2 py-0.5 rounded-md bg-purple-950/80 border border-purple-500/30 text-[10px] font-mono text-purple-300">Fantasy</span>
+              </div>
 
               <h3 id="anime-hero-title" class="text-2xl sm:text-3xl lg:text-4xl font-display font-black text-white leading-tight">
                 Frieren: Beyond Journey's End
@@ -2805,7 +3055,7 @@
                 <textarea 
                   id="admin-announcement-input" 
                   rows="2" 
-                  placeholder="e.g. ⚡ 2x Stardust &amp; XP Event is now live! Watch anime to earn double rewards." 
+                  placeholder="e.g. 2x Stardust &amp; XP Event is now live! Watch anime to earn double rewards." 
                   class="w-full p-3 text-xs bg-[#07050e] border border-pink-500/30 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-pink-400 resize-none"
                 ></textarea>
               </div>
@@ -3105,13 +3355,12 @@
       <div id="global-chat-auth-controls" class="space-y-2">
         <!-- Quick Anime Emojis/Stickers Bar -->
         <div class="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
-          <button onclick="insertGlobalEmoji('🔥')" class="px-1.5 py-0.5 rounded-md hover:bg-white/10 transition-colors cursor-pointer">🔥</button>
-          <button onclick="insertGlobalEmoji('✨')" class="px-1.5 py-0.5 rounded-md hover:bg-white/10 transition-colors cursor-pointer">✨</button>
-          <button onclick="insertGlobalEmoji('🌸')" class="px-1.5 py-0.5 rounded-md hover:bg-white/10 transition-colors cursor-pointer">🌸</button>
-          <button onclick="insertGlobalEmoji('⭐')" class="px-1.5 py-0.5 rounded-md hover:bg-white/10 transition-colors cursor-pointer">⭐</button>
-          <button onclick="insertGlobalEmoji('🍙')" class="px-1.5 py-0.5 rounded-md hover:bg-white/10 transition-colors cursor-pointer">🍙</button>
-          <button onclick="insertGlobalEmoji('⚔️')" class="px-1.5 py-0.5 rounded-md hover:bg-white/10 transition-colors cursor-pointer">⚔️</button>
-          <button onclick="insertGlobalEmoji('🍿')" class="px-1.5 py-0.5 rounded-md hover:bg-white/10 transition-colors cursor-pointer">🍿</button>
+          <button onclick="insertGlobalEmoji('[HYPED] ')" class="px-2 py-0.5 rounded-md bg-white/5 hover:bg-white/10 text-[10px] font-bold text-amber-300 transition-colors cursor-pointer">[HYPED]</button>
+          <button onclick="insertGlobalEmoji('[EPIC] ')" class="px-2 py-0.5 rounded-md bg-white/5 hover:bg-white/10 text-[10px] font-bold text-purple-300 transition-colors cursor-pointer">[EPIC]</button>
+          <button onclick="insertGlobalEmoji('[GG] ')" class="px-2 py-0.5 rounded-md bg-white/5 hover:bg-white/10 text-[10px] font-bold text-emerald-300 transition-colors cursor-pointer">[GG]</button>
+          <button onclick="insertGlobalEmoji('[SUGOI] ')" class="px-2 py-0.5 rounded-md bg-white/5 hover:bg-white/10 text-[10px] font-bold text-cyan-300 transition-colors cursor-pointer">[SUGOI]</button>
+          <button onclick="insertGlobalEmoji('[FIRE] ')" class="px-2 py-0.5 rounded-md bg-white/5 hover:bg-white/10 text-[10px] font-bold text-orange-300 transition-colors cursor-pointer">[FIRE]</button>
+          <button onclick="insertGlobalEmoji('[CHILL] ')" class="px-2 py-0.5 rounded-md bg-white/5 hover:bg-white/10 text-[10px] font-bold text-blue-300 transition-colors cursor-pointer">[CHILL]</button>
           <button onclick="insertGlobalEmoji('>!  !<')" class="ml-auto text-[10px] px-2 py-0.5 rounded bg-white/10 hover:bg-purple-600 text-purple-200 transition-colors cursor-pointer font-mono" title="Insert Spoiler Tag">Spoiler</button>
         </div>
 
@@ -3235,14 +3484,12 @@
     <div class="p-3 border-t border-glassBorder bg-black/40 shrink-0 space-y-2">
       <!-- Anime reaction stickers bar -->
       <div class="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
-        <button onclick="insertDMEmoji('🌸')" class="px-1.5 py-0.5 rounded hover:bg-white/10 transition-colors cursor-pointer">🌸</button>
-        <button onclick="insertDMEmoji('⚡')" class="px-1.5 py-0.5 rounded hover:bg-white/10 transition-colors cursor-pointer">⚡</button>
-        <button onclick="insertDMEmoji('⭐')" class="px-1.5 py-0.5 rounded hover:bg-white/10 transition-colors cursor-pointer">⭐</button>
-        <button onclick="insertDMEmoji('🔥')" class="px-1.5 py-0.5 rounded hover:bg-white/10 transition-colors cursor-pointer">🔥</button>
-        <button onclick="insertDMEmoji('✨')" class="px-1.5 py-0.5 rounded hover:bg-white/10 transition-colors cursor-pointer">✨</button>
-        <button onclick="insertDMEmoji('🍙')" class="px-1.5 py-0.5 rounded hover:bg-white/10 transition-colors cursor-pointer">🍙</button>
-        <button onclick="insertDMEmoji('⚔️')" class="px-1.5 py-0.5 rounded hover:bg-white/10 transition-colors cursor-pointer">⚔️</button>
-        <button onclick="insertDMEmoji('🍿')" class="px-1.5 py-0.5 rounded hover:bg-white/10 transition-colors cursor-pointer">🍿</button>
+        <button onclick="insertDMEmoji('[HYPED] ')" class="px-2 py-0.5 rounded bg-white/5 hover:bg-white/10 text-[10px] font-bold text-amber-300 transition-colors cursor-pointer">[HYPED]</button>
+        <button onclick="insertDMEmoji('[EPIC] ')" class="px-2 py-0.5 rounded bg-white/5 hover:bg-white/10 text-[10px] font-bold text-purple-300 transition-colors cursor-pointer">[EPIC]</button>
+        <button onclick="insertDMEmoji('[GG] ')" class="px-2 py-0.5 rounded bg-white/5 hover:bg-white/10 text-[10px] font-bold text-emerald-300 transition-colors cursor-pointer">[GG]</button>
+        <button onclick="insertDMEmoji('[SUGOI] ')" class="px-2 py-0.5 rounded bg-white/5 hover:bg-white/10 text-[10px] font-bold text-cyan-300 transition-colors cursor-pointer">[SUGOI]</button>
+        <button onclick="insertDMEmoji('[FIRE] ')" class="px-2 py-0.5 rounded bg-white/5 hover:bg-white/10 text-[10px] font-bold text-orange-300 transition-colors cursor-pointer">[FIRE]</button>
+        <button onclick="insertDMEmoji('[CHILL] ')" class="px-2 py-0.5 rounded bg-white/5 hover:bg-white/10 text-[10px] font-bold text-blue-300 transition-colors cursor-pointer">[CHILL]</button>
       </div>
 
       <div class="flex items-center gap-2">
@@ -3418,7 +3665,7 @@
             <span class="text-[10px] text-slate-500 font-mono shrink-0">Just now</span>
           </div>
           <p class="text-xs text-slate-200 pl-8 leading-relaxed">
-            Streaming anime and exploring cosmic stargates across Soranix.to! ✨
+            Streaming anime and exploring cosmic stargates across Soranix.to!
           </p>
         </div>
       </div>
@@ -3943,10 +4190,28 @@
     } from '/src/firebase.ts';
     import { onAuthStateChanged } from 'firebase/auth';
 
+    function $(id) {
+      return document.getElementById(id);
+    }
+    window.$ = $;
+
     // ----------------------------------------------------
     // ----------------------------------------------------
     // STORAGE KEYS & LOCAL DATABASE INITIALIZATION
     // ----------------------------------------------------
+    const COSMIC_THEME_PALETTES = {
+      violet: { color: '#8500FF', sec: '#5700C9', rgb: '133, 0, 255' },
+      pink: { color: '#EC4899', sec: '#BE185D', rgb: '236, 72, 153' },
+      cyan: { color: '#06B6D4', sec: '#0891B2', rgb: '6, 182, 212' },
+      gold: { color: '#F59E0B', sec: '#D97706', rgb: '245, 158, 11' },
+      emerald: { color: '#10B981', sec: '#059669', rgb: '16, 185, 129' },
+      crimson: { color: '#EF4444', sec: '#B91C1C', rgb: '239, 68, 68' },
+      ice: { color: '#38BDF8', sec: '#0284C7', rgb: '56, 189, 248' },
+      amber: { color: '#F97316', sec: '#C2410C', rgb: '249, 115, 22' },
+      lavender: { color: '#A78BFA', sec: '#7C3AED', rgb: '167, 139, 250' },
+      lime: { color: '#84CC16', sec: '#65A30D', rgb: '132, 204, 22' }
+    };
+
     const USERS_DB_KEY = 'soranix_users_db';
     const ACTIVE_SESSION_KEY = 'soranix_active_session';
     const NOTIFICATIONS_PREFIX = 'soranix_notifications_';
@@ -4190,10 +4455,6 @@
         intervalId: null
       }
     };
-
-    function $(id) {
-      return document.getElementById(id);
-    }
 
     // ----------------------------------------------------
     // 1. AUTO-LOGIN & SESSION RESTORATION (Main Menu Preserved)
@@ -4763,10 +5024,10 @@
               title: `Level Up: Level ${newLevel}!`,
               body: `Congratulations, Voyager! You reached Level ${newLevel} (${AppState.user.title}) and earned +${earnedCoins} Stardust!`
             });
-            showToast(`🎉 LEVEL UP! You reached Level ${newLevel} (${AppState.user.title})! +${earnedCoins} Stardust!`, 'success');
+            showToast(`LEVEL UP! You reached Level ${newLevel} (${AppState.user.title})! +${earnedCoins} Stardust!`, 'success');
           } else {
             SoranixAudio.play('coin');
-            showToast(`✨ +${earnedCoins} Stardust & +${earnedXP} XP earned for 5 mins of anime watched!`, 'success');
+            showToast(`+${earnedCoins} Stardust & +${earnedXP} XP earned for 5 mins of anime watched!`, 'success');
           }
 
           saveUserToLocalStorage();
@@ -5418,6 +5679,7 @@
     }
 
     function setCosmicTheme(theme, notify = true) {
+      if (!COSMIC_THEME_PALETTES[theme]) theme = 'violet';
       AppState.theme = theme;
       if (AppState.user) {
         AppState.user.theme = theme;
@@ -5425,11 +5687,13 @@
       localStorage.setItem('soranix_theme', theme);
       saveUserToLocalStorage();
 
-      if (theme === 'violet') {
-        document.documentElement.removeAttribute('data-theme');
-      } else {
-        document.documentElement.setAttribute('data-theme', theme);
-      }
+      const pal = COSMIC_THEME_PALETTES[theme];
+      document.documentElement.setAttribute('data-theme', theme);
+      document.documentElement.style.setProperty('--accent-color', pal.color);
+      document.documentElement.style.setProperty('--accent-secondary', pal.sec);
+      document.documentElement.style.setProperty('--accent-rgb', pal.rgb);
+      document.documentElement.style.setProperty('--accent-glow', `rgba(${pal.rgb}, 0.45)`);
+      document.documentElement.style.setProperty('--accent-glow-strong', `rgba(${pal.rgb}, 0.8)`);
 
       // Update checkmarks in dashboard theme dropdown
       document.querySelectorAll('[data-theme-check]').forEach(icon => {
@@ -5440,7 +5704,7 @@
         }
       });
 
-      if (notify) showToast(`Theme active: ${theme.toUpperCase()}`, 'info');
+      if (notify) showToast(`Theme updated: ${theme.toUpperCase()}`, 'info');
     }
 
     // ----------------------------------------------------
@@ -5560,7 +5824,7 @@
       saveUserToLocalStorage();
       updateViewableProfileUI();
       renderDailyRewardsUI();
-      showToast('🎉 Day 1 Streak Claimed! +100 Stardust Coins added to your vault!', 'success');
+      showToast('Day 1 Streak Claimed! +100 Stardust Coins added to your vault!', 'success');
     }
 
     // ----------------------------------------------------
@@ -5647,7 +5911,7 @@
           enterDashboard('profile');
           if (isGoogleOwner) {
             SoranixAudio.play('power_up');
-            showToast('👑 Owner Authenticated (jaydentorru4@gmail.com)! Administrator clearance granted.', 'success');
+            showToast('Owner Authenticated (jaydentorru4@gmail.com)! Administrator clearance granted.', 'success');
           } else {
             showToast(`Google Sign-In successful! Welcome, ${finalUsername}.`, 'success');
           }
@@ -5676,7 +5940,7 @@
     // ----------------------------------------------------
     (function initStarfield() {
       const canvas = $('galaxy-canvas');
-      if (!canvas) return;
+      if (!canvas || typeof canvas.getContext !== 'function') return;
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
 
@@ -5937,7 +6201,7 @@
       { id: 'badge_celestial', name: '[Celestial Being] Badge', category: 'badge', cost: 950, badgeTitle: 'Celestial Being', icon: 'fa-solid fa-satellite', desc: 'Transcendent star traveler existing beyond time and space.' },
 
       // CATEGORY 5: ANIME STICKERS (15 items)
-      { id: 'pack_chibi', name: 'Chibi Expressions Pack', category: 'sticker', cost: 150, icon: 'fa-solid fa-face-smile-wink', desc: 'Adorable miniature emotes: 🍙, ✨, 🌸, ⚡, 🍡, 🍥' },
+      { id: 'pack_chibi', name: 'Chibi Expressions Pack', category: 'sticker', cost: 150, icon: 'fa-solid fa-face-smile-wink', desc: 'Anime reaction stamps: [HYPED], [EPIC], [GG], [SUGOI]' },
       { id: 'pack_kawaii', name: 'Kawaii Anime Sparks', category: 'sticker', cost: 150, icon: 'fa-solid fa-sparkles', desc: 'Heart sparkles and blushing cute anime reaction emotes.' },
       { id: 'pack_battle', name: 'Shonen Battle Shouts', category: 'sticker', cost: 200, icon: 'fa-solid fa-fire-burner', desc: 'Punchy battle typography: "ORA!", "MUDA!", "PLUS ULTRA!", "BANKAI!"' },
       { id: 'pack_food', name: 'Ramen & Bento Feast', category: 'sticker', cost: 150, icon: 'fa-solid fa-bowl-food', desc: 'Steaming hot anime dishes: tonkotsu ramen, gyoza, dango, matcha.' },
@@ -6178,7 +6442,7 @@
         body: `You acquired "${item.name}" for ${item.cost} Stardust. Item equipped!`
       });
 
-      showToast(`🎉 Unlocked ${item.name}! Equipped to your cosmic profile.`, 'success');
+      showToast(`Unlocked ${item.name}! Equipped to your cosmic profile.`, 'success');
     }
 
     function equipShopItem(itemId) {
@@ -6224,7 +6488,7 @@
       // Audio SFX items play sound effect directly
       if (item.category === 'audio') {
         SoranixAudio.play(item.sfxType);
-        showToast(`Sound Preview: Playing "${item.name}" effect 🎵`, 'info');
+        showToast(`Sound Preview: Playing "${item.name}" effect`, 'info');
         return;
       }
 
@@ -6728,8 +6992,8 @@
       const users = getUsersDB();
 
       const gridContainer = $('friends-grid-container');
-      const incomingContainer = $('incoming-requests-list');
-      const outgoingContainer = $('outgoing-requests-list');
+      const incomingContainer = $('incoming-requests-container') || $('incoming-requests-list');
+      const outgoingContainer = $('outgoing-requests-container') || $('outgoing-requests-list');
 
       // 1. My Friends List Grid
       if (gridContainer) {
@@ -6942,7 +7206,7 @@
       SoranixAudio.play('power_up');
       updateStatsCounters();
       renderFriendsUI();
-      showToast(`✨ Friend request transmitted to ${targetUser.username}!`, 'success');
+      showToast(`Friend request transmitted to ${targetUser.username}!`, 'success');
     }
 
     function acceptFriendRequest(senderUsername) {
@@ -6981,7 +7245,7 @@
       SoranixAudio.play('bell');
       updateStatsCounters();
       renderFriendsUI();
-      showToast(`🎉 You and ${senderUsername} are now connected as cosmic friends!`, 'success');
+      showToast(`You and ${senderUsername} are now connected as cosmic friends!`, 'success');
     }
 
     function declineFriendRequest(senderUsername) {
@@ -7830,7 +8094,7 @@
 
       renderAdminEditorTargetCard(targetUser);
       SoranixAudio.play('power_up');
-      showToast(`✨ Granted item "${itemId}" to ${targetUser.username} for free!`, 'success');
+      showToast(`Granted item "${itemId}" to ${targetUser.username} for free!`, 'success');
     }
 
     function initAdminBroadcastsUI() {
@@ -8053,7 +8317,7 @@
       }, 3400);
     }
 
-    // Keyboard ESC listener
+    // Keyboard Shortcuts Listener (Media controls & Escape)
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         closeAnimeDetailModal();
@@ -8067,6 +8331,33 @@
         closeGearMenu();
         closeDMChatDrawer();
         closeAdminAccessDeniedModal();
+        return;
+      }
+
+      // Skip player shortcuts if user is typing in a form input
+      const tag = (document.activeElement?.tagName || '').toLowerCase();
+      if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
+
+      const playerModal = $('anime-video-player-modal');
+      const isPlayerOpen = playerModal && !playerModal.classList.contains('hidden');
+
+      if (isPlayerOpen) {
+        if (e.key === ' ' || e.code === 'Space') {
+          e.preventDefault();
+          toggleVideoPlayback();
+        } else if (e.key === 'f' || e.key === 'F') {
+          e.preventDefault();
+          togglePlayerBrowserFullscreen();
+        } else if (e.key === 'm' || e.key === 'M') {
+          e.preventDefault();
+          toggleVideoMute();
+        } else if (e.key === 'ArrowLeft') {
+          e.preventDefault();
+          seekVideoRelative(-10);
+        } else if (e.key === 'ArrowRight') {
+          e.preventDefault();
+          seekVideoRelative(10);
+        }
       }
     });
 
@@ -8573,6 +8864,24 @@
         if (trailerPlaceholder) trailerPlaceholder.classList.remove('hidden');
       }
 
+      // Populate Episode Stargates Grid
+      const epGrid = $('detail-episodes-grid');
+      const epCountLabel = $('detail-episodes-count-label');
+      const epCount = anime.episodes || 12;
+      if (epCountLabel) epCountLabel.textContent = `${epCount} Episodes Available`;
+      if (epGrid) {
+        epGrid.innerHTML = Array.from({ length: epCount }, (_, i) => i + 1).map(n => `
+          <button 
+            onclick="closeAnimeDetailModal(); launchAnimePlayer(${anime.id}, ${n});" 
+            class="px-2.5 py-1 rounded-xl bg-white/[0.04] hover:bg-purple-600 hover:text-white border border-white/10 hover:border-purple-400 text-xs font-mono text-slate-300 transition-all cursor-pointer flex items-center gap-1.5 shrink-0"
+            title="Stream Episode ${n}"
+          >
+            <i class="fa-solid fa-play text-[9px] text-accent"></i>
+            <span>Ep ${n}</span>
+          </button>
+        `).join('');
+      }
+
       updateDetailModalFavoriteButton();
 
       if (modal) {
@@ -8627,9 +8936,246 @@
     }
 
     // ====================================================
-    // 25. CINEMA ANIME VIDEO PLAYER ENGINE
+    // 25. CINEMA ANIME VIDEO PLAYER & STREAMING ENGINE
     // ----------------------------------------------------
     let nextEpCountdownTimer = null;
+    let nextEpCountdownSeconds = 5;
+    let nextEpIntervalTimer = null;
+    let currentHlsInstance = null;
+    let currentStreamTimeout = null;
+
+    function slugifyAnimeTitle(title) {
+      if (!title) return 'anime';
+      return String(title)
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^\w\s-]/g, '')
+        .trim()
+        .replace(/\s+/g, '-');
+    }
+
+    function getServerLabel(serverKey) {
+      switch (serverKey) {
+        case 'server1': return 'Server 1 (Primary HD)';
+        case 'server2': return 'Server 2 (Backup Stream)';
+        case 'server3': return 'Server 3 (Official Trailer)';
+        case 'hls': return 'Server 4 (HLS Direct)';
+        default: return 'Primary HD';
+      }
+    }
+
+    function setPlayerWatchState(isActive) {
+      AppState.isWatchingAnime = isActive;
+      const statusEl = $('player-reward-status-label');
+      const pulseDot = $('player-reward-pulse-dot');
+      
+      if (isActive) {
+        if (statusEl) {
+          statusEl.textContent = 'Stardust Tracker: Active';
+          statusEl.className = 'hidden sm:inline text-amber-300 font-bold';
+        }
+        if (pulseDot) {
+          pulseDot.className = 'w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399] animate-pulse';
+        }
+        if (!AppState.watch?.intervalId) {
+          startWatchTracker();
+        }
+      } else {
+        if (statusEl) {
+          statusEl.textContent = 'Stardust Tracker: Paused';
+          statusEl.className = 'hidden sm:inline text-slate-400 font-bold';
+        }
+        if (pulseDot) {
+          pulseDot.className = 'w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_6px_#f59e0b]';
+        }
+      }
+    }
+
+    function playAnimeEpisode(title, episodeNumber = 1, serverOverride = null) {
+      const modal = $('anime-video-player-modal');
+      const titleEl = $('player-anime-title');
+      const epTag = $('player-episode-tag');
+      const epTitle = $('player-episode-title');
+      const epSelect = $('player-episode-select');
+      const serverSelect = $('player-server-select');
+      const embedIframe = $('soranix-embed-player');
+      const html5Video = $('soranix-html5-video');
+      const spinner = $('player-loading-spinner');
+      const statusBanner = $('player-server-status-banner');
+      const centerPlayOverlay = $('player-center-play-overlay');
+
+      if (!title) title = 'Anime Series';
+      const episode = parseInt(episodeNumber) || 1;
+      const slug = slugifyAnimeTitle(title);
+      
+      const server = serverOverride || (serverSelect ? serverSelect.value : 'server1');
+      AppState.playerServer = server;
+      AppState.activePlayerAnimeTitle = title;
+      AppState.activePlayerEpisode = episode;
+
+      if (titleEl) titleEl.textContent = title;
+      if (epTag) epTag.textContent = `Ep ${episode}`;
+      if (epTitle) epTitle.textContent = `Now Playing: Episode ${episode}`;
+      if (epSelect) epSelect.value = episode;
+      if (serverSelect) serverSelect.value = server;
+
+      if (statusBanner) statusBanner.classList.add('hidden');
+      if (spinner) spinner.classList.remove('hidden');
+      if (centerPlayOverlay) centerPlayOverlay.classList.add('opacity-0', 'pointer-events-none');
+
+      clearTimeout(nextEpCountdownTimer);
+      clearInterval(nextEpIntervalTimer);
+      const nextToast = $('player-next-ep-toast');
+      if (nextToast) nextToast.classList.add('hidden');
+
+      // Open Modal
+      if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+      }
+
+      // Destroy any prior HLS instance
+      if (currentHlsInstance) {
+        try { currentHlsInstance.destroy(); } catch (e) {}
+        currentHlsInstance = null;
+      }
+      clearTimeout(currentStreamTimeout);
+
+      // Active reward tracking when streaming
+      setPlayerWatchState(true);
+
+      if (server === 'server1') {
+        // Server 1 (Primary HD): Fast embed streaming
+        if (html5Video) {
+          html5Video.pause();
+          html5Video.classList.add('hidden');
+        }
+        if (embedIframe) {
+          embedIframe.classList.remove('hidden');
+          const streamUrl = `https://2embed.org/embed/anime/${slug}-episode-${episode}`;
+          embedIframe.src = streamUrl;
+
+          embedIframe.onload = () => {
+            if (spinner) spinner.classList.add('hidden');
+          };
+          embedIframe.onerror = () => {
+            handleServerStreamFailure();
+          };
+
+          currentStreamTimeout = setTimeout(() => {
+            if (spinner) spinner.classList.add('hidden');
+          }, 3500);
+        }
+      } else if (server === 'server2') {
+        // Server 2 (Backup Stream): Alternative mirror
+        if (html5Video) {
+          html5Video.pause();
+          html5Video.classList.add('hidden');
+        }
+        if (embedIframe) {
+          embedIframe.classList.remove('hidden');
+          const streamUrl = `https://player.vidsrc.nl/embed/anime/${slug}/${episode}`;
+          embedIframe.src = streamUrl;
+
+          embedIframe.onload = () => {
+            if (spinner) spinner.classList.add('hidden');
+          };
+          embedIframe.onerror = () => {
+            handleServerStreamFailure();
+          };
+
+          currentStreamTimeout = setTimeout(() => {
+            if (spinner) spinner.classList.add('hidden');
+          }, 3500);
+        }
+      } else if (server === 'server3') {
+        // Server 3 (Official Trailer / PV)
+        if (html5Video) {
+          html5Video.pause();
+          html5Video.classList.add('hidden');
+        }
+        if (embedIframe) {
+          embedIframe.classList.remove('hidden');
+          let trailerId = AppState.activePlayerAnime?.trailer?.id || 'tR8YH0G67Rk';
+          embedIframe.src = `https://www.youtube-nocookie.com/embed/${trailerId}?autoplay=1&enablejsapi=1`;
+          embedIframe.onload = () => {
+            if (spinner) spinner.classList.add('hidden');
+          };
+        }
+      } else if (server === 'hls') {
+        // Server 4 (HLS.js Direct Video Streaming)
+        if (embedIframe) {
+          embedIframe.src = 'about:blank';
+          embedIframe.classList.add('hidden');
+        }
+        if (html5Video) {
+          html5Video.classList.remove('hidden');
+          const hlsUrl = 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8';
+
+          if (window.Hls && window.Hls.isSupported()) {
+            const hls = new window.Hls({
+              enableWorker: true,
+              lowLatencyMode: true
+            });
+            currentHlsInstance = hls;
+            hls.loadSource(hlsUrl);
+            hls.attachMedia(html5Video);
+            hls.on(window.Hls.Events.MANIFEST_PARSED, () => {
+              if (spinner) spinner.classList.add('hidden');
+              html5Video.play().catch(() => {});
+            });
+            hls.on(window.Hls.Events.ERROR, (event, data) => {
+              if (data && data.fatal) {
+                handleServerStreamFailure();
+              }
+            });
+          } else if (html5Video.canPlayType('application/vnd.apple.mpegurl')) {
+            html5Video.src = hlsUrl;
+            html5Video.addEventListener('loadedmetadata', () => {
+              if (spinner) spinner.classList.add('hidden');
+              html5Video.play().catch(() => {});
+            }, { once: true });
+          } else {
+            // Direct MP4 fallback
+            html5Video.src = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
+            html5Video.play().catch(() => {});
+            if (spinner) spinner.classList.add('hidden');
+          }
+        }
+      }
+
+      showToast(`Now Streaming: ${title} (Episode ${episode}) &bull; ${getServerLabel(server)}`, 'info');
+    }
+
+    function handlePlayerServerChange(newServer) {
+      AppState.playerServer = newServer;
+      const title = AppState.activePlayerAnimeTitle || AppState.activePlayerAnime?.title?.english || 'Anime';
+      const episode = AppState.activePlayerEpisode || 1;
+      playAnimeEpisode(title, episode, newServer);
+    }
+
+    function handleServerStreamFailure() {
+      const statusBanner = $('player-server-status-banner');
+      const statusText = $('player-server-status-text');
+      const spinner = $('player-loading-spinner');
+      if (spinner) spinner.classList.add('hidden');
+      
+      if (statusText) statusText.textContent = "Server connection failed. Switching to backup server...";
+      if (statusBanner) statusBanner.classList.remove('hidden');
+
+      setTimeout(() => {
+        if (statusBanner) statusBanner.classList.add('hidden');
+        if (AppState.playerServer === 'server1') {
+          handlePlayerServerChange('server2');
+        } else if (AppState.playerServer === 'server2') {
+          handlePlayerServerChange('server3');
+        } else {
+          handlePlayerServerChange('hls');
+        }
+      }, 2500);
+    }
 
     function launchAnimePlayer(animeId, episode = 1) {
       const anime = findAnimeById(animeId);
@@ -8637,55 +9183,48 @@
 
       AppState.activePlayerAnime = anime;
       AppState.activePlayerEpisode = episode;
+      const title = anime.title.english || anime.title.romaji || 'Anime';
+      AppState.activePlayerAnimeTitle = title;
 
-      const modal = $('anime-video-player-modal');
-      const titleEl = $('player-anime-title');
-      const epTag = $('player-episode-tag');
-      const epTitle = $('player-episode-title');
       const epSelect = $('player-episode-select');
-      const video = $('soranix-html5-video');
-
-      const title = anime.title.english || anime.title.romaji;
-      if (titleEl) titleEl.textContent = title;
-      if (epTag) epTag.textContent = `Ep ${episode}`;
-      if (epTitle) epTitle.textContent = `Episode ${episode}: Celestial Journey`;
-
+      const total = anime.episodes || 12;
       if (epSelect) {
-        const total = anime.episodes || 12;
         epSelect.innerHTML = Array.from({ length: total }, (_, i) => i + 1).map(n => `
           <option value="${n}" ${n === episode ? 'selected' : ''}>Ep ${n}: Episode ${n}</option>
         `).join('');
       }
 
+      const video = $('soranix-html5-video');
       if (video) {
         video.poster = anime.bannerImage || anime.coverImage?.extraLarge || '';
-        video.currentTime = 0;
-        video.play().catch(() => {});
       }
 
-      // Ensure watch tracker is actively running and awarding coins
-      if (!AppState.watchTrackerActive) {
-        startWatchTracker();
-      }
-
-      if (modal) {
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-        document.body.style.overflow = 'hidden';
-      }
-
-      showToast(`Now Streaming: ${title} (Episode ${episode})`, 'info');
+      playAnimeEpisode(title, episode);
     }
 
     function closeAnimePlayerModal() {
       const modal = $('anime-video-player-modal');
       const video = $('soranix-html5-video');
+      const embed = $('soranix-embed-player');
+      
       if (video) {
         video.pause();
       }
+      if (embed) {
+        embed.src = 'about:blank';
+      }
+      if (currentHlsInstance) {
+        try { currentHlsInstance.destroy(); } catch (e) {}
+        currentHlsInstance = null;
+      }
       clearTimeout(nextEpCountdownTimer);
+      clearInterval(nextEpIntervalTimer);
+      clearTimeout(currentStreamTimeout);
+
       const nextToast = $('player-next-ep-toast');
       if (nextToast) nextToast.classList.add('hidden');
+
+      setPlayerWatchState(false);
 
       if (modal) {
         modal.classList.remove('flex');
@@ -8704,10 +9243,12 @@
         video.play().catch(() => {});
         if (playIcon) playIcon.className = 'fa-solid fa-pause';
         if (overlay) overlay.classList.add('opacity-0', 'pointer-events-none');
+        setPlayerWatchState(true);
       } else {
         video.pause();
         if (playIcon) playIcon.className = 'fa-solid fa-play';
         if (overlay) overlay.classList.remove('opacity-0', 'pointer-events-none');
+        setPlayerWatchState(false);
       }
     }
 
@@ -8737,34 +9278,54 @@
     }
 
     function playNextEpisode() {
-      const max = AppState.activePlayerAnime?.episodes || 12;
+      const max = AppState.activePlayerAnime?.episodes || 24;
       if (AppState.activePlayerEpisode < max) {
         selectPlayerEpisode(AppState.activePlayerEpisode + 1);
       } else {
-        showToast('You have reached the latest episode!', 'success');
+        showToast('You have reached the latest episode!', 'info');
       }
     }
 
     function selectPlayerEpisode(epNum) {
       clearTimeout(nextEpCountdownTimer);
+      clearInterval(nextEpIntervalTimer);
       const nextToast = $('player-next-ep-toast');
       if (nextToast) nextToast.classList.add('hidden');
 
-      AppState.activePlayerEpisode = epNum;
-      const epTag = $('player-episode-tag');
-      const epTitle = $('player-episode-title');
-      const epSelect = $('player-episode-select');
+      const title = AppState.activePlayerAnimeTitle || AppState.activePlayerAnime?.title?.english || 'Anime';
+      playAnimeEpisode(title, epNum);
+    }
 
-      if (epTag) epTag.textContent = `Ep ${epNum}`;
-      if (epTitle) epTitle.textContent = `Episode ${epNum}: Celestial Journey`;
-      if (epSelect) epSelect.value = epNum;
+    function cancelNextEpisodeCountdown() {
+      clearTimeout(nextEpCountdownTimer);
+      clearInterval(nextEpIntervalTimer);
+      const nextToast = $('player-next-ep-toast');
+      if (nextToast) nextToast.classList.add('hidden');
+      showToast('Next episode auto-advance cancelled', 'info');
+    }
 
-      const video = $('soranix-html5-video');
-      if (video) {
-        video.currentTime = 0;
-        video.play().catch(() => {});
+    function triggerAutoNextEpisodeCountdown() {
+      const nextToast = $('player-next-ep-toast');
+      const toastText = $('player-next-ep-toast-text');
+      const max = AppState.activePlayerAnime?.episodes || 24;
+
+      if (AppState.activePlayerEpisode < max) {
+        const nextEp = AppState.activePlayerEpisode + 1;
+        nextEpCountdownSeconds = 5;
+        if (toastText) toastText.textContent = `Playing Episode ${nextEp} in ${nextEpCountdownSeconds}s...`;
+        if (nextToast) nextToast.classList.remove('hidden');
+
+        clearInterval(nextEpIntervalTimer);
+        nextEpIntervalTimer = setInterval(() => {
+          nextEpCountdownSeconds--;
+          if (toastText) toastText.textContent = `Playing Episode ${nextEp} in ${nextEpCountdownSeconds}s...`;
+          if (nextEpCountdownSeconds <= 0) {
+            clearInterval(nextEpIntervalTimer);
+            if (nextToast) nextToast.classList.add('hidden');
+            selectPlayerEpisode(nextEp);
+          }
+        }, 1000);
       }
-      showToast(`Playing Episode ${epNum}`, 'info');
     }
 
     function toggleVideoMute() {
@@ -8875,6 +9436,7 @@
         const overlay = $('player-center-play-overlay');
         if (playIcon) playIcon.className = 'fa-solid fa-pause';
         if (overlay) overlay.classList.add('opacity-0', 'pointer-events-none');
+        setPlayerWatchState(true);
       });
 
       video.addEventListener('pause', () => {
@@ -8882,43 +9444,173 @@
         const overlay = $('player-center-play-overlay');
         if (playIcon) playIcon.className = 'fa-solid fa-play';
         if (overlay) overlay.classList.remove('opacity-0', 'pointer-events-none');
+        setPlayerWatchState(false);
       });
 
       video.addEventListener('ended', () => {
-        const nextToast = $('player-next-ep-toast');
-        const toastText = $('player-next-ep-toast-text');
-        const max = AppState.activePlayerAnime?.episodes || 12;
-
-        if (AppState.activePlayerEpisode < max) {
-          const nextEp = AppState.activePlayerEpisode + 1;
-          if (toastText) toastText.textContent = `Playing Episode ${nextEp} in 5s...`;
-          if (nextToast) nextToast.classList.remove('hidden');
-
-          nextEpCountdownTimer = setTimeout(() => {
-            selectPlayerEpisode(nextEp);
-          }, 5000);
-        }
+        triggerAutoNextEpisodeCountdown();
       });
     })();
-
     // ====================================================
-    // 26. HERO BANNER INTERACTION ENGINE
+    // 26. HERO BANNER & 3-SECOND AUTO-PREVIEW CAROUSEL
     // ----------------------------------------------------
+    const FEATURED_HERO_ANIME_LIST = [
+      {
+        id: 154587,
+        title: { english: "Frieren: Beyond Journey's End", romaji: "Sousou no Frieren" },
+        bannerImage: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/154587-ivXNJ23SM1xB.jpg",
+        coverImage: { extraLarge: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx154587-qQTzQnEJJ3oB.jpg", large: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx154587-qQTzQnEJJ3oB.jpg" },
+        description: "An elf mage embarks on a poignant quest across the galaxy to understand the fleeting lives of mortals and the comrades she left behind.",
+        genres: ["Adventure", "Drama", "Fantasy"],
+        averageScore: 91,
+        episodes: 28,
+        status: "FINISHED AIRING",
+        studios: { nodes: [{ name: "Madhouse" }] },
+        trailer: { id: "tR8YH0G67Rk", site: "youtube" }
+      },
+      {
+        id: 151807,
+        title: { english: "Solo Leveling", romaji: "Ore dake Level Up na Ken" },
+        bannerImage: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/151807-37yfQA3ym8PA.jpg",
+        coverImage: { extraLarge: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx151807-it355ZgzquUd.png", large: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx151807-it355ZgzquUd.png" },
+        description: "The weakest hunter awakens with an extraordinary system, shattering his limits to become the shadow monarch of the galaxy.",
+        genres: ["Action", "Adventure", "Fantasy"],
+        averageScore: 85,
+        episodes: 12,
+        status: "FINISHED AIRING",
+        studios: { nodes: [{ name: "A-1 Pictures" }] },
+        trailer: { id: "HkIKAnwLZCw", site: "youtube" }
+      },
+      {
+        id: 145064,
+        title: { english: "Jujutsu Kaisen Season 2", romaji: "Jujutsu Kaisen 2nd Season" },
+        bannerImage: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/145064-esDtAY2He7sk.jpg",
+        coverImage: { extraLarge: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx145064-hSNRJM03pvv1.jpg", large: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx145064-hSNRJM03pvv1.jpg" },
+        description: "The fateful Shibuya Incident commences as sorcerers and cursed spirits collide in a cataclysmic war of domain expansions.",
+        genres: ["Action", "Drama", "Supernatural"],
+        averageScore: 88,
+        episodes: 23,
+        status: "FINISHED AIRING",
+        studios: { nodes: [{ name: "MAPPA" }] },
+        trailer: { id: "O6qVieflwqs", site: "youtube" }
+      },
+      {
+        id: 166240,
+        title: { english: "Demon Slayer: Hashira Training", romaji: "Kimetsu no Yaiba: Hashira Geiko-hen" },
+        bannerImage: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/166240-YdxoEhrfwNk0.jpg",
+        coverImage: { extraLarge: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx166240-PBV7zukIHW7V.png", large: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx166240-PBV7zukIHW7V.png" },
+        description: "Tanjiro undertakes the grueling training regimen of the Hashira to forge unbreakable strength before the final reckoning.",
+        genres: ["Action", "Fantasy", "Supernatural"],
+        averageScore: 84,
+        episodes: 8,
+        status: "FINISHED AIRING",
+        studios: { nodes: [{ name: "ufotable" }] },
+        trailer: { id: "7w5Vfjozzb8", site: "youtube" }
+      },
+      {
+        id: 127230,
+        title: { english: "Chainsaw Man", romaji: "Chainsaw Man" },
+        bannerImage: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/127230-o8IRwCGVr9KW.jpg",
+        coverImage: { extraLarge: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx127230-DdP4vAdssLoz.png", large: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx127230-DdP4vAdssLoz.png" },
+        description: "Denji revives as the Chainsaw Man and enters the brutal ranks of Devil Hunters fighting demons across high-octane battlefields.",
+        genres: ["Action", "Drama", "Horror"],
+        averageScore: 84,
+        episodes: 12,
+        status: "FINISHED AIRING",
+        studios: { nodes: [{ name: "MAPPA" }] },
+        trailer: { id: "v4yLeNt-kCU", site: "youtube" }
+      }
+    ];
+
+    let activeFeaturedHeroIndex = 0;
+    let featuredHeroCarouselTimer = null;
+
+    function renderFeaturedHeroShowcase(index) {
+      if (index >= FEATURED_HERO_ANIME_LIST.length) index = 0;
+      if (index < 0) index = FEATURED_HERO_ANIME_LIST.length - 1;
+      activeFeaturedHeroIndex = index;
+      const anime = FEATURED_HERO_ANIME_LIST[index];
+      if (!anime) return;
+
+      const bgImg = $('anime-hero-bg');
+      const titleEl = $('anime-hero-title');
+      const descEl = $('anime-hero-desc');
+      const favIcon = $('anime-hero-fav-icon');
+      const scoreBadge = $('anime-hero-score');
+      const genresEl = $('anime-hero-genres');
+
+      if (bgImg) {
+        bgImg.style.opacity = '0.35';
+        setTimeout(() => {
+          bgImg.src = anime.bannerImage || anime.coverImage.extraLarge;
+          bgImg.style.opacity = '1';
+        }, 120);
+      }
+      if (titleEl) titleEl.textContent = anime.title.english || anime.title.romaji;
+      if (descEl) descEl.textContent = anime.description;
+      if (scoreBadge) {
+        scoreBadge.innerHTML = `<i class="fa-solid fa-star text-[10px] text-amber-400"></i> <span>${(anime.averageScore / 10).toFixed(1)}</span>`;
+      }
+      if (favIcon) {
+        const isFav = isAnimeFavorited(anime.id);
+        favIcon.className = isFav ? 'fa-solid fa-heart text-pink-500 text-base' : 'fa-regular fa-heart text-pink-400 text-base';
+      }
+      if (genresEl) {
+        genresEl.innerHTML = anime.genres.map(g => `<span class="px-2 py-0.5 rounded-md bg-purple-950/80 border border-purple-500/30 text-[10px] font-mono text-purple-300">${g}</span>`).join('');
+      }
+
+      // Update dots
+      document.querySelectorAll('.hero-carousel-dot').forEach((dot, idx) => {
+        if (idx === activeFeaturedHeroIndex) {
+          dot.className = 'hero-carousel-dot w-6 h-1.5 rounded-full bg-accent transition-all cursor-pointer';
+        } else {
+          dot.className = 'hero-carousel-dot w-2 h-1.5 rounded-full bg-white/20 hover:bg-white/40 transition-all cursor-pointer';
+        }
+      });
+    }
+
+    function nextFeaturedHeroAnime() {
+      renderFeaturedHeroShowcase(activeFeaturedHeroIndex + 1);
+    }
+
+    function prevFeaturedHeroAnime() {
+      renderFeaturedHeroShowcase(activeFeaturedHeroIndex - 1);
+    }
+
+    function startFeaturedHeroCarousel() {
+      if (featuredHeroCarouselTimer) clearInterval(featuredHeroCarouselTimer);
+      // Auto-preview every 3 seconds as requested!
+      featuredHeroCarouselTimer = setInterval(() => {
+        nextFeaturedHeroAnime();
+      }, 3000);
+    }
+
+    function stopFeaturedHeroCarousel() {
+      if (featuredHeroCarouselTimer) {
+        clearInterval(featuredHeroCarouselTimer);
+        featuredHeroCarouselTimer = null;
+      }
+    }
+
     function playFeaturedHeroAnime() {
-      launchAnimePlayer(154587, 1);
+      const anime = FEATURED_HERO_ANIME_LIST[activeFeaturedHeroIndex];
+      if (anime) launchAnimePlayer(anime.id, 1);
     }
 
     function openFeaturedHeroAnimeDetail() {
-      openAnimeDetailModal(154587);
+      const anime = FEATURED_HERO_ANIME_LIST[activeFeaturedHeroIndex];
+      if (anime) openAnimeDetailModal(anime.id);
     }
 
     function toggleFeaturedHeroFavorite() {
-      const heroAnime = findAnimeById(154587);
-      toggleFavoriteAnime(heroAnime);
-      const isFav = isAnimeFavorited(154587);
-      const icon = $('anime-hero-fav-icon');
-      if (icon) {
-        icon.className = isFav ? 'fa-solid fa-heart text-pink-500 text-base' : 'fa-regular fa-heart text-pink-400 text-base';
+      const anime = FEATURED_HERO_ANIME_LIST[activeFeaturedHeroIndex];
+      if (anime) {
+        toggleFavoriteAnime(anime);
+        const favIcon = $('anime-hero-fav-icon');
+        if (favIcon) {
+          const isFav = isAnimeFavorited(anime.id);
+          favIcon.className = isFav ? 'fa-solid fa-heart text-pink-500 text-base' : 'fa-regular fa-heart text-pink-400 text-base';
+        }
       }
     }
 
@@ -9041,17 +9733,20 @@
     // ----------------------------------------------------
     function toggleGlobalChatFullscreen() {
       const panel = $('global-chat-panel');
-      const icon = $('#global-chat-panel button i.fa-expand, #global-chat-panel button i.fa-compress');
+      const icon = $('global-chat-fullscreen-icon');
       if (!panel) return;
 
-      if (panel.classList.contains('w-full') && panel.classList.contains('sm:w-full')) {
-        panel.classList.remove('sm:w-full');
-        panel.classList.add('sm:w-[420px]');
+      const isFull = panel.classList.contains('sm:w-full') || panel.classList.contains('w-full');
+      if (isFull && !panel.classList.contains('sm:w-[420px]')) {
+        panel.classList.remove('sm:w-full', 'w-full', 'inset-0');
+        panel.classList.add('sm:w-[420px]', 'w-full', 'right-0');
         if (icon) icon.className = 'fa-solid fa-expand text-xs';
+        showToast('Chat restored to side drawer', 'info');
       } else {
         panel.classList.remove('sm:w-[420px]');
-        panel.classList.add('sm:w-full');
+        panel.classList.add('sm:w-full', 'w-full');
         if (icon) icon.className = 'fa-solid fa-compress text-xs';
+        showToast('Chat expanded to fullscreen', 'info');
       }
     }
 
@@ -9060,15 +9755,58 @@
       const icon = $('dm-chat-fullscreen-icon');
       if (!drawer) return;
 
-      if (drawer.classList.contains('sm:w-full')) {
+      const isFull = drawer.classList.contains('sm:w-full');
+      if (isFull) {
         drawer.classList.remove('sm:w-full');
         drawer.classList.add('sm:w-[420px]');
         if (icon) icon.className = 'fa-solid fa-expand';
+        showToast('Direct Messages restored to side drawer', 'info');
       } else {
         drawer.classList.remove('sm:w-[420px]');
         drawer.classList.add('sm:w-full');
         if (icon) icon.className = 'fa-solid fa-compress';
+        showToast('Direct Messages expanded to fullscreen', 'info');
       }
+    }
+
+    function toggleNotificationsFullscreen(e) {
+      if (e) e.stopPropagation();
+      const dropdown = $('notification-dropdown');
+      const icon = $('notifications-fullscreen-icon');
+      if (!dropdown) return;
+
+      const isFullscreen = dropdown.classList.contains('fixed');
+      if (isFullscreen) {
+        dropdown.classList.remove('fixed', 'inset-4', 'sm:inset-10', 'max-w-4xl', 'mx-auto', 'h-[85vh]', 'z-[100]');
+        dropdown.classList.add('absolute', 'right-0', 'top-12', 'w-80', 'sm:w-96');
+        const list = $('notification-items-list');
+        if (list) {
+          list.classList.remove('max-h-[65vh]');
+          list.classList.add('max-h-80');
+        }
+        if (icon) icon.className = 'fa-solid fa-expand';
+        showToast('Notifications restored to popover', 'info');
+      } else {
+        dropdown.classList.remove('absolute', 'right-0', 'top-12', 'w-80', 'sm:w-96');
+        dropdown.classList.add('fixed', 'inset-4', 'sm:inset-10', 'max-w-4xl', 'mx-auto', 'h-[85vh]', 'z-[100]');
+        const list = $('notification-items-list');
+        if (list) {
+          list.classList.remove('max-h-80');
+          list.classList.add('max-h-[65vh]');
+        }
+        if (icon) icon.className = 'fa-solid fa-compress';
+        showToast('Notifications expanded to fullscreen', 'info');
+      }
+    }
+
+    function closeNotificationDropdown() {
+      const dropdown = $('notification-dropdown');
+      const icon = $('notifications-fullscreen-icon');
+      if (!dropdown) return;
+      dropdown.classList.add('hidden');
+      dropdown.classList.remove('fixed', 'inset-4', 'sm:inset-10', 'max-w-4xl', 'mx-auto', 'h-[85vh]', 'z-[100]');
+      dropdown.classList.add('absolute', 'right-0', 'top-12', 'w-80', 'sm:w-96');
+      if (icon) icon.className = 'fa-solid fa-expand';
     }
 
     // ====================================================
@@ -9107,6 +9845,10 @@
       const favs = getFavoritesList();
       const favBadge = $('sidebar-fav-badge');
       if (favBadge) favBadge.textContent = favs.length;
+
+      // Start 3-second auto-preview anime carousel
+      renderFeaturedHeroShowcase(0);
+      startFeaturedHeroCarousel();
     }, 100);
 
     // Expose all functions to global window for HTML onclick / oninput bindings
@@ -9120,6 +9862,13 @@
     window.openEditProfileModal = openEditProfileModal;
     window.closeEditProfileModal = closeEditProfileModal;
     window.updateLivePreview = updateLivePreview;
+    window.renderFeaturedHeroShowcase = renderFeaturedHeroShowcase;
+    window.nextFeaturedHeroAnime = nextFeaturedHeroAnime;
+    window.prevFeaturedHeroAnime = prevFeaturedHeroAnime;
+    window.startFeaturedHeroCarousel = startFeaturedHeroCarousel;
+    window.stopFeaturedHeroCarousel = stopFeaturedHeroCarousel;
+    window.toggleNotificationsFullscreen = toggleNotificationsFullscreen;
+    window.closeNotificationDropdown = closeNotificationDropdown;
     window.selectFrame = selectFrame;
     window.saveProfileChanges = saveProfileChanges;
     window.handleModalAvatarUpload = handleModalAvatarUpload;
@@ -9234,8 +9983,14 @@
     window.launchAnimePlayerFromDetail = launchAnimePlayerFromDetail;
     window.copyShareAnimeLink = copyShareAnimeLink;
     window.toggleFavoriteFromDetail = toggleFavoriteFromDetail;
+    window.playAnimeEpisode = playAnimeEpisode;
     window.launchAnimePlayer = launchAnimePlayer;
     window.closeAnimePlayerModal = closeAnimePlayerModal;
+    window.handlePlayerServerChange = handlePlayerServerChange;
+    window.handleServerStreamFailure = handleServerStreamFailure;
+    window.cancelNextEpisodeCountdown = cancelNextEpisodeCountdown;
+    window.slugifyAnimeTitle = slugifyAnimeTitle;
+    window.setPlayerWatchState = setPlayerWatchState;
     window.toggleVideoPlayback = toggleVideoPlayback;
     window.handleVideoSeek = handleVideoSeek;
     window.seekVideoRelative = seekVideoRelative;
