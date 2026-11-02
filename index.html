@@ -607,7 +607,7 @@
   <!-- ========================================================== -->
   <!-- MODAL 5: CUSTOM CINEMA ANIME VIDEO PLAYER MODAL             -->
   <!-- ========================================================== -->
-  <div id="anime-video-player-modal" class="fixed inset-0 z-50 hidden bg-[#05030a]/98 backdrop-blur-3xl flex-col select-none overflow-hidden transition-all duration-300">
+  <div id="anime-video-player-modal" class="fixed inset-0 z-50 hidden bg-[#05030a]/98 backdrop-blur-3xl select-none overflow-hidden transition-all duration-300">
     
     <!-- Top Player Header Bar (Auto-hides with controls) -->
     <div id="player-header-bar" class="w-full px-3 sm:px-6 py-3 border-b border-white/10 bg-gradient-to-b from-black/95 via-black/80 to-transparent flex items-center justify-between z-30 transition-opacity duration-300 shrink-0 gap-2">
@@ -935,7 +935,7 @@
   <!-- ========================================================== -->
   <!-- MAINTENANCE MODE GUARD OVERLAY (Non-Admins Blocked)        -->
   <!-- ========================================================== -->
-  <div id="maintenance-mode-guard" class="hidden fixed inset-0 z-[99] bg-[#07050e]/95 backdrop-blur-2xl flex flex-col items-center justify-center p-6 text-center select-none">
+  <div id="maintenance-mode-guard" class="hidden fixed inset-0 z-[99] bg-[#07050e]/95 backdrop-blur-2xl items-center justify-center p-6 text-center select-none">
     <div class="w-20 h-20 rounded-3xl bg-red-950/70 border border-red-500/50 flex items-center justify-center text-red-400 text-3xl shadow-[0_0_35px_rgba(239,68,68,0.4)] mb-5 animate-pulse">
       <i class="fa-solid fa-wrench"></i>
     </div>
@@ -960,7 +960,7 @@
   <!-- ========================================================== -->
   <!-- BANNED ACCOUNT OVERLAY SCREEN (Suspended User Lockout)    -->
   <!-- ========================================================== -->
-  <div id="banned-account-overlay" class="hidden fixed inset-0 z-[100] bg-[#07050e]/95 backdrop-blur-3xl flex flex-col items-center justify-center p-6 text-center select-none">
+  <div id="banned-account-overlay" class="hidden fixed inset-0 z-[100] bg-[#07050e]/95 backdrop-blur-3xl items-center justify-center p-6 text-center select-none">
     <div class="w-20 h-20 rounded-3xl bg-red-950/80 border border-red-500/60 flex items-center justify-center text-red-400 text-3xl shadow-[0_0_40px_rgba(239,68,68,0.5)] mb-5 animate-bounce">
       <i class="fa-solid fa-user-slash"></i>
     </div>
@@ -1293,7 +1293,7 @@
   <!-- ========================================================== -->
   <!-- VIEW 2: MAIN DASHBOARD & PROFILE APPLICATION               -->
   <!-- ========================================================== -->
-  <div id="view-dashboard" class="relative z-10 min-h-screen w-full flex hidden flex-col md:flex-row">
+  <div id="view-dashboard" class="relative z-10 min-h-screen w-full hidden flex-col md:flex-row">
     
     <!-- -------------------------------------------------------- -->
     <!-- 1. LEFT SIDEBAR WITH GEAR / PROFILE POP-DOWN MENU        -->
@@ -4709,7 +4709,9 @@
 
       if (splash && dash) {
         splash.classList.add('hidden');
+        splash.classList.remove('flex');
         dash.classList.remove('hidden');
+        dash.classList.add('flex');
         AppState.currentView = 'dashboard';
         switchDashboardTab(tabToOpen);
         startWatchTracker();
@@ -4723,7 +4725,9 @@
 
       if (splash && dash) {
         dash.classList.add('hidden');
+        dash.classList.remove('flex');
         splash.classList.remove('hidden');
+        splash.classList.add('flex');
         AppState.currentView = 'splash';
         closeGearMenu();
         window.scrollTo({ top: 0, behavior: 'smooth' });
