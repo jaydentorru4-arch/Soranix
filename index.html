@@ -955,6 +955,70 @@
         <i class="fa-solid fa-shield-halved"></i>
         <span>Owner Bypass &bull; Open Admin</span>
       </button>
+  </div>
+
+  <!-- ========================================================== -->
+  <!-- BANNED ACCOUNT OVERLAY SCREEN (Suspended User Lockout)    -->
+  <!-- ========================================================== -->
+  <div id="banned-account-overlay" class="hidden fixed inset-0 z-[100] bg-[#07050e]/95 backdrop-blur-3xl flex flex-col items-center justify-center p-6 text-center select-none">
+    <div class="w-20 h-20 rounded-3xl bg-red-950/80 border border-red-500/60 flex items-center justify-center text-red-400 text-3xl shadow-[0_0_40px_rgba(239,68,68,0.5)] mb-5 animate-bounce">
+      <i class="fa-solid fa-user-slash"></i>
+    </div>
+    <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-red-950/80 border border-red-500/50 text-[11px] font-mono font-bold text-red-300 uppercase tracking-widest mb-3">
+      <i class="fa-solid fa-triangle-exclamation text-red-400"></i>
+      <span>Account Suspended</span>
+    </div>
+    <h2 class="text-2xl sm:text-4xl font-display font-black text-white mb-2">Access Denied &bull; Suspended</h2>
+    <p id="banned-overlay-username" class="text-xs text-slate-400 font-mono mb-4">Account: <span class="text-red-400 font-bold">User</span></p>
+    
+    <div class="glass-card rounded-2xl p-5 max-w-md w-full border border-red-500/40 text-left mb-6 space-y-2 bg-red-950/20 shadow-2xl">
+      <div class="text-[11px] font-mono font-bold uppercase text-red-300 flex items-center gap-2">
+        <i class="fa-solid fa-shield-exclamation text-xs"></i>
+        <span>Suspension Reason:</span>
+      </div>
+      <p id="banned-overlay-reason" class="text-xs text-slate-200 leading-relaxed pl-1">
+        Your account was suspended by Administrator due to a violation of platform community rules.
+      </p>
+    </div>
+
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-3 w-full max-w-md">
+      <button onclick="openBanAppealModal()" class="w-full sm:flex-1 py-3 rounded-xl bg-gradient-to-r from-red-600 to-purple-600 hover:from-red-500 hover:to-purple-500 text-xs font-bold text-white shadow-lg transition-all cursor-pointer flex items-center justify-center gap-2">
+        <i class="fa-solid fa-paper-plane text-xs"></i>
+        <span>Appeal Ban to Owner</span>
+      </button>
+      <button onclick="logoutBannedAccount()" class="w-full sm:flex-1 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-bold text-slate-200 border border-white/10 transition-all cursor-pointer flex items-center justify-center gap-2">
+        <i class="fa-solid fa-right-from-bracket text-xs"></i>
+        <span>Log Out</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- MODAL: BAN APPEAL FORM -->
+  <div id="ban-appeal-modal" class="hidden fixed inset-0 z-[105] items-center justify-center p-4 bg-black/85 backdrop-blur-xl">
+    <div class="w-full max-w-md glass-card rounded-3xl p-6 sm:p-8 relative shadow-2xl border border-purple-500/40 space-y-4">
+      <button onclick="closeBanAppealModal()" class="absolute top-4 right-4 p-2 text-slate-400 hover:text-white transition-colors cursor-pointer">
+        <i class="fa-solid fa-xmark text-sm"></i>
+      </button>
+      <div class="flex items-center gap-3 pb-3 border-b border-glassBorder">
+        <div class="w-12 h-12 rounded-2xl bg-purple-950/80 border border-purple-500/50 flex items-center justify-center text-purple-300 text-2xl">
+          <i class="fa-solid fa-envelope-open-text"></i>
+        </div>
+        <div>
+          <h3 class="text-lg font-display font-bold text-white">Submit Unban Appeal</h3>
+          <p class="text-xs text-purple-300/70">Message will be delivered directly to System Owner (JaydenTorru)</p>
+        </div>
+      </div>
+      <div>
+        <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">Kindly Explain Your Appeal</label>
+        <textarea id="ban-appeal-message-input" rows="4" placeholder="Hello Owner, kindly unban my account because..." class="w-full p-3 text-xs bg-[#07050e] border border-purple-500/40 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400 resize-none"></textarea>
+      </div>
+      <div class="pt-2 flex items-center gap-2">
+        <button onclick="closeBanAppealModal()" class="flex-1 py-2.5 rounded-xl text-xs font-semibold bg-white/10 hover:bg-white/20 text-white transition-all cursor-pointer">Cancel</button>
+        <button onclick="submitBanAppeal()" class="flex-1 py-2.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 shadow-accent-glow transition-all cursor-pointer flex items-center justify-center gap-1.5">
+          <i class="fa-solid fa-paper-plane text-xs"></i>
+          <span>Send Appeal</span>
+        </button>
+      </div>
     </div>
   </div>
 
@@ -2730,6 +2794,15 @@
             <span>User &amp; Account Moderation</span>
           </button>
           <button 
+            id="admin-tab-btn-appeals"
+            onclick="switchAdminSubTab('appeals')" 
+            class="admin-subtab-btn px-4 py-2 rounded-2xl text-xs font-bold transition-all text-slate-400 hover:text-white bg-white/[0.04] hover:bg-white/10 cursor-pointer flex items-center gap-2 shrink-0 relative"
+          >
+            <i class="fa-solid fa-envelope-open-text text-xs text-amber-400"></i>
+            <span>Ban Appeals Station</span>
+            <span id="admin-appeals-badge" class="px-1.5 py-0.2 rounded-full text-[9px] font-mono bg-red-600 text-white font-bold">0</span>
+          </button>
+          <button 
             id="admin-tab-btn-currency"
             onclick="switchAdminSubTab('currency')" 
             class="admin-subtab-btn px-4 py-2 rounded-2xl text-xs font-bold transition-all text-slate-400 hover:text-white bg-white/[0.04] hover:bg-white/10 cursor-pointer flex items-center gap-2 shrink-0"
@@ -2753,6 +2826,31 @@
             <i class="fa-solid fa-sliders text-xs text-electricCyan"></i>
             <span>Platform &amp; Maintenance</span>
           </button>
+        </div>
+
+        <!-- ==================================================== -->
+        <!-- SUB-PANEL 5: BAN APPEALS REVIEW CENTER               -->
+        <!-- ==================================================== -->
+        <div id="admin-panel-appeals" class="space-y-4 hidden">
+          <div class="glass-panel rounded-3xl p-5 sm:p-6 border border-amber-500/30 bg-amber-950/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 rounded-2xl bg-amber-950/80 border border-amber-500/50 flex items-center justify-center text-amber-400 text-2xl">
+                <i class="fa-solid fa-envelope-open-text"></i>
+              </div>
+              <div>
+                <h3 class="text-base font-display font-bold text-white">Ban Appeals Review Station</h3>
+                <p class="text-xs text-slate-400">Review unban requests sent directly from suspended users. 1-Click Approve to reactivate their account.</p>
+              </div>
+            </div>
+            <button onclick="renderAdminBanAppealsList()" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white/10 hover:bg-white/20 text-white cursor-pointer transition-all flex items-center gap-1.5">
+              <i class="fa-solid fa-rotate-right text-xs"></i>
+              <span>Refresh Appeals</span>
+            </button>
+          </div>
+
+          <div id="admin-appeals-list-container" class="space-y-3">
+            <!-- Dynamically populated -->
+          </div>
         </div>
 
         <!-- ==================================================== -->
@@ -5445,6 +5543,7 @@
       if (!AppState.isGuest) {
         renderNotificationsUI();
       }
+      checkBannedOverlayState();
     }
 
     // ----------------------------------------------------
@@ -8055,6 +8154,8 @@
     }
 
     function adminToggleBanUser(username) {
+      if (!checkStaffActionPermission('moderator')) return;
+
       const users = getUsersDB();
       const key = username.toLowerCase();
       const u = users[key];
@@ -8068,8 +8169,18 @@
       u.isBanned = !u.isBanned;
       if (u.isBanned) {
         u.bannedReason = 'Administrative action by Platform Owner.';
+        addNotification(u.username, {
+          title: 'Account Suspended',
+          body: `Your account was suspended by Administrator. Reason: ${u.bannedReason}`,
+          type: 'level_up'
+        });
       } else {
         u.bannedReason = '';
+        addNotification(u.username, {
+          title: 'Account Reactivated',
+          body: 'Your Soranix account suspension has been lifted by Administrator.',
+          type: 'level_up'
+        });
       }
 
       users[key] = u;
@@ -8080,6 +8191,8 @@
     }
 
     function adminMuteUser(username, minutes) {
+      if (!checkStaffActionPermission('moderator')) return;
+
       const users = getUsersDB();
       const key = username.toLowerCase();
       const u = users[key];
@@ -8093,12 +8206,21 @@
       u.mutedUntil = Date.now() + (minutes * 60 * 1000);
       users[key] = u;
       saveUsersDB(users);
+      
+      addNotification(u.username, {
+        title: 'Chat Timeout Issued',
+        body: `You have been timed out in global chat for ${minutes} minute(s).`,
+        type: 'level_up'
+      });
+
       renderAdminUsersList();
       SoranixAudio.play('laser');
       showToast(`${username} has been timed out for ${minutes} minute(s). Chat & DMs suppressed.`, 'info');
     }
 
     function adminUnmuteUser(username) {
+      if (!checkStaffActionPermission('moderator')) return;
+
       const users = getUsersDB();
       const key = username.toLowerCase();
       const u = users[key];
@@ -10049,17 +10171,270 @@
     }
 
     // ====================================================
-    // 29. STAFF ROLE ASSIGNMENT HANDLERS
+    // 29. STAFF ROLE ASSIGNMENT & BAN APPEALS ENGINE
     // ----------------------------------------------------
+    const BAN_APPEALS_KEY = 'soranix_ban_appeals';
+
+    function getBanAppealsList() {
+      try {
+        const raw = localStorage.getItem(BAN_APPEALS_KEY);
+        return raw ? JSON.parse(raw) : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveBanAppealsList(list) {
+      try {
+        localStorage.setItem(BAN_APPEALS_KEY, JSON.stringify(list));
+      } catch (e) {
+        console.warn('Appeals save error:', e);
+      }
+    }
+
+    function checkBannedOverlayState() {
+      const overlay = $('banned-account-overlay');
+      const userLabel = $('banned-overlay-username');
+      const reasonLabel = $('banned-overlay-reason');
+
+      if (!overlay) return;
+
+      if (!AppState.isGuest && AppState.user && AppState.user.isBanned) {
+        if (userLabel) userLabel.textContent = `Account: @${AppState.user.username}`;
+        if (reasonLabel) reasonLabel.textContent = AppState.user.bannedReason || 'Violation of platform community terms and guidelines.';
+        overlay.classList.remove('hidden');
+        overlay.classList.add('flex');
+      } else {
+        overlay.classList.remove('flex');
+        overlay.classList.add('hidden');
+      }
+    }
+
+    function logoutBannedAccount() {
+      const overlay = $('banned-account-overlay');
+      if (overlay) {
+        overlay.classList.remove('flex');
+        overlay.classList.add('hidden');
+      }
+      handleLogout();
+      showToast('Logged out of suspended session.', 'info');
+    }
+
+    function openBanAppealModal() {
+      const modal = $('ban-appeal-modal');
+      if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      }
+    }
+
+    function closeBanAppealModal() {
+      const modal = $('ban-appeal-modal');
+      if (modal) {
+        modal.classList.remove('flex');
+        modal.classList.add('hidden');
+      }
+    }
+
+    function submitBanAppeal() {
+      const input = $('ban-appeal-message-input');
+      const msg = input ? input.value.trim() : '';
+      if (!msg) {
+        showToast('Please enter your appeal explanation message.', 'error');
+        return;
+      }
+
+      const u = AppState.user;
+      const username = u ? u.username : 'User';
+      const email = u ? (u.email || 'No email') : '';
+
+      const appeals = getBanAppealsList();
+      const newAppeal = {
+        id: 'appeal_' + Date.now(),
+        username: username,
+        email: email,
+        bannedReason: u ? (u.bannedReason || 'Violation of terms') : 'Violation',
+        appealMessage: msg,
+        status: 'Pending',
+        time: 'Just now',
+        timestamp: Date.now()
+      };
+
+      appeals.unshift(newAppeal);
+      saveBanAppealsList(appeals);
+
+      // Deliver alert notification to System Owner
+      addNotification('JaydenTorru', {
+        title: 'Ban Appeal Received!',
+        body: `User [${username}] submitted an unban appeal: "${msg}"`,
+        type: 'level_up'
+      });
+      if (OWNER_EMAIL && OWNER_EMAIL !== 'JaydenTorru') {
+        addNotification(OWNER_EMAIL, {
+          title: 'Ban Appeal Received!',
+          body: `User [${username}] submitted an unban appeal: "${msg}"`,
+          type: 'level_up'
+        });
+      }
+
+      closeBanAppealModal();
+      if (input) input.value = '';
+      showToast('Ban appeal submitted! System Administrator (JaydenTorru) will review it shortly.', 'success');
+    }
+
+    function checkStaffActionPermission(requiredRole = 'moderator') {
+      if (AppState.isGuest) {
+        showToast('Guest users cannot perform administrative actions.', 'error');
+        return false;
+      }
+      if (isOwner(AppState.user)) return true; // Owner can do everything
+
+      const role = (AppState.user.staffRole || '').toLowerCase();
+
+      if (role === 'tester') {
+        showToast('Permission Denied: Quality Testers have read-only diagnostic privileges and cannot ban, timeout, or modify accounts.', 'error');
+        return false;
+      }
+
+      if (requiredRole === 'admin' && !['owner', 'admin'].includes(role)) {
+        showToast('Permission Denied: System Administrator clearance required.', 'error');
+        return false;
+      }
+
+      if (requiredRole === 'moderator' && !['owner', 'admin', 'moderator'].includes(role)) {
+        showToast('Permission Denied: Moderator clearance required.', 'error');
+        return false;
+      }
+
+      return true;
+    }
+
+    function renderAdminBanAppealsList() {
+      const container = $('admin-appeals-list-container');
+      if (!container) return;
+
+      const appeals = getBanAppealsList();
+      const badge = $('admin-appeals-badge');
+      const pendingCount = appeals.filter(a => a.status === 'Pending').length;
+      if (badge) badge.textContent = pendingCount;
+
+      if (appeals.length === 0) {
+        container.innerHTML = `
+          <div class="glass-card rounded-2xl p-8 text-center text-slate-400 space-y-2">
+            <i class="fa-solid fa-check-circle text-2xl text-emerald-400"></i>
+            <h4 class="text-sm font-bold text-white">No Pending Ban Appeals</h4>
+            <p class="text-xs text-slate-400">All user ban appeals have been processed or none have been filed.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = appeals.map(app => {
+        const isPending = app.status === 'Pending';
+        return `
+          <div class="glass-card rounded-2xl p-4 border ${isPending ? 'border-amber-500/40 bg-amber-950/10' : 'border-white/5'} transition-all space-y-3">
+            <div class="flex items-center justify-between gap-3 flex-wrap">
+              <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-full bg-red-950 border border-red-500/50 flex items-center justify-center text-red-400 font-bold text-xs shrink-0">
+                  ${(app.username || 'U')[0].toUpperCase()}
+                </div>
+                <div>
+                  <h4 class="text-xs font-bold text-white">${app.username} <span class="text-slate-400 font-mono">(${app.email || 'No email'})</span></h4>
+                  <p class="text-[10px] text-slate-400 font-mono">Reason: <span class="text-red-300">${app.bannedReason || 'Violation'}</span> &bull; ${app.time}</p>
+                </div>
+              </div>
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold ${isPending ? 'bg-amber-950 text-amber-300 border border-amber-500/40' : (app.status === 'Approved' ? 'bg-emerald-950 text-emerald-400 border border-emerald-500/40' : 'bg-red-950 text-red-400 border border-red-500/40')}">
+                ${app.status}
+              </span>
+            </div>
+
+            <div class="p-3 rounded-xl bg-black/40 border border-white/5 text-xs text-slate-200 leading-relaxed font-sans">
+              <i class="fa-solid fa-quote-left text-accent/60 mr-1.5"></i> ${app.appealMessage}
+            </div>
+
+            ${isPending ? `
+              <div class="flex items-center justify-end gap-2 pt-1">
+                <button onclick="adminRejectBanAppeal('${app.id}')" class="px-3 py-1.5 rounded-xl text-xs font-bold text-red-400 hover:text-white bg-red-950/60 hover:bg-red-600 border border-red-500/30 transition-all cursor-pointer">
+                  Reject Appeal
+                </button>
+                <button onclick="adminApproveBanAppeal('${app.id}', '${app.username}')" class="px-4 py-1.5 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-500 shadow-md transition-all cursor-pointer flex items-center gap-1.5">
+                  <i class="fa-solid fa-user-check text-xs"></i>
+                  <span>Approve &amp; Unban User</span>
+                </button>
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    function adminApproveBanAppeal(appealId, username) {
+      if (!checkStaffActionPermission('moderator')) return;
+
+      const users = getUsersDB();
+      const userKey = Object.keys(users).find(k => k === username.toLowerCase() || (users[k].username && users[k].username.toLowerCase() === username.toLowerCase()));
+
+      if (userKey && users[userKey]) {
+        users[userKey].isBanned = false;
+        users[userKey].bannedReason = '';
+        saveUsersDB(users);
+      }
+
+      const appeals = getBanAppealsList();
+      const appeal = appeals.find(a => a.id === appealId);
+      if (appeal) {
+        appeal.status = 'Approved';
+        saveBanAppealsList(appeals);
+      }
+
+      addNotification(username, {
+        title: 'Ban Appeal Approved!',
+        body: 'Your unban appeal was approved by System Administrator! Your account is now fully active.',
+        type: 'level_up'
+      });
+
+      showToast(`Approved appeal and unbanned ${username}!`, 'success');
+      renderAdminBanAppealsList();
+      renderAdminUsersList();
+    }
+
+    function adminRejectBanAppeal(appealId) {
+      if (!checkStaffActionPermission('moderator')) return;
+
+      const appeals = getBanAppealsList();
+      const appeal = appeals.find(a => a.id === appealId);
+      if (appeal) {
+        appeal.status = 'Rejected';
+        saveBanAppealsList(appeals);
+      }
+
+      showToast('Ban appeal marked as rejected.', 'info');
+      renderAdminBanAppealsList();
+    }
+
     function handleStaffRolePresetChange(roleKey) {
-      // Helper for role presets if configured in admin
+      const customInput = $('admin-staff-custom-title');
+      if (!customInput) return;
+      const map = {
+        developer: 'Cosmic Developer',
+        tester: 'Quality Tester',
+        moderator: 'Cosmic Moderator',
+        admin: 'System Administrator',
+        member: 'Novice Voyager'
+      };
+      if (map[roleKey]) {
+        customInput.value = map[roleKey];
+      }
     }
 
     function adminAssignStaffRole() {
+      if (!checkStaffActionPermission('admin')) return;
+
       const select = $('admin-staff-user-select');
       const roleSelect = $('admin-staff-role-select');
+      const customTitleInput = $('admin-staff-custom-title');
       const targetKey = select?.value;
-      const role = roleSelect?.value || 'Moderator';
+      const role = roleSelect?.value || 'moderator';
 
       if (!targetKey) {
         showToast('Please select a user to assign role.', 'error');
@@ -10068,10 +10443,29 @@
 
       const users = getUsersDB();
       if (users[targetKey]) {
-        users[targetKey].staffRole = role;
-        users[targetKey].title = `${role} of Soranix`;
+        const roleTitleMap = {
+          developer: 'Cosmic Developer',
+          tester: 'Quality Tester',
+          moderator: 'Cosmic Moderator',
+          admin: 'System Administrator',
+          member: 'Novice Voyager'
+        };
+
+        const titleLabel = (customTitleInput?.value || '').trim() || roleTitleMap[role] || `${role.toUpperCase()} of Soranix`;
+
+        users[targetKey].staffRole = role === 'member' ? '' : role;
+        users[targetKey].title = titleLabel;
         saveUsersDB(users);
-        showToast(`Assigned role [${role}] to ${users[targetKey].username}!`, 'success');
+
+        if (role !== 'member') {
+          addNotification(users[targetKey].username, {
+            title: 'Staff Role Granted!',
+            body: `You have received the ${role.toUpperCase()} staff role (${titleLabel})! You can now access the Admin Control Station when you log in.`,
+            type: 'level_up'
+          });
+        }
+
+        showToast(`Assigned role [${role.toUpperCase()}] to ${users[targetKey].username}!`, 'success');
         renderAdminUsersList();
       }
     }
