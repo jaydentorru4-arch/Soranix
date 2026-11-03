@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Soranix - Galaxy Anime Platform & Profile Hub</title>
-  <meta name="description" content="Deep Space and Galaxy-themed anime platform with dark glassmorphism, persistent authentication, real-time username uniqueness, zeroed starting stats, and watch-time leveling rewards." />
-  <meta property="og:title" content="Soranix - Galaxy Anime Platform & Profile Hub" />
-  <meta property="og:description" content="Deep Space and Galaxy-themed anime platform with dark glassmorphism, persistent authentication, real-time username uniqueness, zeroed starting stats, and watch-time leveling rewards." />
+  <title>Soranix.to - Galaxy Anime Platform</title>
+  <meta name="description" content="Deep Space and Galaxy-themed anime streaming platform with twinkling starfield, authentication modal, video player, and modular dashboard." />
+  <meta property="og:title" content="Soranix.to - Galaxy Anime Platform" />
+  <meta property="og:description" content="Deep Space and Galaxy-themed anime streaming platform with twinkling starfield, authentication modal, video player, and modular dashboard." />
   <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary_large_image" />
 
@@ -553,8 +553,7 @@
               src="" 
               title="Anime Trailer" 
               frameborder="0" 
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-              allowfullscreen
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
             ></iframe>
             <div id="detail-trailer-placeholder" class="hidden absolute inset-0 flex flex-col items-center justify-center p-6 text-center text-slate-400 space-y-2">
               <i class="fa-regular fa-circle-play text-4xl text-slate-600"></i>
@@ -680,7 +679,6 @@
       <iframe 
         id="soranix-embed-player" 
         class="w-full h-full border-0 hidden bg-black" 
-        allowfullscreen 
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
         referrerpolicy="origin"
         title="Anime Stream Player"
@@ -919,6 +917,7 @@
         <i class="fa-solid fa-shield-halved"></i>
         <span>Owner Bypass &bull; Open Admin</span>
       </button>
+    </div>
   </div>
 
   <!-- ========================================================== -->
@@ -1567,6 +1566,7 @@
             <i class="fa-solid fa-shield-halved text-red-400 text-[10px]"></i>
             <span class="font-mono uppercase tracking-wider text-[11px]">Owner</span>
           </div>
+        </div>
 
           <!-- Account-Only Notification Bell & Pop-Down Tray (Strictly Hidden for Guests) -->
           <div id="header-notification-container" class="relative hidden">
@@ -4330,11 +4330,12 @@
   <!-- ========================================================== -->
   <!-- JAVASCRIPT SYSTEM ENGINE (Single-File Architecture)        -->
   <!-- ========================================================== -->
-  <script type="module">
+  <script>
     window.onerror = function(message, source, lineno, colno, error) {
-      alert("App Error: " + message + "\\nLine: " + lineno);
-      return false;
+      console.error("Global App Error:", message, source, lineno, colno, error);
     };
+  </script>
+  <script type="module">
     import { 
       auth, 
       signInWithGoogle, 
@@ -4627,7 +4628,7 @@
     // ----------------------------------------------------
     // 1. AUTO-LOGIN & SESSION RESTORATION (Main Menu Preserved)
     // ----------------------------------------------------
-    (function initAutoLogin() {
+    function initAutoLogin() {
       try {
         const savedTheme = localStorage.getItem('soranix_theme') || 'violet';
         setCosmicTheme(savedTheme, false);
@@ -4672,7 +4673,6 @@
         // NEVER automatically navigate away or remove the Main Menu screen!
         returnToSplash();
       } catch (err) {
-        alert('Critical boot error: ' + (err instanceof Error ? err.message : String(err)));
         console.error('Critical boot error, falling back to guest mode:', err);
         // Fallback to guest mode
         AppState.isGuest = true;
@@ -4680,7 +4680,7 @@
         updateViewableProfileUI();
         returnToSplash();
       }
-    })();
+    }
 
     // ----------------------------------------------------
     // 2. VIEW SWITCHING: SPLASH VS DASHBOARD
@@ -10458,6 +10458,7 @@
 
     // Initialize initial state on load
     setTimeout(() => {
+      initAutoLogin();
       if (!AppState.catalogInitialised) {
         fetchAniListCatalog();
       }
@@ -10468,7 +10469,7 @@
       // Start 3-second auto-preview anime carousel
       renderFeaturedHeroShowcase(0);
       startFeaturedHeroCarousel();
-    }, 100);
+    }, 50);
 
     // Expose all functions to global window for HTML onclick / oninput bindings
     window.enterDashboard = enterDashboard;
