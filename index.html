@@ -9796,39 +9796,73 @@
       }
     }
     // ====================================================
-    // DYNAMIC ANILIST / JIKAN EPISODE FETCHING ENGINE
+    // DYNAMIC ANILIST / JIKAN EPISODE FETCHING ENGINE (WITH PAGINATION & CACHING)
     // ----------------------------------------------------
     const JIKAN_EPISODES_CACHE = {};
+    window.currentAnimeEpisodes = [];
 
     async function fetchJikanEpisodes(animeId) {
       if (!animeId) return null;
       if (JIKAN_EPISODES_CACHE[animeId]) return JIKAN_EPISODES_CACHE[animeId];
+
+      const cacheKey = `soranix_jikan_eps_${animeId}`;
       try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000);
-        const res = await fetch(`https://api.jikan.moe/v4/anime/${animeId}/episodes`, {
-          signal: controller.signal
-        });
-        clearTimeout(timeoutId);
-        if (res.ok) {
-          const data = await res.json();
-          if (data && Array.isArray(data.data)) {
-            const map = {};
-            data.data.forEach(ep => {
-              const num = ep.mal_id || ep.episode_id;
-              if (num && ep.title) {
-                map[num] = {
-                  title: ep.title,
-                  desc: ep.synopsis || `Official episode transmission for episode ${num}.`
-                };
-              }
-            });
-            JIKAN_EPISODES_CACHE[animeId] = map;
-            return map;
+        const cached = localStorage.getItem(cacheKey);
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          JIKAN_EPISODES_CACHE[animeId] = parsed;
+          window.currentAnimeEpisodes = Object.values(parsed);
+          return parsed;
+        }
+      } catch (e) {}
+
+      try {
+        let page = 1;
+        let hasNextPage = true;
+        let allEpisodesData = [];
+
+        while (hasNextPage && page <= 20) { // Support long anime up to 2000 eps (20 pages)
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 6000);
+          const res = await fetch(`https://api.jikan.moe/v4/anime/${animeId}/episodes?page=${page}`, {
+            signal: controller.signal
+          });
+          clearTimeout(timeoutId);
+
+          if (!res.ok) break;
+          const json = await res.json();
+          if (json && Array.isArray(json.data)) {
+            allEpisodesData = allEpisodesData.concat(json.data);
+          }
+
+          if (json && json.pagination && json.pagination.has_next_page) {
+            page++;
+          } else {
+            hasNextPage = false;
           }
         }
+
+        if (allEpisodesData.length > 0) {
+          const map = {};
+          allEpisodesData.forEach(ep => {
+            const num = ep.mal_id || ep.episode_id;
+            if (num) {
+              map[num] = {
+                title: ep.title || `Episode ${num}`,
+                title_japanese: ep.title_japanese || '',
+                desc: ep.synopsis || `Official episode transmission for episode ${num}: ${ep.title || ''}.`
+              };
+            }
+          });
+          JIKAN_EPISODES_CACHE[animeId] = map;
+          window.currentAnimeEpisodes = allEpisodesData;
+          try {
+            localStorage.setItem(cacheKey, JSON.stringify(map));
+          } catch (e) {}
+          return map;
+        }
       } catch (e) {
-        console.warn('Jikan episodes fetch notice:', e);
+        console.warn('Jikan episodes pagination fetch notice:', e);
       }
       return null;
     }
