@@ -673,8 +673,8 @@
       <!-- Split-Screen Row Container (Left: ~70% Player | Right: ~30% Episode Info & Control) -->
       <div class="w-full max-w-[1920px] mx-auto p-3 sm:p-5 flex flex-col lg:flex-row gap-5 flex-1 min-h-0">
         
-        <!-- LEFT COLUMN: VIDEO PLAYER AREA (~70% width) -->
-        <div class="w-full lg:w-[70%] flex flex-col space-y-3">
+        <!-- LEFT COLUMN: VIDEO PLAYER AREA (~70% width default, expandable to full theater mode) -->
+        <div id="player-left-column" class="w-full lg:w-[70%] flex flex-col space-y-3 transition-all duration-300">
           
           <!-- Cinema-mode Responsive Video Container -->
           <div id="player-viewport-container" class="aspect-video w-full rounded-2xl overflow-hidden relative shadow-[0_0_50px_rgba(0,0,0,0.85)] border border-white/10 bg-black group select-none">
@@ -927,13 +927,23 @@
                     <button onclick="setPlayerTrack('DUB')" id="track-btn-dub" class="px-2 py-0.5 rounded-lg text-slate-400 hover:text-white cursor-pointer">DUB</button>
                   </div>
 
+                  <!-- Theater Expand Mode Toggle Button -->
+                  <button 
+                    id="player-btn-theater" 
+                    onclick="togglePlayerTheaterMode()" 
+                    class="w-8 h-8 rounded-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all cursor-pointer text-xs" 
+                    title="Toggle Expanded Theater Cinema Mode"
+                  >
+                    <i id="player-btn-theater-icon" class="fa-solid fa-expand text-[11px] text-purple-300"></i>
+                  </button>
+
                   <!-- Fullscreen Button -->
                   <button 
                     onclick="togglePlayerBrowserFullscreen()" 
                     class="w-8 h-8 rounded-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all cursor-pointer text-xs" 
-                    title="Fullscreen (F)"
+                    title="Toggle Fullscreen (F)"
                   >
-                    <i id="player-btn-fullscreen-icon" class="fa-solid fa-expand"></i>
+                    <i id="player-btn-fullscreen-icon" class="fa-solid fa-up-right-and-down-left-from-center text-[11px]"></i>
                   </button>
                 </div>
               </div>
@@ -2692,11 +2702,14 @@
             </div>
           </div>
 
-          <!-- Add Friend Input Bar -->
-          <div class="glass-card rounded-2xl p-5 border border-purple-500/20">
-            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-300 mb-2 flex items-center gap-2">
-              <i class="fa-solid fa-user-plus text-accent"></i>
-              <span>Add Cosmic Friend</span>
+          <!-- Add Friend Input Bar with Live Search Profile Preview -->
+          <div class="glass-card rounded-2xl p-5 border border-purple-500/20 space-y-3">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center justify-between">
+              <span class="flex items-center gap-2">
+                <i class="fa-solid fa-user-plus text-accent"></i>
+                <span>Add Cosmic Friend</span>
+              </span>
+              <span class="text-[10px] text-purple-300 font-mono font-normal">Type a username to view profile preview</span>
             </h4>
             <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
               <div class="relative flex-1">
@@ -2706,9 +2719,10 @@
                 <input 
                   id="input-friend-search" 
                   type="text" 
-                  maxlength="20"
-                  placeholder="Enter exact registered username (e.g. AstralScout)..." 
-                  class="w-full pl-9 pr-4 py-2.5 text-xs bg-[#07050e]/90 border border-purple-500/30 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400 transition-all"
+                  maxlength="25"
+                  placeholder="Type username to search and preview profile..." 
+                  class="w-full pl-9 pr-4 py-2.5 text-xs bg-[#07050e]/90 border border-purple-500/30 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400 transition-all font-sans"
+                  oninput="handleFriendSearchInput(this.value)"
                   onkeydown="if(event.key === 'Enter') handleSendFriendRequest();"
                 />
               </div>
@@ -2720,6 +2734,9 @@
                 <span>Send Request</span>
               </button>
             </div>
+            
+            <!-- Live Friend Search Profile Preview Container -->
+            <div id="friend-search-preview-container" class="hidden p-3 rounded-2xl bg-black/40 border border-purple-500/30 space-y-2 mt-2"></div>
             <p id="friend-search-feedback" class="text-xs mt-2 hidden"></p>
           </div>
 
@@ -6607,17 +6624,18 @@
             gain.connect(ctx.destination);
             osc.start(now);
             osc.stop(now + 0.22);
-          } else if (type === 'bell') {
+          } else if (type === 'bell' || type === 'ping' || type === 'notification') {
             const osc = ctx.createOscillator();
             const gain = ctx.createGain();
             osc.type = 'sine';
-            osc.frequency.setValueAtTime(1760, now);
-            gain.gain.setValueAtTime(0.18, now);
-            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
+            osc.frequency.setValueAtTime(880, now);
+            osc.frequency.setValueAtTime(1760, now + 0.08);
+            gain.gain.setValueAtTime(0.2, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
             osc.connect(gain);
             gain.connect(ctx.destination);
             osc.start(now);
-            osc.stop(now + 0.8);
+            osc.stop(now + 0.4);
           } else {
             const osc = ctx.createOscillator();
             const gain = ctx.createGain();
@@ -7655,6 +7673,95 @@
       }
     }
 
+    function handleFriendSearchInput(query) {
+      const container = $('friend-search-preview-container');
+      if (!container) return;
+
+      const cleanQ = (query || '').trim().toLowerCase();
+      if (!cleanQ) {
+        container.innerHTML = '';
+        container.classList.add('hidden');
+        return;
+      }
+
+      const users = getUsersDB();
+      const currentUsername = (AppState.user?.username || '').toLowerCase();
+      const matches = Object.keys(users)
+        .filter(k => k.includes(cleanQ))
+        .map(k => users[k]);
+
+      if (matches.length === 0) {
+        container.innerHTML = `
+          <div class="glass-card rounded-2xl p-4 text-center text-slate-400 text-xs border border-white/10">
+            No cosmic voyagers found matching "${query}".
+          </div>
+        `;
+        container.classList.remove('hidden');
+        return;
+      }
+
+      container.innerHTML = matches.map(u => {
+        const uName = u.username || 'Voyager';
+        const isSelf = uName.toLowerCase() === currentUsername;
+        const isFriend = (AppState.user?.friends || []).some(f => f.toLowerCase() === uName.toLowerCase());
+        const isIncoming = (AppState.user?.incomingRequests || []).some(f => f.toLowerCase() === uName.toLowerCase());
+        const isOutgoing = (AppState.user?.outgoingRequests || []).some(f => f.toLowerCase() === uName.toLowerCase());
+        
+        let btnHtml = '';
+        if (isSelf) {
+          btnHtml = `<span class="text-[10px] text-purple-400 font-bold font-mono px-2 py-1 bg-purple-950/60 rounded-lg border border-purple-500/30">That's You</span>`;
+        } else if (isFriend) {
+          btnHtml = `
+            <button onclick="openDMChat('${uName}')" class="px-3 py-1 rounded-xl text-xs font-bold text-white bg-purple-600 hover:bg-purple-500 shadow-md transition-all cursor-pointer flex items-center gap-1">
+              <i class="fa-solid fa-paper-plane text-[10px]"></i> Chat
+            </button>
+          `;
+        } else if (isIncoming) {
+          btnHtml = `
+            <button onclick="acceptFriendRequest('${uName}')" class="px-3 py-1 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-500 shadow-md transition-all cursor-pointer flex items-center gap-1">
+              <i class="fa-solid fa-check text-[10px]"></i> Accept
+            </button>
+          `;
+        } else if (isOutgoing) {
+          btnHtml = `<span class="text-[10px] text-amber-300 font-medium px-2 py-1 bg-amber-950/50 rounded-lg border border-amber-500/30">Request Sent</span>`;
+        } else {
+          btnHtml = `
+            <button onclick="sendFriendRequestTo('${uName}')" class="px-3 py-1 rounded-xl text-xs font-bold text-white bg-purple-600 hover:bg-purple-500 shadow-md transition-all cursor-pointer flex items-center gap-1">
+              <i class="fa-solid fa-user-plus text-[10px]"></i> Add Friend
+            </button>
+          `;
+        }
+
+        const frame = u.equippedFrame || 'galaxy';
+        const initial = (uName[0] || 'V').toUpperCase();
+        const avatarHtml = u.avatarDataUrl 
+          ? `<img src="${u.avatarDataUrl}" alt="${uName}" class="w-8 h-8 rounded-full object-cover">`
+          : `<div class="w-8 h-8 rounded-full bg-purple-800 flex items-center justify-center text-white text-xs font-bold">${initial}</div>`;
+
+        return `
+          <div class="glass-card rounded-2xl p-3 border border-purple-500/30 flex items-center justify-between gap-3 hover:bg-purple-950/30 transition-all">
+            <div onclick="openUserProfilePreviewModal('${uName}')" class="flex items-center gap-3 cursor-pointer group">
+              <div class="pfp-frame-container frame-${frame} p-0.5 shrink-0">
+                ${avatarHtml}
+              </div>
+              <div>
+                <h4 class="text-xs font-bold text-white group-hover:text-purple-300 transition-colors flex items-center gap-1.5">
+                  <span>${uName}</span>
+                  <span class="text-[9px] px-1.5 py-0.2 rounded bg-purple-900/60 text-purple-300 border border-purple-500/30 font-mono">Lv ${u.level || 1}</span>
+                </h4>
+                <p class="text-[10px] text-slate-400">${u.title || 'Novice Voyager'}</p>
+              </div>
+            </div>
+            <div class="shrink-0 flex items-center gap-2">
+              ${btnHtml}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      container.classList.remove('hidden');
+    }
+
     function handleSendFriendRequest() {
       const input = $('input-friend-search');
       if (!input) return;
@@ -8076,6 +8183,11 @@
 
       if (!AppState.isGuest && targetUsername.toLowerCase() === AppState.user.username.toLowerCase()) {
         renderNotificationsUI();
+        try {
+          if (typeof SoranixAudio !== 'undefined' && SoranixAudio.play) {
+            SoranixAudio.play('ping');
+          }
+        } catch (e) {}
       }
     }
 
@@ -8408,9 +8520,16 @@
       const u = users[key];
       if (!u) return;
 
-      if (checkIsAdmin(u)) {
-        showToast('System Administrator / Owner accounts cannot be banned.', 'error');
+      if (isOwner(u)) {
+        showToast('Platform Owner account cannot be banned.', 'error');
         return;
+      }
+
+      if (checkIsAdmin(u)) {
+        if (!isOwner(AppState.user)) {
+          showToast('Permission Denied: Only the Platform Owner (JaydenTorru) can ban or unban Developers, Testers, Moderators, or Staff members!', 'error');
+          return;
+        }
       }
 
       u.isBanned = !u.isBanned;
@@ -8871,6 +8990,7 @@
       }
       if (e.key && e.key.startsWith(NOTIFICATIONS_PREFIX) && !AppState.isGuest) {
         renderNotificationsUI();
+        try { SoranixAudio.play('ping'); } catch (err) {}
       }
       if (e.key === USERS_DB_KEY && !AppState.isGuest && AppState.currentUserKey) {
         const users = getUsersDB();
@@ -9036,7 +9156,7 @@
         title: { english: "Attack on Titan", romaji: "Shingeki no Kyojin", native: "進撃の巨人" },
         coverImage: { extraLarge: "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=600&q=80", large: "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=400&q=80" },
         bannerImage: "https://images.unsplash.com/photo-1511447333015-45b65e60f6d5?auto=format&fit=crop&w=1600&q=80",
-        episodes: 25,
+        episodes: 89,
         averageScore: 90,
         status: "FINISHED AIRING",
         genres: ["Action", "Drama", "Fantasy", "Mystery"],
@@ -9062,7 +9182,7 @@
         title: { english: "Bleach: Thousand-Year Blood War", romaji: "Bleach: Sennen Kessen-hen", native: "BLEACH 千年血戦篇" },
         coverImage: { extraLarge: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=600&q=80", large: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=400&q=80" },
         bannerImage: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1600&q=80",
-        episodes: 13,
+        episodes: 26,
         averageScore: 88,
         status: "FINISHED AIRING",
         genres: ["Action", "Adventure", "Supernatural"],
@@ -9114,7 +9234,7 @@
         title: { english: "Vinland Saga", romaji: "Vinland Saga", native: "ヴィンランド・サガ" },
         coverImage: { extraLarge: "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=600&q=80", large: "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=400&q=80" },
         bannerImage: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1600&q=80",
-        episodes: 24,
+        episodes: 48,
         averageScore: 88,
         status: "FINISHED AIRING",
         genres: ["Action", "Adventure", "Drama"],
@@ -9181,6 +9301,9 @@
               }
               bannerImage
               episodes
+              nextAiringEpisode {
+                episode
+              }
               averageScore
               status
               genres
@@ -9218,26 +9341,43 @@
           const json = await response.json();
           const items = json?.data?.Page?.media;
           if (Array.isArray(items) && items.length > 0) {
-            AppState.animeCatalog = items.map(item => ({
-              id: item.id,
-              title: {
-                english: item.title?.english || item.title?.romaji || 'Untitled Series',
-                romaji: item.title?.romaji || item.title?.english || '',
-                native: item.title?.native || ''
-              },
-              coverImage: {
-                extraLarge: item.coverImage?.extraLarge || item.coverImage?.large || 'https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=600&q=80',
-                large: item.coverImage?.large || 'https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=400&q=80'
-              },
-              bannerImage: item.bannerImage || item.coverImage?.extraLarge || 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=1600&q=80',
-              episodes: item.episodes || 12,
-              averageScore: item.averageScore || 85,
-              status: item.status || 'AIRING',
-              genres: Array.isArray(item.genres) ? item.genres : ['Action'],
-              studios: item.studios || { nodes: [{ name: 'Animation Studio' }] },
-              trailer: item.trailer || { id: 'qgQunxD0qLk', site: 'youtube' },
-              description: item.description ? item.description.replace(/<[^>]*>?/gm, '') : 'No synopsis available for this galactic transmission.'
-            }));
+            AppState.animeCatalog = items.map(item => {
+              const engTitle = (item.title?.english || item.title?.romaji || '').toLowerCase();
+              let calcEp = item.episodes || (item.nextAiringEpisode ? item.nextAiringEpisode.episode - 1 : null);
+              if (!calcEp) {
+                if (item.id === 21 || engTitle.includes('one piece')) calcEp = 1100;
+                else if (engTitle.includes('attack on titan') || engTitle.includes('shingeki no kyojin')) calcEp = 89;
+                else if (engTitle.includes('vinland saga')) calcEp = 48;
+                else if (engTitle.includes('death note')) calcEp = 37;
+                else if (engTitle.includes('bleach')) calcEp = 26;
+                else calcEp = (item.status === 'RELEASING' ? 100 : 24);
+              } else {
+                if (item.id === 21 || engTitle.includes('one piece')) calcEp = Math.max(calcEp, 1100);
+                if (engTitle.includes('attack on titan') || engTitle.includes('shingeki no kyojin')) calcEp = Math.max(calcEp, 89);
+                if (engTitle.includes('vinland saga')) calcEp = Math.max(calcEp, 48);
+              }
+
+              return {
+                id: item.id,
+                title: {
+                  english: item.title?.english || item.title?.romaji || 'Untitled Series',
+                  romaji: item.title?.romaji || item.title?.english || '',
+                  native: item.title?.native || ''
+                },
+                coverImage: {
+                  extraLarge: item.coverImage?.extraLarge || item.coverImage?.large || 'https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=600&q=80',
+                  large: item.coverImage?.large || 'https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=400&q=80'
+                },
+                bannerImage: item.bannerImage || item.coverImage?.extraLarge || 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=1600&q=80',
+                episodes: calcEp,
+                averageScore: item.averageScore || 85,
+                status: item.status || 'AIRING',
+                genres: Array.isArray(item.genres) ? item.genres : ['Action'],
+                studios: item.studios || { nodes: [{ name: 'Animation Studio' }] },
+                trailer: item.trailer || { id: 'qgQunxD0qLk', site: 'youtube' },
+                description: item.description ? item.description.replace(/<[^>]*>?/gm, '') : 'No synopsis available for this galactic transmission.'
+              };
+            });
           }
         }
       } catch (err) {
@@ -9595,6 +9735,31 @@
         if (pulseDot) {
           pulseDot.className = 'w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_6px_#f59e0b]';
         }
+      }
+    }
+
+    function togglePlayerTheaterMode() {
+      const leftCol = $('player-left-column');
+      const btn = $('player-btn-theater');
+      if (!leftCol) return;
+
+      const isTheater = leftCol.classList.contains('lg:w-[100%]');
+      if (isTheater) {
+        leftCol.classList.remove('lg:w-[100%]');
+        leftCol.classList.add('lg:w-[70%]');
+        if (btn) {
+          btn.innerHTML = `<i class="fa-solid fa-expand text-xs"></i><span class="hidden sm:inline">Theater</span>`;
+          btn.className = 'px-2.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-slate-300 text-xs font-medium transition-all cursor-pointer flex items-center gap-1.5';
+        }
+        showToast('Split-screen streaming mode restored.', 'info');
+      } else {
+        leftCol.classList.remove('lg:w-[70%]');
+        leftCol.classList.add('lg:w-[100%]');
+        if (btn) {
+          btn.innerHTML = `<i class="fa-solid fa-compress text-xs"></i><span class="hidden sm:inline">Normal</span>`;
+          btn.className = 'px-2.5 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-[0_0_10px_rgba(168,85,247,0.5)]';
+        }
+        showToast('Spacious Theater Cinema mode activated!', 'success');
       }
     }
     // ====================================================
@@ -11339,7 +11504,10 @@
     }
 
     function adminAssignStaffRole() {
-      if (!checkStaffActionPermission('admin')) return;
+      if (!isOwner(AppState.user)) {
+        showToast('Permission Denied: Only the Platform Owner (JaydenTorru) can grant or remove staff roles.', 'error');
+        return;
+      }
 
       const select = $('admin-staff-user-select');
       const roleSelect = $('admin-staff-role-select');
@@ -11348,37 +11516,55 @@
       const role = roleSelect?.value || 'moderator';
 
       if (!targetKey) {
-        showToast('Please select a user to assign role.', 'error');
+        showToast('Please select a user to assign or remove role.', 'error');
         return;
       }
 
       const users = getUsersDB();
-      if (users[targetKey]) {
-        const roleTitleMap = {
-          developer: 'Cosmic Developer',
-          tester: 'Quality Tester',
-          moderator: 'Cosmic Moderator',
-          admin: 'System Administrator',
-          member: 'Novice Voyager'
-        };
+      const targetUser = users[targetKey];
+      if (!targetUser) return;
 
-        const titleLabel = (customTitleInput?.value || '').trim() || roleTitleMap[role] || `${role.toUpperCase()} of Soranix`;
-
-        users[targetKey].staffRole = role === 'member' ? '' : role;
-        users[targetKey].title = titleLabel;
-        saveUsersDB(users);
-
-        if (role !== 'member') {
-          addNotification(users[targetKey].username, {
-            title: 'Staff Role Granted!',
-            body: `You have received the ${role.toUpperCase()} staff role (${titleLabel})! You can now access the Admin Control Station when you log in.`,
-            type: 'level_up'
-          });
-        }
-
-        showToast(`Assigned role [${role.toUpperCase()}] to ${users[targetKey].username}!`, 'success');
-        renderAdminUsersList();
+      if (isOwner(targetUser)) {
+        showToast('Platform Owner privileges cannot be altered.', 'error');
+        return;
       }
+
+      const roleTitleMap = {
+        developer: 'Cosmic Developer',
+        tester: 'Quality Tester',
+        moderator: 'Cosmic Moderator',
+        admin: 'Cosmic Administrator',
+        member: 'Novice Voyager'
+      };
+
+      const isRevoke = role === 'member';
+      const titleLabel = isRevoke ? 'Novice Voyager' : ((customTitleInput?.value || '').trim() || roleTitleMap[role] || `${role.toUpperCase()} of Soranix`);
+
+      targetUser.staffRole = isRevoke ? '' : role;
+      targetUser.title = titleLabel;
+      targetUser.isAdmin = !isRevoke;
+
+      users[targetKey] = targetUser;
+      saveUsersDB(users);
+
+      if (isRevoke) {
+        addNotification(targetUser.username, {
+          title: 'Staff Access Revoked',
+          body: `Your staff role and admin panel access have been removed by Platform Owner. Title reset to ${titleLabel}.`,
+          type: 'level_up'
+        });
+        showToast(`Revoked staff role from ${targetUser.username}. Access removed.`, 'info');
+      } else {
+        addNotification(targetUser.username, {
+          title: 'Staff Role & Admin Access Granted!',
+          body: `Congratulations! You have received the ${role.toUpperCase()} staff role (${titleLabel})! You can now access the Admin Control Center whenever you log in.`,
+          type: 'level_up'
+        });
+        showToast(`Assigned role [${role.toUpperCase()}] (${titleLabel}) to ${targetUser.username}! Notification sent.`, 'success');
+      }
+
+      SoranixAudio.play('power_up');
+      renderAdminUsersList();
     }
 
     // Initialize initial state on load
@@ -11571,6 +11757,8 @@
     window.toggleEpisodeSpoilers = toggleEpisodeSpoilers;
     window.toggleSynopsisAccordion = toggleSynopsisAccordion;
     window.toggleSubDubTrack = toggleSubDubTrack;
+    window.handleFriendSearchInput = handleFriendSearchInput;
+    window.togglePlayerTheaterMode = togglePlayerTheaterMode;
     window.takeVideoSnapshot = takeVideoSnapshot;
     window.togglePlayerSettingsMenu = togglePlayerSettingsMenu;
     window.setPlayerPlaybackSpeed = setPlayerPlaybackSpeed;
