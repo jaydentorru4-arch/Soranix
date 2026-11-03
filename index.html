@@ -1897,6 +1897,13 @@
                 </div>
                 <div class="flex items-center gap-1.5">
                   <button 
+                    onclick="clearAllNotifications()" 
+                    class="text-[11px] font-semibold text-red-400 hover:text-red-300 transition-colors cursor-pointer mr-1"
+                    title="Clear All Notifications"
+                  >
+                    Clear All
+                  </button>
+                  <button 
                     onclick="markAllNotificationsRead()" 
                     class="text-[11px] font-semibold text-purple-300 hover:text-white transition-colors cursor-pointer mr-1"
                   >
@@ -3135,7 +3142,7 @@
         <div id="admin-panel-users" class="space-y-4">
           
           <!-- Staff Roles & Title Delegation Station (Developer, Tester, Moderator) -->
-          <div class="glass-panel rounded-3xl p-5 sm:p-6 border border-purple-500/30 space-y-4 bg-purple-950/20">
+          <div id="admin-staff-delegation-card" class="glass-panel rounded-3xl p-5 sm:p-6 border border-purple-500/30 space-y-4 bg-purple-950/20">
             <div class="flex items-center gap-3 pb-3 border-b border-glassBorder">
               <div class="w-10 h-10 rounded-2xl bg-purple-950/80 border border-purple-500/40 flex items-center justify-center text-accent text-lg">
                 <i class="fa-solid fa-id-badge"></i>
@@ -7309,11 +7316,15 @@
                       ${m.senderTitle}
                     </span>
                   ` : ''}
-                  ${m.isAdmin ? `
+                  ${m.isOwner ? `
                     <span class="text-[9px] px-1.5 py-0.2 rounded bg-red-950/80 text-red-300 border border-red-500/30 font-bold font-mono">
-                      ADMIN
+                      OWNER
                     </span>
-                  ` : ''}
+                  ` : (m.senderStaffRole ? `
+                    <span class="text-[9px] px-1.5 py-0.2 rounded bg-purple-950/80 text-purple-300 border border-purple-500/30 font-bold font-mono truncate max-w-[120px]">
+                      ${m.senderStaffRole.toUpperCase()}
+                    </span>
+                  ` : '')}
                   ${m.isMuted ? `
                     <span class="text-[9px] px-1.5 py-0.2 rounded bg-amber-950/80 text-amber-400 font-mono">
                       MUTED
@@ -7359,17 +7370,19 @@
       const text = input.value.trim();
       if (!text) return;
 
-      const isOwner = checkIsAdmin(AppState.user);
+      const isPlatformOwner = isOwner(AppState.user);
       const msgs = getGlobalChatMessages();
       const newMsg = {
         id: `msg_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
         sender: AppState.user.username,
-        senderTitle: isOwner ? 'System Administrator / Owner' : (AppState.user.equippedChatBadge || AppState.user.title || 'Novice Voyager'),
+        senderTitle: AppState.user.title || (isPlatformOwner ? 'System Administrator / Owner' : 'Novice Voyager'),
+        senderStaffRole: AppState.user.staffRole || null,
         senderLevel: AppState.user.level || 1,
         senderAvatar: AppState.user.avatarDataUrl || null,
         senderFrame: AppState.user.equippedFrame || 'galaxy',
         senderGlow: AppState.user.equippedNameGlow || null,
-        isAdmin: isOwner,
+        isAdmin: isPlatformOwner || !!AppState.user.staffRole,
+        isOwner: isPlatformOwner,
         message: text,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         time: Date.now()
@@ -8322,9 +8335,57 @@
         maintEl.className = cfg.maintenanceMode ? 'text-lg font-display font-black text-red-400 mt-0.5' : 'text-lg font-display font-black text-emerald-400 mt-0.5';
       }
 
+      const isUserOwner = isOwner(AppState.user);
+      const role = (AppState.user?.staffRole || '').toLowerCase();
+
+      const currencyTab = $('admin-tab-btn-currency');
+      const platformTab = $('admin-tab-btn-platform');
+      const broadcastsTab = $('admin-tab-btn-broadcasts');
+      const staffRolesSection = $('admin-staff-delegation-card');
+
+      if (currencyTab) {
+        currencyTab.style.display = (isUserOwner || role === 'admin') ? 'flex' : 'none';
+      }
+      if (platformTab) {
+        platformTab.style.display = isUserOwner ? 'flex' : 'none';
+      }
+      if (broadcastsTab) {
+        broadcastsTab.style.display = (isUserOwner || role === 'admin') ? 'flex' : 'none';
+      }
+      if (staffRolesSection) {
+        staffRolesSection.style.display = isUserOwner ? 'block' : 'none';
+      }
+
       switchAdminSubTab(AppState.adminSubTab || 'users');
       syncAdminFirestoreUsers(false);
     }
+
+    function adminRevokeUserRole(username) {
+      if (!isOwner(AppState.user)) {
+        showToast('Permission Denied: Only the Platform Owner can revoke staff roles.', 'error');
+        return;
+      }
+      const users = getUsersDB();
+      const key = username.toLowerCase();
+      const targetUser = users[key] || Object.values(users).find(u => u.username.toLowerCase() === key);
+      if (!targetUser) return;
+
+      targetUser.staffRole = '';
+      targetUser.title = 'Novice Voyager';
+      targetUser.isAdmin = false;
+      users[targetUser.username.toLowerCase()] = targetUser;
+      saveUsersDB(users);
+
+      addNotification(targetUser.username, {
+        title: 'Staff Role Revoked',
+        body: 'Your staff role and admin panel access have been removed by Platform Owner.',
+        type: 'level_up'
+      });
+
+      showToast(`Revoked staff role from ${targetUser.username}.`, 'success');
+      renderAdminUsersList();
+    }
+    window.adminRevokeUserRole = adminRevokeUserRole;
 
     let isSyncingRemoteUsers = false;
     async function syncAdminFirestoreUsers(showToastFeedback = false) {
@@ -8488,6 +8549,17 @@
                 <i class="fa-solid fa-pen-to-square text-[11px] text-accent"></i>
                 <span>Edit</span>
               </button>
+
+              ${u.staffRole && isOwner(AppState.user) ? `
+                <button 
+                  onclick="adminRevokeUserRole('${u.username}')" 
+                  class="px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-950/60 hover:bg-amber-900 text-amber-300 border border-amber-500/40 transition-all cursor-pointer flex items-center gap-1.5"
+                  title="Revoke Staff Role"
+                >
+                  <i class="fa-solid fa-user-minus text-[11px]"></i>
+                  <span>Revoke</span>
+                </button>
+              ` : ''}
 
               <!-- Timeout / Mute Actions -->
               ${isMuted ? `
@@ -11443,6 +11515,20 @@
       const username = u ? u.username : 'User';
       const email = u ? (u.email || 'No email') : '';
 
+      if (u) {
+        u.appealMessage = msg;
+        u.appealStatus = 'pending';
+        AppState.user = { ...u };
+        if (AppState.currentUserKey) {
+          const users = getUsersDB();
+          if (users[AppState.currentUserKey]) {
+            users[AppState.currentUserKey].appealMessage = msg;
+            users[AppState.currentUserKey].appealStatus = 'pending';
+            saveUsersDB(users);
+          }
+        }
+      }
+
       const appeals = getBanAppealsList();
       const newAppeal = {
         id: 'appeal_' + Date.now(),
@@ -11474,7 +11560,15 @@
 
       closeBanAppealModal();
       if (input) input.value = '';
-      showToast('Ban appeal submitted! System Administrator (JaydenTorru) will review it shortly.', 'success');
+      showToast('Appeal submitted successfully. Admins have been notified.', 'success');
+    }
+
+    function clearAllNotifications() {
+      if (AppState.isGuest) return;
+      const username = AppState.user.username;
+      saveNotifications(username, []);
+      renderNotificationsUI();
+      showToast('All notifications cleared.', 'success');
     }
 
     function checkStaffActionPermission(requiredRole = 'moderator') {
@@ -11898,6 +11992,8 @@
     window.togglePlayerEpisodeDrawer = togglePlayerEpisodeDrawer;
     window.toggleDashboardThemeMenu = toggleDashboardThemeMenu;
     window.closeDashboardThemeMenu = closeDashboardThemeMenu;
+    window.clearAllNotifications = clearAllNotifications;
+    window.submitBanAppeal = submitBanAppeal;
     // Split-Screen Cinema Player Methods
     window.navigateBackToSeries = navigateBackToSeries;
     window.toggleCurrentEpisodeWatched = toggleCurrentEpisodeWatched;
