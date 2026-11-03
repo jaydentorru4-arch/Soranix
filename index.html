@@ -9796,6 +9796,58 @@
       }
     }
     // ====================================================
+    // DYNAMIC ANILIST / JIKAN EPISODE FETCHING ENGINE
+    // ----------------------------------------------------
+    const JIKAN_EPISODES_CACHE = {};
+
+    async function fetchJikanEpisodes(animeId) {
+      if (!animeId) return null;
+      if (JIKAN_EPISODES_CACHE[animeId]) return JIKAN_EPISODES_CACHE[animeId];
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
+        const res = await fetch(`https://api.jikan.moe/v4/anime/${animeId}/episodes`, {
+          signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+        if (res.ok) {
+          const data = await res.json();
+          if (data && Array.isArray(data.data)) {
+            const map = {};
+            data.data.forEach(ep => {
+              const num = ep.mal_id || ep.episode_id;
+              if (num && ep.title) {
+                map[num] = {
+                  title: ep.title,
+                  desc: ep.synopsis || `Official episode transmission for episode ${num}.`
+                };
+              }
+            });
+            JIKAN_EPISODES_CACHE[animeId] = map;
+            return map;
+          }
+        }
+      } catch (e) {
+        console.warn('Jikan episodes fetch notice:', e);
+      }
+      return null;
+    }
+
+    async function ensureAnimeEpisodesFetched(anime) {
+      if (!anime || !anime.id) return;
+      const fetched = await fetchJikanEpisodes(anime.id);
+      if (fetched && AppState.activePlayerAnime && AppState.activePlayerAnime.id === anime.id) {
+        const ep = AppState.activePlayerEpisode || 1;
+        const epMeta = getEpisodeMeta(anime, ep);
+        const subHeadingEl = $('player-subheading-title');
+        const panelEpTitle = $('player-panel-ep-title');
+        if (subHeadingEl) subHeadingEl.textContent = `Season 1 - Episode ${ep} | ${epMeta.title}`;
+        if (panelEpTitle) panelEpTitle.textContent = `Episode ${ep} • ${epMeta.title}`;
+        renderPlayerEpisodeDrawer(anime, ep, '', AppState.playerRangeFilter || null);
+      }
+    }
+
+    // ====================================================
     // CANONICAL EPISODE METADATA & PERSISTENCE ENGINE
     // ----------------------------------------------------
     const CANONICAL_EPISODES = {
