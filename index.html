@@ -13,46 +13,10 @@
   <!-- Google Fonts: Plus Jakarta Sans & Space Grotesk -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <!-- Tailwind CSS v4 Stylesheet -->
+  <link rel="stylesheet" href="/src/index.css" />
 
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            void: '#05030B',
-            spaceDark: '#0B0615',
-            brandPrimary: '#8500FF',
-            brandSecondary: '#5700C9',
-            brandText: '#FFFFFF',
-            brandMuted: '#C5C0D0',
-            glassBg: 'rgba(11, 6, 21, 0.85)',
-            glassCard: 'rgba(11, 6, 21, 0.72)',
-            glassBorder: 'rgba(255, 255, 255, 0.08)',
-            cosmicViolet: '#8500FF',
-            accent: '#8500FF',
-          },
-          fontFamily: {
-            sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
-            display: ['"Space Grotesk"', 'sans-serif'],
-          },
-          animation: {
-            'spin-slow': 'spin 18s linear infinite',
-            'pulse-glow': 'pulseGlow 3.5s ease-in-out infinite',
-          },
-          keyframes: {
-            pulseGlow: {
-              '0%, 100%': { opacity: '0.45', transform: 'scale(1)' },
-              '50%': { opacity: '0.85', transform: 'scale(1.04)' },
-            }
-          }
-        }
-      }
-    }
-  </script>
+
 
   <!-- HLS.js CDN for Direct M3U8 Streaming -->
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
@@ -1067,12 +1031,13 @@
   <!-- ========================================================== -->
   <div id="view-splash" class="relative z-20 min-h-screen w-full flex flex-col justify-between overflow-x-hidden bg-[#05030B] select-none transition-all duration-500">
     
-    <!-- 1. CINEMATIC HERO ANIME BACKGROUND (Exact pay.jpg) -->
+    <!-- 1. CINEMATIC HERO ANIME BACKGROUND -->
     <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
       <img 
-        src="/assets/images/pay.jpg" 
+        src="https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=1920&q=80" 
         alt="Soranix Anime Heroes" 
         class="w-full h-full object-cover object-[70%_center] sm:object-[68%_center] lg:object-center filter brightness-[0.82] contrast-[1.08] select-none transition-all duration-700"
+        onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=1920&q=80';"
       />
       <!-- Subtle Black Overlay for Global Readability -->
       <div class="absolute inset-0 bg-[#05030B]/45"></div>
@@ -4366,6 +4331,10 @@
   <!-- JAVASCRIPT SYSTEM ENGINE (Single-File Architecture)        -->
   <!-- ========================================================== -->
   <script type="module">
+    window.onerror = function(message, source, lineno, colno, error) {
+      alert("App Error: " + message + "\\nLine: " + lineno);
+      return false;
+    };
     import { 
       auth, 
       signInWithGoogle, 
@@ -4656,48 +4625,58 @@
     // 1. AUTO-LOGIN & SESSION RESTORATION (Main Menu Preserved)
     // ----------------------------------------------------
     (function initAutoLogin() {
-      const savedTheme = localStorage.getItem('soranix_theme') || 'violet';
-      setCosmicTheme(savedTheme, false);
+      try {
+        const savedTheme = localStorage.getItem('soranix_theme') || 'violet';
+        setCosmicTheme(savedTheme, false);
 
-      // Cleanse any stale mock/seeded dummy messages from global chat
-      getGlobalChatMessages();
+        // Cleanse any stale mock/seeded dummy messages from global chat
+        getGlobalChatMessages();
 
-      const users = getUsersDB();
+        const users = getUsersDB();
 
-      // Check active announcement banner & maintenance mode
-      renderAnnouncementBannerUI();
-      updateMaintenanceGuardUI();
+        // Check active announcement banner & maintenance mode
+        renderAnnouncementBannerUI();
+        updateMaintenanceGuardUI();
 
-      const activeSession = getActiveSession();
+        const activeSession = getActiveSession();
 
-      if (activeSession && activeSession.username) {
-        const userKey = activeSession.username.toLowerCase();
+        if (activeSession && activeSession.username) {
+          const userKey = activeSession.username.toLowerCase();
 
-        if (activeSession.isGuest) {
-          AppState.isGuest = true;
-          AppState.currentUserKey = null;
-          AppState.user = createInitialUser('Guest Explorer');
-          updateViewableProfileUI();
-        } else if (users[userKey]) {
-          AppState.isGuest = false;
-          AppState.currentUserKey = userKey;
-          AppState.user = { ...createInitialUser(users[userKey].username), ...users[userKey] };
-          
-          if (checkIsAdmin(AppState.user)) {
-            AppState.user.isAdmin = true;
-            AppState.user.title = 'System Administrator / Owner';
+          if (activeSession.isGuest) {
+            AppState.isGuest = true;
+            AppState.currentUserKey = null;
+            AppState.user = createInitialUser('Guest Explorer');
+            updateViewableProfileUI();
+          } else if (users[userKey]) {
+            AppState.isGuest = false;
+            AppState.currentUserKey = userKey;
+            AppState.user = { ...createInitialUser(users[userKey].username), ...users[userKey] };
+            
+            if (checkIsAdmin(AppState.user)) {
+              AppState.user.isAdmin = true;
+              AppState.user.title = 'System Administrator / Owner';
+            }
+
+            if (AppState.user.theme) {
+              setCosmicTheme(AppState.user.theme, false);
+            }
+            updateViewableProfileUI();
           }
-
-          if (AppState.user.theme) {
-            setCosmicTheme(AppState.user.theme, false);
-          }
-          updateViewableProfileUI();
         }
-      }
 
-      // CRITICAL: Always stay on the Main Menu screen on initial boot!
-      // NEVER automatically navigate away or remove the Main Menu screen!
-      returnToSplash();
+        // CRITICAL: Always stay on the Main Menu screen on initial boot!
+        // NEVER automatically navigate away or remove the Main Menu screen!
+        returnToSplash();
+      } catch (err) {
+        alert('Critical boot error: ' + (err instanceof Error ? err.message : String(err)));
+        console.error('Critical boot error, falling back to guest mode:', err);
+        // Fallback to guest mode
+        AppState.isGuest = true;
+        AppState.user = createInitialUser('Guest Explorer');
+        updateViewableProfileUI();
+        returnToSplash();
+      }
     })();
 
     // ----------------------------------------------------

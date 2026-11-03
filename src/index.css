@@ -1,1 +1,37 @@
 @import "tailwindcss";
+
+@theme {
+  --color-void: #05030B;
+  --color-spaceDark: #0B0615;
+  --color-brandPrimary: #8500FF;
+  --color-brandSecondary: #5700C9;
+  --color-brandText: #FFFFFF;
+  --color-brandMuted: #C5C0D0;
+  --color-glassBg: rgba(11, 6, 21, 0.85);
+  --color-glassCard: rgba(11, 6, 21, 0.72);
+  --color-glassBorder: rgba(255, 255, 255, 0.08);
+  --color-cosmicViolet: #8500FF;
+  --color-accent: #8500FF;
+  --color-electricCyan: #06B6D4;
+  --color-solarGold: #F59E0B;
+  --font-sans: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-display: "Space Grotesk", sans-serif;
+}
+
+@layer utilities {
+  .glass-card {
+    background: rgba(11, 6, 21, 0.72);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .glass-panel {
+    background: rgba(11, 6, 21, 0.85);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .shadow-accent-glow {
+    box-shadow: 0 0 20px rgba(133, 0, 255, 0.45);
+  }
+}
