@@ -571,31 +571,57 @@
   </div>
 
   <!-- ========================================================== -->
-  <!-- MODAL 5: CUSTOM CINEMA ANIME VIDEO PLAYER MODAL             -->
   <!-- ========================================================== -->
-  <div id="anime-video-player-modal" class="fixed inset-0 z-50 hidden bg-[#05030a]/98 backdrop-blur-3xl select-none overflow-hidden transition-all duration-300">
+  <!-- MODAL 5: CUSTOM CINEMA ANIME SPLIT-SCREEN STREAMING PLAYER -->
+  <!-- ========================================================== -->
+  <div id="anime-video-player-modal" class="fixed inset-0 z-50 hidden bg-[#07050e] backdrop-blur-3xl select-none overflow-hidden transition-all duration-300 flex-col">
     
-    <!-- Top Player Header Bar (Auto-hides with controls) -->
-    <div id="player-header-bar" class="w-full px-3 sm:px-6 py-3 border-b border-white/10 bg-gradient-to-b from-black/95 via-black/80 to-transparent flex items-center justify-between z-30 transition-opacity duration-300 shrink-0 gap-2">
-      <div class="flex items-center gap-2.5 min-w-0">
-        <button onclick="closeAnimePlayerModal()" class="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all cursor-pointer text-xs shrink-0" title="Back to Soranix (Esc)">
-          <i class="fa-solid fa-arrow-left"></i>
+    <!-- 1. TOP HEADER NAVIGATION -->
+    <header id="player-header-bar" class="w-full px-3 sm:px-6 py-3 border-b border-white/10 bg-[#07050e]/95 backdrop-blur-2xl flex items-center justify-between z-30 shrink-0 gap-3">
+      <!-- Left: < Back to series button + Anime Title + Season/Ep Subtitle + Meta Pills -->
+      <div class="flex items-center gap-3 min-w-0">
+        <!-- Back to series Button -->
+        <button 
+          onclick="navigateBackToSeries()" 
+          class="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-slate-200 hover:text-white transition-all cursor-pointer group shrink-0" 
+          title="Back to series"
+        >
+          <i class="fa-solid fa-chevron-left text-[11px] text-accent group-hover:-translate-x-0.5 transition-transform"></i>
+          <span class="font-bold">&lt; Back to series</span>
         </button>
-        <div class="min-w-0">
-          <div class="flex items-center gap-2">
-            <h3 id="player-anime-title" class="text-sm sm:text-base font-display font-bold text-white truncate">Anime Title</h3>
-            <span id="player-episode-tag" class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-purple-950/80 text-purple-300 border border-purple-500/40 shrink-0">Ep 1</span>
+
+        <div class="h-6 w-px bg-white/10 hidden sm:block shrink-0"></div>
+
+        <!-- Title, Subtitle & Metadata Pills Container -->
+        <div class="flex flex-col min-w-0">
+          <div class="flex items-center gap-2.5 flex-wrap">
+            <h1 id="player-anime-title" class="text-sm sm:text-lg lg:text-xl font-display font-extrabold text-white tracking-wide truncate max-w-[200px] sm:max-w-md lg:max-w-xl">
+              Anime Title
+            </h1>
+            
+            <!-- Metadata Pills -->
+            <div id="player-metadata-pills" class="hidden sm:flex items-center gap-1.5 flex-wrap">
+              <span id="player-meta-format" class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-white/10 text-white border border-white/10">TV</span>
+              <span id="player-meta-year" class="px-2 py-0.5 rounded-md text-[10px] font-mono font-semibold bg-white/5 text-slate-300 border border-white/5">2024</span>
+              <span id="player-meta-episodes" class="px-2 py-0.5 rounded-md text-[10px] font-mono font-semibold bg-white/5 text-slate-300 border border-white/5">24 Episodes</span>
+              <span id="player-meta-score" class="flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-amber-950/60 text-amber-300 border border-amber-500/30">
+                <i class="fa-solid fa-star text-[9px] text-amber-400"></i>
+                <span id="player-meta-score-val">8.8</span>
+              </span>
+              <div id="player-meta-genres" class="hidden md:flex items-center gap-1"></div>
+            </div>
           </div>
-          <p id="player-episode-title" class="text-[11px] text-slate-400 truncate">Now Playing: Episode 1</p>
+          <p id="player-subheading-title" class="text-[11px] sm:text-xs text-purple-300/80 font-medium truncate mt-0.5">
+            Season 1 - Episode 1 | The Strongest Man
+          </p>
         </div>
       </div>
 
-      <!-- Right Header Actions: Multi-Server Switcher, Active Stardust Tracker & Close -->
-      <div class="flex items-center gap-2 sm:gap-3 shrink-0">
-        
-        <!-- Multi-Server Fallback Switcher -->
-        <div class="flex items-center gap-1.5">
-          <span class="hidden md:inline text-[10px] font-mono uppercase tracking-wider text-slate-400">Server:</span>
+      <!-- Right: Server Mirror Switcher, Stardust Tracker & Window Controls -->
+      <div class="flex items-center gap-2 sm:gap-2.5 shrink-0">
+        <!-- Multi-Server Mirror Switcher -->
+        <div class="hidden sm:flex items-center gap-1.5">
+          <span class="hidden xl:inline text-[10px] font-mono uppercase tracking-wider text-slate-400">Server:</span>
           <select 
             id="player-server-select" 
             onchange="handlePlayerServerChange(this.value)" 
@@ -603,273 +629,505 @@
             title="Switch Stream Source Mirror"
           >
             <option value="server1">Server 1 (Primary HD)</option>
-            <option value="server2">Server 2 (Official Anime PV)</option>
-            <option value="hls">Server 3 (Direct HTML5 Player)</option>
+            <option value="server2">Server 2 (Official PV)</option>
+            <option value="hls">Server 3 (Direct HTML5)</option>
             <option value="server4">Server 4 (Backup Mirror)</option>
           </select>
         </div>
 
-        <!-- Active Stardust Watch-Time Reward Glowing Status Indicator -->
+        <!-- Stardust Coins Reward Status Tracker -->
         <div 
           id="player-reward-tracker-status" 
-          class="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 rounded-xl bg-purple-950/70 border border-purple-500/40 text-xs font-mono text-purple-200 shadow-[0_0_15px_rgba(168,85,247,0.25)]"
+          class="hidden md:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-purple-950/70 border border-purple-500/40 text-xs font-mono text-purple-200 shadow-[0_0_15px_rgba(168,85,247,0.25)]"
           title="Stardust Coins Watch-Time Reward Tracker"
         >
           <span id="player-reward-pulse-dot" class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399] animate-pulse"></span>
           <i class="fa-solid fa-stopwatch text-amber-400 text-xs"></i>
-          <span id="player-reward-status-label" class="hidden sm:inline text-amber-300 font-bold">Stardust Tracker: Active</span>
-          <span id="player-reward-timer-pill" class="text-purple-300 font-semibold text-[10px] sm:text-[11px] font-mono">(+50 Stardust/5m)</span>
+          <span id="player-reward-status-label" class="hidden lg:inline text-amber-300 font-bold">Stardust: Active</span>
+          <span id="player-reward-timer-pill" class="text-purple-300 font-semibold text-[10px] sm:text-[11px] font-mono">(+50/5m)</span>
         </div>
 
-        <button onclick="togglePlayerBrowserFullscreen()" class="w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white flex items-center justify-center transition-all cursor-pointer text-xs" title="Toggle Fullscreen (F)">
+        <!-- Fullscreen Button -->
+        <button 
+          onclick="togglePlayerBrowserFullscreen()" 
+          class="w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white flex items-center justify-center transition-all cursor-pointer text-xs" 
+          title="Toggle Fullscreen (F)"
+        >
           <i id="player-fullscreen-header-icon" class="fa-solid fa-expand"></i>
         </button>
 
-        <button onclick="closeAnimePlayerModal()" class="w-9 h-9 rounded-xl bg-red-950/60 hover:bg-red-900/60 border border-red-500/40 text-red-300 hover:text-white flex items-center justify-center transition-all cursor-pointer text-xs" title="Exit Cinema Mode (Esc)">
+        <!-- Close / Exit Cinema Button -->
+        <button 
+          onclick="closeAnimePlayerModal()" 
+          class="w-9 h-9 rounded-xl bg-red-950/60 hover:bg-red-900/60 border border-red-500/40 text-red-300 hover:text-white flex items-center justify-center transition-all cursor-pointer text-xs" 
+          title="Exit Cinema (Esc)"
+        >
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
-    </div>
+    </header>
 
-    <!-- Center Cinema Video Screen Container -->
-    <div id="player-viewport-container" class="relative flex-1 flex items-center justify-center bg-black overflow-hidden group">
+    <!-- 2. MAIN SCROLLABLE STREAMING WORKSPACE -->
+    <div class="flex-1 overflow-y-auto flex flex-col justify-between">
       
-      <!-- Multi-Server Fallback / Connection Status Banner -->
-      <div 
-        id="player-server-status-banner" 
-        class="hidden absolute top-4 inset-x-4 max-w-lg mx-auto z-40 px-4 py-2.5 rounded-2xl bg-amber-950/95 border border-amber-500/60 text-amber-200 text-xs flex flex-col sm:flex-row items-center justify-between gap-3 shadow-2xl backdrop-blur-xl animate-bounce"
-      >
-        <div class="flex items-center gap-2.5">
-          <i class="fa-solid fa-triangle-exclamation text-amber-400 shrink-0"></i>
-          <span id="player-server-status-text">Server connection failed. Switching to backup server...</span>
-        </div>
-        <div class="flex items-center gap-2 shrink-0">
-          <button onclick="handlePlayerServerChange('server2')" class="px-2.5 py-1 rounded-lg bg-purple-600 hover:bg-purple-500 text-white font-bold text-[10px] cursor-pointer">
-            Official PV
-          </button>
-          <button onclick="handlePlayerServerChange('hls')" class="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[10px] cursor-pointer">
-            Direct Player
-          </button>
-          <button onclick="$('player-server-status-banner')?.classList.add('hidden')" class="text-amber-400 hover:text-white text-xs cursor-pointer ml-1">
-            <i class="fa-solid fa-xmark"></i>
-          </button>
-        </div>
-      </div>
-
-      <!-- Transmission Loading Satellite Spinner -->
-      <div 
-        id="player-loading-spinner" 
-        class="hidden absolute inset-0 flex flex-col items-center justify-center bg-black/75 z-25 pointer-events-none transition-opacity duration-300"
-      >
-        <div class="w-12 h-12 rounded-full border-3 border-purple-500/20 border-t-purple-500 animate-spin mb-3"></div>
-        <span class="text-xs font-mono font-semibold text-purple-300 tracking-wider">Establishing stream transmission...</span>
-      </div>
-
-      <!-- 1. Native HTML5 Video Element (HLS.js Direct Streaming / MP4) -->
-      <video 
-        id="soranix-html5-video" 
-        class="w-full h-full object-contain cursor-pointer"
-        playsinline
-        preload="metadata"
-        poster="https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=1600&q=80"
-        onclick="toggleVideoPlayback()"
-      >
-        <source id="video-source-mp4" src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4" />
-        Your browser does not support high-definition video playback.
-      </video>
-
-      <!-- 2. IFrame Embed Player (Primary HD, Backup Stream & Trailer Embeds) -->
-      <iframe 
-        id="soranix-embed-player" 
-        class="w-full h-full border-0 hidden bg-black" 
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
-        referrerpolicy="origin"
-        title="Anime Stream Player"
-      ></iframe>
-
-      <!-- Center Big Play Button Overlay (when paused in HTML5 video mode) -->
-      <div 
-        id="player-center-play-overlay" 
-        onclick="toggleVideoPlayback()" 
-        class="absolute inset-0 flex items-center justify-center bg-black/40 cursor-pointer transition-opacity duration-300 pointer-events-none opacity-0"
-      >
-        <div class="w-20 h-20 rounded-full bg-purple-600/90 hover:bg-purple-500 text-white flex items-center justify-center text-3xl shadow-accent-strong hover:scale-110 active:scale-95 transition-all pointer-events-auto">
-          <i class="fa-solid fa-play ml-1"></i>
-        </div>
-      </div>
-
-      <!-- Quick Skip Intro Button (+85s) Overlay in Bottom Left -->
-      <button 
-        id="player-skip-intro-btn" 
-        onclick="skipAnimeIntro()" 
-        class="absolute bottom-24 left-6 z-30 px-4 py-2 rounded-xl bg-black/80 hover:bg-purple-600/90 border border-white/20 hover:border-purple-400 text-xs font-bold text-white shadow-2xl backdrop-blur-md cursor-pointer transition-all flex items-center gap-2 group"
-      >
-        <i class="fa-solid fa-forward-step text-purple-400 group-hover:text-white"></i>
-        <span>Skip Intro (+85s)</span>
-      </button>
-
-      <!-- Next Episode Auto-Progression Toast Countdown -->
-      <div 
-        id="player-next-ep-toast" 
-        class="hidden absolute top-16 right-6 z-30 px-4 py-3 rounded-2xl bg-purple-950/95 border border-purple-500/60 text-xs text-white shadow-2xl backdrop-blur-xl flex items-center gap-3 animate-bounce"
-      >
-        <i class="fa-solid fa-forward text-amber-400 text-sm"></i>
-        <div>
-          <span class="font-bold">Next Episode Ready</span>
-          <p id="player-next-ep-toast-text" class="text-[10px] text-purple-200">Playing Episode 2 in 5s...</p>
-        </div>
-        <div class="flex items-center gap-1.5">
-          <button onclick="playNextEpisode()" class="px-2.5 py-1 rounded-lg bg-purple-600 hover:bg-purple-500 font-bold text-[10px] cursor-pointer">Play Now</button>
-          <button onclick="cancelNextEpisodeCountdown()" class="px-2 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-slate-300 text-[10px] cursor-pointer">Cancel</button>
-        </div>
-      </div>
-
-      <!-- Media Control Overlay Bar (Autohides during playback, shows on hover or pause) -->
-      <div 
-        id="player-control-bar" 
-        class="absolute bottom-0 inset-x-0 p-4 sm:p-6 bg-gradient-to-t from-black/95 via-black/80 to-transparent z-30 flex flex-col space-y-3 transition-opacity duration-300"
-      >
-        <!-- Interactive Progress / Scrub Timeline -->
-        <div class="relative w-full flex items-center group/scrub">
-          <input 
-            id="player-timeline-slider" 
-            type="range" 
-            min="0" 
-            max="100" 
-            value="0" 
-            step="0.1"
-            class="w-full h-1.5 bg-white/20 rounded-lg appearance-none cursor-pointer accent-purple-500 hover:h-2.5 transition-all"
-            oninput="handleVideoSeek(this.value)"
-          />
-        </div>
-
-        <!-- Controls Row -->
-        <div class="flex items-center justify-between gap-3 flex-wrap">
+      <!-- Split-Screen Row Container (Left: ~70% Player | Right: ~30% Episode Info & Control) -->
+      <div class="w-full max-w-[1920px] mx-auto p-3 sm:p-5 flex flex-col lg:flex-row gap-5 flex-1 min-h-0">
+        
+        <!-- LEFT COLUMN: VIDEO PLAYER AREA (~70% width) -->
+        <div class="w-full lg:w-[70%] flex flex-col space-y-3">
           
-          <!-- Left Controls: Play, Prev, Next, Seek -10s/+10s, Timestamps, Volume -->
-          <div class="flex items-center gap-2 sm:gap-3">
-            <!-- Play/Pause Toggle -->
-            <button 
-              id="player-btn-play"
+          <!-- Cinema-mode Responsive Video Container -->
+          <div id="player-viewport-container" class="aspect-video w-full rounded-2xl overflow-hidden relative shadow-[0_0_50px_rgba(0,0,0,0.85)] border border-white/10 bg-black group select-none">
+            
+            <!-- Multi-Server Fallback / Connection Status Banner -->
+            <div 
+              id="player-server-status-banner" 
+              class="hidden absolute top-4 inset-x-4 max-w-lg mx-auto z-40 px-4 py-2.5 rounded-2xl bg-amber-950/95 border border-amber-500/60 text-amber-200 text-xs flex flex-col sm:flex-row items-center justify-between gap-3 shadow-2xl backdrop-blur-xl animate-bounce"
+            >
+              <div class="flex items-center gap-2.5">
+                <i class="fa-solid fa-triangle-exclamation text-amber-400 shrink-0"></i>
+                <span id="player-server-status-text">Server connection failed. Switching to backup server...</span>
+              </div>
+              <div class="flex items-center gap-2 shrink-0">
+                <button onclick="handlePlayerServerChange('server2')" class="px-2.5 py-1 rounded-lg bg-purple-600 hover:bg-purple-500 text-white font-bold text-[10px] cursor-pointer">
+                  Official PV
+                </button>
+                <button onclick="handlePlayerServerChange('hls')" class="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[10px] cursor-pointer">
+                  Direct Player
+                </button>
+                <button onclick="$('player-server-status-banner')?.classList.add('hidden')" class="text-amber-400 hover:text-white text-xs cursor-pointer ml-1">
+                  <i class="fa-solid fa-xmark"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Transmission Loading Satellite Spinner -->
+            <div 
+              id="player-loading-spinner" 
+              class="hidden absolute inset-0 flex flex-col items-center justify-center bg-black/80 z-25 pointer-events-none transition-opacity duration-300"
+            >
+              <div class="w-12 h-12 rounded-full border-3 border-purple-500/20 border-t-purple-500 animate-spin mb-3"></div>
+              <span class="text-xs font-mono font-semibold text-purple-300 tracking-wider">Establishing stream transmission...</span>
+            </div>
+
+            <!-- 1. Native HTML5 Video Element (Direct MP4 / HLS) -->
+            <video 
+              id="soranix-html5-video" 
+              class="w-full h-full object-contain cursor-pointer"
+              playsinline
+              preload="metadata"
+              poster="https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=1600&q=80"
+              onclick="toggleVideoPlayback()"
+            >
+              <source id="video-source-mp4" src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4" />
+              Your browser does not support high-definition video playback.
+            </video>
+
+            <!-- 2. IFrame Embed Player (Primary HD / Official PV / Multi-Mirror) -->
+            <iframe 
+              id="soranix-embed-player" 
+              class="w-full h-full border-0 hidden bg-black" 
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+              referrerpolicy="origin"
+              title="Anime Stream Player"
+            ></iframe>
+
+            <!-- Center Big Play Button Overlay -->
+            <div 
+              id="player-center-play-overlay" 
               onclick="toggleVideoPlayback()" 
-              class="w-10 h-10 rounded-xl bg-white/10 hover:bg-purple-600 text-white flex items-center justify-center transition-all cursor-pointer text-sm shadow-md"
-              title="Play/Pause (Space)"
+              class="absolute inset-0 flex items-center justify-center bg-black/40 cursor-pointer transition-opacity duration-300 pointer-events-none opacity-0"
             >
-              <i id="player-btn-play-icon" class="fa-solid fa-play"></i>
+              <div class="w-20 h-20 rounded-full bg-purple-600/90 hover:bg-purple-500 text-white flex items-center justify-center text-3xl shadow-accent-strong hover:scale-110 active:scale-95 transition-all pointer-events-auto">
+                <i class="fa-solid fa-play ml-1"></i>
+              </div>
+            </div>
+
+            <!-- Quick Skip Intro Button (+85s) Overlay in Bottom Left -->
+            <button 
+              id="player-skip-intro-btn" 
+              onclick="skipAnimeIntro()" 
+              class="absolute bottom-20 left-4 sm:left-6 z-30 px-3.5 py-2 rounded-xl bg-black/80 hover:bg-purple-600/90 border border-white/20 hover:border-purple-400 text-xs font-bold text-white shadow-2xl backdrop-blur-md cursor-pointer transition-all flex items-center gap-2 group"
+            >
+              <i class="fa-solid fa-forward-step text-purple-400 group-hover:text-white"></i>
+              <span>Skip Intro (+85s)</span>
             </button>
 
-            <!-- Previous Episode -->
-            <button 
-              onclick="playPreviousEpisode()" 
-              class="w-8 h-8 rounded-xl bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white flex items-center justify-center transition-all cursor-pointer text-xs"
-              title="Previous Episode (|<<)"
+            <!-- Next Episode Auto-Progression Toast Countdown -->
+            <div 
+              id="player-next-ep-toast" 
+              class="hidden absolute top-16 right-6 z-30 px-4 py-3 rounded-2xl bg-purple-950/95 border border-purple-500/60 text-xs text-white shadow-2xl backdrop-blur-xl flex items-center gap-3 animate-bounce"
             >
-              <i class="fa-solid fa-backward-step"></i>
-            </button>
+              <i class="fa-solid fa-forward text-amber-400 text-sm"></i>
+              <div>
+                <span class="font-bold">Next Episode Ready</span>
+                <p id="player-next-ep-toast-text" class="text-[10px] text-purple-200">Playing Episode 2 in 5s...</p>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <button onclick="playNextEpisode()" class="px-2.5 py-1 rounded-lg bg-purple-600 hover:bg-purple-500 font-bold text-[10px] cursor-pointer">Play Now</button>
+                <button onclick="cancelNextEpisodeCountdown()" class="px-2 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-slate-300 text-[10px] cursor-pointer">Cancel</button>
+              </div>
+            </div>
 
-            <!-- Next Episode -->
-            <button 
-              onclick="playNextEpisode()" 
-              class="w-8 h-8 rounded-xl bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white flex items-center justify-center transition-all cursor-pointer text-xs"
-              title="Next Episode (>>|)"
+            <!-- Media Control Overlay Bar -->
+            <div 
+              id="player-control-bar" 
+              class="absolute bottom-0 inset-x-0 p-3 sm:p-4 bg-gradient-to-t from-black/95 via-black/80 to-transparent z-30 flex flex-col space-y-2.5 transition-opacity duration-300"
             >
-              <i class="fa-solid fa-forward-step"></i>
-            </button>
+              <!-- Seek Bar Timeline with Interactive Scrubbing -->
+              <div class="relative w-full flex items-center group/scrub">
+                <input 
+                  id="player-timeline-slider" 
+                  type="range" 
+                  min="0" 
+                  max="100" 
+                  value="0" 
+                  step="0.1" 
+                  class="w-full h-1.5 bg-white/20 rounded-lg appearance-none cursor-pointer accent-purple-500 hover:h-2.5 transition-all" 
+                  oninput="handleVideoSeek(this.value)" 
+                />
+              </div>
 
-            <!-- Seek -10s / +10s -->
-            <button 
-              onclick="seekVideoRelative(-10)" 
-              class="hidden sm:flex w-8 h-8 rounded-xl bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white items-center justify-center transition-all cursor-pointer text-[10px]"
-              title="Rewind 10s (Left Arrow)"
-            >
-              -10s
-            </button>
-            <button 
-              onclick="seekVideoRelative(10)" 
-              class="hidden sm:flex w-8 h-8 rounded-xl bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white items-center justify-center transition-all cursor-pointer text-[10px]"
-              title="Forward 10s (Right Arrow)"
-            >
-              +10s
-            </button>
+              <!-- Controls Row: Play, Skip 10s, Volume, Timestamp, Snapshot, Gear, Fullscreen -->
+              <div class="flex items-center justify-between gap-2.5 flex-wrap">
+                <!-- Left Controls -->
+                <div class="flex items-center gap-1.5 sm:gap-2.5 flex-wrap">
+                  <!-- Play/Pause Toggle -->
+                  <button 
+                    id="player-btn-play" 
+                    onclick="toggleVideoPlayback()" 
+                    class="w-9 h-9 rounded-xl bg-white/10 hover:bg-purple-600 text-white flex items-center justify-center transition-all cursor-pointer text-xs shadow-md" 
+                    title="Play/Pause (Space)"
+                  >
+                    <i id="player-btn-play-icon" class="fa-solid fa-play"></i>
+                  </button>
 
-            <!-- Volume Mute Toggle & Slider -->
-            <div class="flex items-center gap-2 group/vol">
+                  <!-- Previous Episode -->
+                  <button 
+                    onclick="playPreviousEpisode()" 
+                    class="w-8 h-8 rounded-xl bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white flex items-center justify-center transition-all cursor-pointer text-xs" 
+                    title="Previous Episode (|<<)"
+                  >
+                    <i class="fa-solid fa-backward-step"></i>
+                  </button>
+
+                  <!-- Next Episode -->
+                  <button 
+                    onclick="playNextEpisode()" 
+                    class="w-8 h-8 rounded-xl bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white flex items-center justify-center transition-all cursor-pointer text-xs" 
+                    title="Next Episode (>>|)"
+                  >
+                    <i class="fa-solid fa-forward-step"></i>
+                  </button>
+
+                  <!-- Skip -10s -->
+                  <button 
+                    onclick="seekVideoRelative(-10)" 
+                    class="w-8 h-8 rounded-xl bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white flex items-center justify-center transition-all cursor-pointer text-[10px]" 
+                    title="Rewind 10s (Left Arrow)"
+                  >
+                    -10s
+                  </button>
+
+                  <!-- Skip +10s -->
+                  <button 
+                    onclick="seekVideoRelative(10)" 
+                    class="w-8 h-8 rounded-xl bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white flex items-center justify-center transition-all cursor-pointer text-[10px]" 
+                    title="Forward 10s (Right Arrow)"
+                  >
+                    +10s
+                  </button>
+
+                  <!-- Volume Control with Mute Toggle & Slider -->
+                  <div class="flex items-center gap-1.5 group/vol">
+                    <button 
+                      id="player-btn-mute" 
+                      onclick="toggleVideoMute()" 
+                      class="w-8 h-8 rounded-xl bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white flex items-center justify-center transition-all cursor-pointer text-xs" 
+                      title="Mute / Unmute (M)"
+                    >
+                      <i id="player-vol-icon" class="fa-solid fa-volume-high"></i>
+                    </button>
+                    <input 
+                      id="player-vol-slider" 
+                      type="range" 
+                      min="0" 
+                      max="1" 
+                      step="0.05" 
+                      value="1" 
+                      class="w-14 sm:w-20 h-1 bg-white/20 rounded-lg appearance-none cursor-pointer accent-purple-500" 
+                      oninput="setVideoVolume(this.value)" 
+                    />
+                  </div>
+
+                  <!-- Timestamp Display -->
+                  <div class="text-[11px] font-mono text-slate-300 shrink-0">
+                    <span id="player-time-current">00:00</span> / <span id="player-time-total">24:21</span>
+                  </div>
+                </div>
+
+                <!-- Right Controls: Snapshot, Settings Gear, Quality, Track, Fullscreen -->
+                <div class="flex items-center gap-1.5 sm:gap-2">
+                  <!-- Screenshot / Snapshot Tool -->
+                  <button 
+                    onclick="takeVideoSnapshot()" 
+                    class="w-8 h-8 rounded-xl bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white flex items-center justify-center transition-all cursor-pointer text-xs" 
+                    title="Capture Screen Snapshot"
+                  >
+                    <i class="fa-solid fa-camera"></i>
+                  </button>
+
+                  <!-- Settings Gear Dropdown Toggle -->
+                  <div class="relative">
+                    <button 
+                      id="player-settings-gear-btn" 
+                      onclick="togglePlayerSettingsMenu(event)" 
+                      class="w-8 h-8 rounded-xl bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white flex items-center justify-center transition-all cursor-pointer text-xs" 
+                      title="Playback Settings"
+                    >
+                      <i class="fa-solid fa-gear"></i>
+                    </button>
+
+                    <!-- Settings Dropdown Popover Tray -->
+                    <div 
+                      id="player-settings-tray" 
+                      class="hidden absolute bottom-10 right-0 w-56 glass-card rounded-2xl p-3 shadow-2xl border border-glassBorder z-50 space-y-2.5 bg-[#0a0714]/95 text-xs text-slate-200"
+                    >
+                      <div>
+                        <span class="text-[10px] font-mono uppercase tracking-wider text-slate-400 block mb-1">Playback Speed:</span>
+                        <div class="grid grid-cols-4 gap-1 text-[10px] font-mono">
+                          <button onclick="setPlayerPlaybackSpeed('0.5')" class="py-1 rounded bg-white/5 hover:bg-white/15 text-center">0.5x</button>
+                          <button onclick="setPlayerPlaybackSpeed('1.0')" class="py-1 rounded bg-purple-600 text-white font-bold text-center">1x</button>
+                          <button onclick="setPlayerPlaybackSpeed('1.25')" class="py-1 rounded bg-white/5 hover:bg-white/15 text-center">1.25x</button>
+                          <button onclick="setPlayerPlaybackSpeed('1.5')" class="py-1 rounded bg-white/5 hover:bg-white/15 text-center">1.5x</button>
+                        </div>
+                      </div>
+
+                      <div class="border-t border-white/10 pt-2">
+                        <span class="text-[10px] font-mono uppercase tracking-wider text-slate-400 block mb-1">Resolution:</span>
+                        <div class="flex items-center gap-1 text-[10px] font-mono">
+                          <button onclick="setPlayerQuality('1080p')" class="flex-1 py-1 rounded bg-purple-600 text-white text-center font-bold">1080p</button>
+                          <button onclick="setPlayerQuality('720p')" class="flex-1 py-1 rounded bg-white/5 hover:bg-white/15 text-center">720p</button>
+                          <button onclick="setPlayerQuality('480p')" class="flex-1 py-1 rounded bg-white/5 hover:bg-white/15 text-center">480p</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Quick Quality Selector Pills -->
+                  <div class="hidden sm:flex items-center p-0.5 bg-black/60 border border-white/15 rounded-xl text-[10px] font-mono font-bold">
+                    <button onclick="setPlayerQuality('1080p')" id="quality-btn-1080" class="px-2 py-0.5 rounded-lg bg-purple-600 text-white cursor-pointer">1080p</button>
+                    <button onclick="setPlayerQuality('720p')" id="quality-btn-720" class="px-2 py-0.5 rounded-lg text-slate-400 hover:text-white cursor-pointer">720p</button>
+                    <button onclick="setPlayerQuality('480p')" id="quality-btn-480" class="px-2 py-0.5 rounded-lg text-slate-400 hover:text-white cursor-pointer">480p</button>
+                  </div>
+
+                  <!-- Quick Sub/Dub Selector Pills -->
+                  <div class="hidden md:flex items-center p-0.5 bg-black/60 border border-white/15 rounded-xl text-[10px] font-mono font-bold">
+                    <button onclick="setPlayerTrack('SUB')" id="track-btn-sub" class="px-2 py-0.5 rounded-lg bg-cyan-600 text-white cursor-pointer">SUB</button>
+                    <button onclick="setPlayerTrack('DUB')" id="track-btn-dub" class="px-2 py-0.5 rounded-lg text-slate-400 hover:text-white cursor-pointer">DUB</button>
+                  </div>
+
+                  <!-- Fullscreen Button -->
+                  <button 
+                    onclick="togglePlayerBrowserFullscreen()" 
+                    class="w-8 h-8 rounded-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all cursor-pointer text-xs" 
+                    title="Fullscreen (F)"
+                  >
+                    <i id="player-btn-fullscreen-icon" class="fa-solid fa-expand"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Bottom Stream Mirror Quick Switcher Bar -->
+          <div class="flex items-center justify-between px-3 py-2 rounded-xl bg-white/[0.03] border border-white/5 text-xs text-slate-400">
+            <div class="flex items-center gap-2">
+              <i class="fa-solid fa-circle-info text-accent text-xs"></i>
+              <span class="text-[11px] sm:text-xs">Buffering? Switch streaming mirror:</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <button onclick="handlePlayerServerChange('server1')" class="px-2 py-0.5 rounded bg-white/5 hover:bg-white/10 text-[10px] font-mono text-slate-300 cursor-pointer">Server 1 HD</button>
+              <button onclick="handlePlayerServerChange('server2')" class="px-2 py-0.5 rounded bg-white/5 hover:bg-white/10 text-[10px] font-mono text-slate-300 cursor-pointer">Official PV</button>
+              <button onclick="handlePlayerServerChange('hls')" class="px-2 py-0.5 rounded bg-white/5 hover:bg-white/10 text-[10px] font-mono text-slate-300 cursor-pointer">Direct HTML5</button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT COLUMN: EPISODE CONTROL & INFO PANEL (~30% width) -->
+        <div class="w-full lg:w-[30%] flex flex-col space-y-4">
+          
+          <div class="glass-card rounded-2xl p-4 sm:p-5 border border-purple-500/30 bg-[#0a0714]/90 backdrop-blur-2xl shadow-2xl flex flex-col space-y-4">
+            
+            <!-- Top Metadata Badges Row: S1 • E1 & Sub/Dub Indicator -->
+            <div class="flex items-center justify-between pb-3 border-b border-white/10">
+              <div class="flex items-center gap-2">
+                <span id="player-panel-season-ep" class="px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-purple-950/80 text-purple-300 border border-purple-500/40">
+                  S1 &bull; E1
+                </span>
+                <button 
+                  id="player-subdub-toggle" 
+                  onclick="toggleSubDubTrack()" 
+                  class="px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-cyan-950/80 text-cyan-300 border border-cyan-500/40 hover:bg-cyan-900/60 transition-all cursor-pointer flex items-center gap-1.5" 
+                  title="Toggle Sub / Dub"
+                >
+                  <span id="player-subdub-label">💬 Sub</span>
+                </button>
+              </div>
+              <span id="player-panel-server-badge" class="px-2 py-0.5 rounded-lg text-[10px] font-mono text-slate-400 bg-white/5 border border-white/5">
+                Server 1 HD
+              </span>
+            </div>
+
+            <!-- Episode Title & Anime Name Heading -->
+            <div class="space-y-1">
+              <h2 id="player-panel-ep-title" class="text-base sm:text-lg font-display font-extrabold text-white leading-snug">
+                Episode 1 &bull; The Strongest Man
+              </h2>
+              <p id="player-panel-anime-name" class="text-xs text-purple-300/80 font-medium">
+                Anime Series Title
+              </p>
+            </div>
+
+            <!-- Action Buttons: "✓ Mark watched" and "👥 Watch together" -->
+            <div class="grid grid-cols-2 gap-2.5">
               <button 
-                id="player-btn-mute"
-                onclick="toggleVideoMute()" 
-                class="w-8 h-8 rounded-xl bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white flex items-center justify-center transition-all cursor-pointer text-xs"
-                title="Mute / Unmute (M)"
+                id="player-btn-mark-watched" 
+                onclick="toggleCurrentEpisodeWatched()" 
+                class="py-2.5 px-3 rounded-xl bg-white/5 hover:bg-purple-600/30 border border-white/10 hover:border-purple-500/50 text-xs font-semibold text-slate-200 hover:text-white transition-all cursor-pointer flex items-center justify-center gap-2 group" 
+                title="Mark this episode as watched"
               >
-                <i id="player-vol-icon" class="fa-solid fa-volume-high"></i>
+                <i id="player-btn-mark-watched-icon" class="fa-solid fa-check text-xs text-slate-400 group-hover:text-purple-400"></i>
+                <span id="player-btn-mark-watched-label">Mark watched</span>
               </button>
+
+              <button 
+                id="player-btn-watch-together" 
+                onclick="launchWatchTogetherParty()" 
+                class="py-2.5 px-3 rounded-xl bg-purple-950/80 hover:bg-purple-900/80 border border-purple-500/40 text-xs font-semibold text-purple-300 hover:text-white transition-all cursor-pointer flex items-center justify-center gap-2 shadow-sm" 
+                title="Create Watch Party Session"
+              >
+                <i class="fa-solid fa-user-group text-xs text-purple-400"></i>
+                <span>Watch together</span>
+              </button>
+            </div>
+
+            <!-- Season Progress Bar Tracker with Interactive Pips -->
+            <div class="p-3 rounded-xl bg-white/[0.02] border border-white/5 space-y-2">
+              <div class="flex items-center justify-between text-xs font-mono">
+                <span class="text-slate-400">Season Progress</span>
+                <span id="player-progress-ratio" class="font-bold text-accent">1/12 &bull; 0 watched</span>
+              </div>
+              <div class="w-full h-2 rounded-full bg-white/10 overflow-hidden">
+                <div id="player-season-progress-fill" class="h-full bg-gradient-to-r from-purple-600 to-indigo-500 transition-all duration-300" style="width: 8%;"></div>
+              </div>
+              <!-- Interactive Clickable Progress Pips -->
+              <div id="player-season-pips-container" class="flex items-center gap-1 overflow-x-auto py-1 pr-1"></div>
+            </div>
+
+            <!-- Synopsis / Description Accordion with "Show/Hide Spoilers" toggle -->
+            <div class="rounded-xl bg-white/[0.02] border border-white/5 overflow-hidden">
+              <div class="p-3 flex items-center justify-between cursor-pointer" onclick="toggleSynopsisAccordion()">
+                <span class="text-xs font-bold text-white flex items-center gap-2">
+                  <i class="fa-solid fa-align-left text-accent text-xs"></i>
+                  <span>Episode Synopsis</span>
+                </span>
+                <div class="flex items-center gap-2">
+                  <button 
+                    id="player-spoilers-btn" 
+                    onclick="event.stopPropagation(); toggleEpisodeSpoilers();" 
+                    class="text-[10px] font-mono text-amber-400 hover:text-amber-300 transition-colors flex items-center gap-1 cursor-pointer"
+                  >
+                    <i id="player-spoilers-icon" class="fa-solid fa-eye-slash text-[10px]"></i>
+                    <span id="player-spoilers-label">Show Spoilers</span>
+                  </button>
+                  <i id="player-synopsis-chevron" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200"></i>
+                </div>
+              </div>
+              <div id="player-synopsis-content" class="px-3 pb-3 text-xs text-slate-300 leading-relaxed border-t border-white/5 pt-2">
+                <p id="player-spoilers-text" class="blur-sm select-none transition-all duration-300">
+                  Episode synopsis details are loaded dynamically...
+                </p>
+              </div>
+            </div>
+
+            <!-- Quick Episode Navigation Card Box (Previous & Next Episode) -->
+            <div class="space-y-2 pt-1">
+              <span class="text-[10px] font-mono uppercase tracking-wider text-slate-400 block">Quick Episode Navigation:</span>
+              <div class="grid grid-cols-2 gap-2">
+                <!-- Previous Episode Card -->
+                <div 
+                  id="player-quick-prev-card" 
+                  onclick="playPreviousEpisode()" 
+                  class="p-2.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/10 hover:border-purple-400/40 transition-all cursor-pointer flex items-center gap-2.5 group"
+                >
+                  <div class="w-10 h-10 rounded-lg bg-black/60 overflow-hidden relative shrink-0">
+                    <img id="player-quick-prev-thumb" class="w-full h-full object-cover group-hover:scale-105 transition-transform" src="" alt="Prev" onerror="this.src='https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=400&q=80';" />
+                    <div class="absolute inset-0 flex items-center justify-center bg-black/40"><i class="fa-solid fa-backward text-[10px] text-white"></i></div>
+                  </div>
+                  <div class="min-w-0 flex-1">
+                    <span class="text-[9px] font-mono text-purple-400 uppercase font-bold block">Previous</span>
+                    <h4 id="player-quick-prev-title" class="text-xs font-bold text-white truncate">Ep 0</h4>
+                  </div>
+                </div>
+
+                <!-- Next Episode Card -->
+                <div 
+                  id="player-quick-next-card" 
+                  onclick="playNextEpisode()" 
+                  class="p-2.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/10 hover:border-purple-400/40 transition-all cursor-pointer flex items-center gap-2.5 group"
+                >
+                  <div class="w-10 h-10 rounded-lg bg-black/60 overflow-hidden relative shrink-0">
+                    <img id="player-quick-next-thumb" class="w-full h-full object-cover group-hover:scale-105 transition-transform" src="" alt="Next" onerror="this.src='https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=400&q=80';" />
+                    <div class="absolute inset-0 flex items-center justify-center bg-black/40"><i class="fa-solid fa-forward text-[10px] text-white"></i></div>
+                  </div>
+                  <div class="min-w-0 flex-1">
+                    <span class="text-[9px] font-mono text-purple-400 uppercase font-bold block">Next Up</span>
+                    <h4 id="player-quick-next-title" class="text-xs font-bold text-white truncate">Ep 2</h4>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- 3. BOTTOM EPISODES DRAWER -->
+      <div class="w-full max-w-[1920px] mx-auto p-4 sm:p-6 border-t border-glassBorder bg-black/50 backdrop-blur-xl shrink-0 space-y-4">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <h3 class="text-sm sm:text-base font-display font-extrabold text-white flex items-center gap-2">
+              <i class="fa-solid fa-film text-accent text-sm"></i>
+              <span>Episode Archive</span>
+            </h3>
+            <span id="player-drawer-count" class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-purple-950/80 text-purple-300 border border-purple-500/40">
+              24 Episodes
+            </span>
+          </div>
+
+          <!-- Episode Search Bar & Range Tabs -->
+          <div class="flex items-center gap-2 w-full sm:w-auto">
+            <div class="relative flex-1 sm:w-64">
+              <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
               <input 
-                id="player-vol-slider" 
-                type="range" 
-                min="0" 
-                max="1" 
-                step="0.05" 
-                value="1" 
-                class="w-16 sm:w-20 h-1 bg-white/20 rounded-lg appearance-none cursor-pointer accent-purple-500"
-                oninput="setVideoVolume(this.value)"
+                id="player-episode-search-input" 
+                oninput="filterEpisodeDrawer(this.value)" 
+                type="text" 
+                placeholder="🔍 Episode or range (e.g., 5, 1-12)..." 
+                class="w-full bg-[#0a0714] border border-purple-500/30 rounded-xl pl-8 pr-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400 transition-all font-mono" 
               />
             </div>
-
-            <!-- Current Time / Duration Timestamp -->
-            <div class="text-[11px] font-mono text-slate-300 shrink-0">
-              <span id="player-time-current">00:00</span> / <span id="player-time-total">23:55</span>
-            </div>
+            <div id="player-range-filter-tabs" class="flex items-center gap-1 shrink-0"></div>
           </div>
-
-          <!-- Right Controls: Episode Selector, Quality Switcher, Audio Track, Fullscreen -->
-          <div class="flex items-center gap-2 sm:gap-3">
-            
-            <!-- Episode Quick-Selector Dropdown -->
-            <div class="relative">
-              <select 
-                id="player-episode-select" 
-                onchange="selectPlayerEpisode(parseInt(this.value))" 
-                class="px-2.5 py-1.5 text-xs bg-black/60 border border-white/20 rounded-xl text-white focus:outline-none focus:border-purple-400 cursor-pointer font-mono"
-              >
-                <option value="1">Ep 1: The Departure</option>
-                <option value="2">Ep 2: Celestial Stardust</option>
-                <option value="3">Ep 3: Beyond the Galaxy</option>
-                <option value="4">Ep 4: Echoes of Eternity</option>
-                <option value="5">Ep 5: The Grand Stargate</option>
-                <option value="6">Ep 6: Lightyears Ahead</option>
-                <option value="7">Ep 7: Nebula Secrets</option>
-                <option value="8">Ep 8: The Cosmic Core</option>
-                <option value="9">Ep 9: Starlight Requiem</option>
-                <option value="10">Ep 10: Infinite Horizons</option>
-                <option value="11">Ep 11: Dark Matter Rift</option>
-                <option value="12">Ep 12: Supernova Climax</option>
-              </select>
-            </div>
-
-            <!-- Quality Switcher (1080p / 720p / 480p) -->
-            <div class="flex items-center p-0.5 bg-black/60 border border-white/15 rounded-xl text-[10px] font-mono font-bold">
-              <button onclick="setPlayerQuality('1080p')" id="quality-btn-1080" class="px-2 py-1 rounded-lg bg-purple-600 text-white cursor-pointer">1080p</button>
-              <button onclick="setPlayerQuality('720p')" id="quality-btn-720" class="px-2 py-1 rounded-lg text-slate-400 hover:text-white cursor-pointer">720p</button>
-              <button onclick="setPlayerQuality('480p')" id="quality-btn-480" class="px-2 py-1 rounded-lg text-slate-400 hover:text-white cursor-pointer">480p</button>
-            </div>
-
-            <!-- Audio/Sub Track Switcher (SUB / DUB) -->
-            <div class="flex items-center p-0.5 bg-black/60 border border-white/15 rounded-xl text-[10px] font-mono font-bold">
-              <button onclick="setPlayerTrack('SUB')" id="track-btn-sub" class="px-2 py-1 rounded-lg bg-cyan-600 text-white cursor-pointer">SUB</button>
-              <button onclick="setPlayerTrack('DUB')" id="track-btn-dub" class="px-2 py-1 rounded-lg text-slate-400 hover:text-white cursor-pointer">DUB</button>
-            </div>
-
-            <!-- Fullscreen Toggle Button -->
-            <button 
-              onclick="togglePlayerBrowserFullscreen()" 
-              class="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all cursor-pointer text-xs"
-              title="Fullscreen (F)"
-            >
-              <i id="player-btn-fullscreen-icon" class="fa-solid fa-expand"></i>
-            </button>
-          </div>
-
         </div>
 
+        <!-- Scrollable Episode Tiles Grid -->
+        <div id="player-episodes-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-3 max-h-60 overflow-y-auto pr-1"></div>
       </div>
 
     </div>
@@ -9339,12 +9597,321 @@
         }
       }
     }
+    // ====================================================
+    // CANONICAL EPISODE METADATA & PERSISTENCE ENGINE
+    // ----------------------------------------------------
+    const CANONICAL_EPISODES = {
+      'solo-leveling': [
+        { title: "I'm Used to It", desc: "Sung Jinwoo, known as Humanity's Weakest Hunter, enters a low-rank D-Rank dungeon with his party, only to stumble upon a hidden double dungeon that conceals a terrifying ancient trial." },
+        { title: "If I Had One More Chance", desc: "Trapped in the temple of the God statue, Jinwoo deciphers the commandments while his comrades fall one by one. With his final breath, an ominous quest window appears before him." },
+        { title: "It's Like a Game", desc: "Jinwoo wakes up intact in a hospital bed with a floating holographic interface only he can see. A daily quest log requires relentless physical conditioning or face severe penalty." },
+        { title: "I've Gotta Get Stronger", desc: "Jinwoo enters an instant dungeon in the subway station. Testing his newfound strength against ferocious steel-fanged beasts, he discovers how his stats can grow exponentially." },
+        { title: "A Pretty Good Deal", desc: "Joining a strike squad with Hwang Dongsuk, Jinwoo descends into a C-rank dungeon, observing that the party's sinister motives are far deadlier than the boss within." },
+        { title: "The Real Hunt Begins", desc: "Betrayed and locked inside the spider boss's cavern, Jinwoo unleashes his unlocked combat fury, realizing he must eliminate his treacherous betrayers to survive." },
+        { title: "Let's See What I Can Do", desc: "Jinwoo enters an S-rank dungeon instance to collect ingredients for the Elixir of Life, confronting Cerberus, the three-headed guardian of the demon gates." },
+        { title: "Just 4 Hours", desc: "Jinho and Jinwoo team up to clear multiple C-Rank dungeons at lightning speed, drawing the suspicion of the Hunter Association and major guilds." },
+        { title: "You've Been Hiding Your Skills", desc: "An association dungeon inspection turns catastrophic when high-level inmates run amok. Jinwoo is forced to reveal a fraction of his devastating powers." },
+        { title: "What Is This, a Picnic?", desc: "Entering the job quest dungeon, Jinwoo encounters relentless waves of phantom armored knights, pushing his stamina and mana to their absolute limits." },
+        { title: "A Knight Who Defends an Empty Throne", desc: "Blood-Red Commander Igris stands before Jinwoo. A magnificent duel of blade, lightning, and sheer willpower ensues inside the grand throne room." },
+        { title: "Arise", desc: "Jinwoo unlocks the Necromancer class, evolving into the Shadow Monarch. Uttering the command 'Arise', he commands an undying army from fallen foes." }
+      ],
+      'frieren-beyond-journeys-end': [
+        { title: "The Journey's End", desc: "Following a decade-long crusade against the Demon King, the hero party disbands. Decades pass in the blink of an eye for the long-lived elf mage Frieren as mortality catches up to her allies." },
+        { title: "It Didn't Have to Be Magic...", desc: "Frieren accepts Fern as her apprentice and delves into collecting eccentric folk magic while honoring the passing of corrupt priest Heiter." },
+        { title: "Killing Magic", desc: "Frieren and Fern arrive at a village haunted by Qual, the Elder of Corruption who invented modern offensive piercing magic, showcasing centuries of magical evolution." },
+        { title: "The Land Where Souls Rest", desc: "The duo embarks on a solemn trek north toward Aureole, the legendary haven where souls of the dead reside, hoping to speak once more with Himmel." },
+        { title: "Phantoms of the Dead", desc: "A phantom demon casts illusions of lost loved ones across a mountain pass, confronting Frieren with her deepest sentimental memories." },
+        { title: "The Hero of the Village", desc: "Frieren and Fern recruit Stark, the cowardly yet shockingly agile vanguard disciple of Eisen the warrior, to defeat a solar dragon." },
+        { title: "Like a Fairy Tale", desc: "In the trade city of Walis, demonic envoys request peace talks. Frieren recognizes the true deceitful nature of demons and readies her staff." },
+        { title: "Frieren the Slayer", desc: "Aura the Guillotine initiates her Scales of Obedience against Frieren, unaware that the elf has concealed her immense mana pool for over a millennium." },
+        { title: "Aura the Guillotine", desc: "The culmination of the battle against Aura. With insurmountable suppressed mana unveiled, Frieren delivers an unequivocal command of demise." },
+        { title: "A Much More Powerful Mage", desc: "Memories of Flamme the Great Mage resurface as Frieren recalls the ancient teachings of demon warfare and magical concealment." },
+        { title: "Winter in the Northern Lands", desc: "Stuck in an elven mountain cottage during a blizzard, the party meets Kraft, an immortal elven monk from forgotten myth." },
+        { title: "A Real Hero", desc: "The party reaches a town celebrating the legendary hero's sword, shedding light on why Himmel chose a replica blade to save the world." }
+      ],
+      'jujutsu-kaisen': [
+        { title: "Ryomen Sukuna", desc: "Yuji Itadori swallows a cursed finger to save his occult club classmates from ravenous curses, awakening the King of Curses within his soul." },
+        { title: "For Myself", desc: "Brought before Satoru Gojo and Jujutsu High elders, Yuji faces execution but chooses to become a vessel to eliminate Sukuna's fingers for good." },
+        { title: "Girl of Steel", desc: "Yuji and Megumi meet Nobara Kugisaki in Roppongi, embarking on an exorcism mission inside an abandoned apartment building." },
+        { title: "Curse Womb Must Die", desc: "A Special Grade cursed womb manifests at Eishu Juvenile Detention Center. Megumi and Nobara are pushed to the brink while Yuji unleashes Sukuna." },
+        { title: "Fearsome Womb, Part 2", desc: "Sukuna rips out Yuji's heart to hold him hostage, engaging Megumi Fushiguro in a fierce battle that forces Megumi to tap into his ultimate shadows." },
+        { title: "After the Rain", desc: "Gojo reflects on the corrupt elders of the jujutsu world while a resurrected Yuji secretly trains in cursed energy control using cinema films." }
+      ],
+      'demon-slayer-kimetsu-no-yaiba': [
+        { title: "Cruelty", desc: "Tanjiro Kamado's peaceful life is shattered when demons slaughter his family and transform his sister Nezuko into a demon." },
+        { title: "Trainer Sakonji Urokodaki", desc: "Guided by Water Hashira Giyu Tomioka, Tanjiro and Nezuko journey to Mount Sagiri to seek training under former Hashira Urokodaki." },
+        { title: "Sabito and Makomo", desc: "Struggling to slice an enormous boulder, Tanjiro is challenged by phantom swordsmen Sabito and Makomo in ruthless spiritual combat." },
+        { title: "Final Selection", desc: "Tanjiro enters the demon-infested Mount Fujikasane to endure seven days and nights of lethal survival for the Demon Slayer Corps." },
+        { title: "My Own Steel", desc: "Tanjiro selects his Tamahagane ore and crafts his Nichirin sword, receiving his first mission along with his Kasugai Crow." }
+      ]
+    };
+
+    function getWatchedEpisodesMap() {
+      try {
+        const raw = localStorage.getItem('soranix_watched_episodes');
+        return raw ? JSON.parse(raw) : {};
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function saveWatchedEpisodesMap(map) {
+      try {
+        localStorage.setItem('soranix_watched_episodes', JSON.stringify(map));
+      } catch (e) {}
+    }
+
+    function getSeriesKey(anime) {
+      if (!anime) return 'default';
+      return anime.id ? String(anime.id) : slugifyAnimeTitle(anime.title?.english || anime.title?.romaji || 'anime');
+    }
+
+    function getWatchedEpisodes(anime) {
+      const map = getWatchedEpisodesMap();
+      const key = getSeriesKey(anime);
+      return Array.isArray(map[key]) ? map[key] : [];
+    }
+
+    function isEpisodeWatched(anime, epNum) {
+      const list = getWatchedEpisodes(anime);
+      return list.includes(parseInt(epNum));
+    }
+
+    function toggleEpisodeWatched(anime, epNum) {
+      const map = getWatchedEpisodesMap();
+      const key = getSeriesKey(anime);
+      const ep = parseInt(epNum);
+      const list = Array.isArray(map[key]) ? map[key] : [];
+      let isNowWatched = false;
+
+      if (list.includes(ep)) {
+        map[key] = list.filter(n => n !== ep);
+        isNowWatched = false;
+      } else {
+        map[key] = [...list, ep].sort((a, b) => a - b);
+        isNowWatched = true;
+      }
+      saveWatchedEpisodesMap(map);
+      return isNowWatched;
+    }
+
+    function getEpisodeMeta(anime, episodeNumber) {
+      const slug = anime ? slugifyAnimeTitle(anime.title?.english || anime.title?.romaji || '') : '';
+      const epNum = parseInt(episodeNumber) || 1;
+      const canonicalKey = Object.keys(CANONICAL_EPISODES).find(k => slug.includes(k) || k.includes(slug));
+      const canonicalList = canonicalKey ? CANONICAL_EPISODES[canonicalKey] : null;
+
+      if (canonicalList && canonicalList[epNum - 1]) {
+        return canonicalList[epNum - 1];
+      }
+
+      const defaultTitles = [
+        "The Awakening of Destiny",
+        "Trial in the Neon Shadows",
+        "Unbound Resonance",
+        "The Iron Citadel",
+        "Echoes Across the Horizon",
+        "Shadows of the Past",
+        "Convergence of Will",
+        "A Glimpse into Eternity",
+        "Clash of Domain Horizons",
+        "The Silent Vanguard",
+        "Fractured Bonds",
+        "Beyond the Astral Rift",
+        "The Last Horizon",
+        "Fallen Sovereignty",
+        "Resurgence of the Brave",
+        "The Phantom Sentinel",
+        "Crest of the Star Monarch",
+        "Whispers in the Dark Void",
+        "Eternal Dawn",
+        "The Final Stand",
+        "Bonds of Astral Blood",
+        "Radiance in the Abyss",
+        "The Ultimate Transmission",
+        "Ascension of the Apex"
+      ];
+
+      const title = defaultTitles[(epNum - 1) % defaultTitles.length];
+      const animeName = anime?.title?.english || anime?.title?.romaji || 'The protagonist';
+      const desc = `${animeName} faces an unprecedented challenge as secrets regarding the astral domain unravel. Tensions heighten when allies converge to confront an ancient adversary in Episode ${epNum}. Spoilers reveal tactical revelations and unexpected turns in the ongoing saga.`;
+
+      return { title, desc };
+    }
+
+    function renderPlayerEpisodePips(anime, currentEpisode) {
+      const pipsContainer = $('player-season-pips-container');
+      if (!pipsContainer) return;
+
+      const total = anime?.episodes || 12;
+      const watchedList = getWatchedEpisodes(anime);
+
+      pipsContainer.innerHTML = Array.from({ length: total }, (_, i) => {
+        const ep = i + 1;
+        const isCur = ep === currentEpisode;
+        const isW = watchedList.includes(ep);
+        let cls = 'bg-white/10 text-slate-300 hover:bg-white/20';
+        if (isCur) {
+          cls = 'bg-purple-600 text-white font-bold ring-2 ring-purple-400 shadow-[0_0_10px_rgba(168,85,247,0.5)]';
+        } else if (isW) {
+          cls = 'bg-emerald-600 text-white font-semibold';
+        }
+
+        return `
+          <button 
+            onclick="selectPlayerEpisode(${ep})" 
+            class="h-6 min-w-[26px] px-1.5 rounded-md text-[10px] font-mono cursor-pointer transition-all flex items-center justify-center shrink-0 ${cls}" 
+            title="Episode ${ep}${isW ? ' (Watched)' : ''}${isCur ? ' (Current)' : ''}"
+          >
+            ${ep}
+          </button>
+        `;
+      }).join('');
+    }
+
+    function renderPlayerEpisodeDrawer(anime, currentEpisode, filterQuery = '', rangeFilter = null) {
+      const grid = $('player-episodes-grid');
+      const tabs = $('player-range-filter-tabs');
+      if (!grid) return;
+
+      const total = anime?.episodes || 12;
+      const watchedList = getWatchedEpisodes(anime);
+      const poster = anime?.bannerImage || anime?.coverImage?.large || 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=600&q=80';
+
+      // 1. Render Range Tabs if > 12 episodes
+      if (tabs) {
+        if (total > 12) {
+          const tabChunks = [];
+          tabChunks.push({ label: 'All', from: 1, to: total, isAll: true });
+          for (let start = 1; start <= total; start += 12) {
+            const end = Math.min(start + 11, total);
+            tabChunks.push({ label: `${start}-${end}`, from: start, to: end, isAll: false });
+          }
+
+          tabs.innerHTML = tabChunks.map(chunk => {
+            const active = (!rangeFilter && chunk.isAll) || (rangeFilter && rangeFilter.from === chunk.from && rangeFilter.to === chunk.to);
+            const cls = active 
+              ? 'bg-purple-600 text-white font-bold' 
+              : 'bg-white/5 text-slate-400 hover:text-white hover:bg-white/10';
+            const arg = chunk.isAll ? 'null, null' : `${chunk.from}, ${chunk.to}`;
+            return `
+              <button 
+                onclick="setEpisodeRangeFilter(${arg})" 
+                class="px-2.5 py-1 rounded-lg text-[10px] font-mono transition-all cursor-pointer ${cls}"
+              >
+                ${chunk.label}
+              </button>
+            `;
+          }).join('');
+        } else {
+          tabs.innerHTML = '';
+        }
+      }
+
+      // 2. Filter Episodes
+      const cleanQ = (filterQuery || '').trim().toLowerCase();
+      let episodesToShow = [];
+
+      for (let n = 1; n <= total; n++) {
+        // Range check
+        if (rangeFilter && (n < rangeFilter.from || n > rangeFilter.to)) {
+          continue;
+        }
+
+        const meta = getEpisodeMeta(anime, n);
+        // Search query check (supports e.g. "5", "ep 5", "strongest", etc.)
+        if (cleanQ) {
+          const matchesNum = String(n) === cleanQ || `ep ${n}`.includes(cleanQ) || `episode ${n}`.includes(cleanQ);
+          const matchesTitle = meta.title.toLowerCase().includes(cleanQ);
+          const rangeMatch = cleanQ.includes('-') && (() => {
+            const parts = cleanQ.split('-').map(p => parseInt(p.trim()));
+            return parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1]) && n >= parts[0] && n <= parts[1];
+          })();
+
+          if (!matchesNum && !matchesTitle && !rangeMatch) {
+            continue;
+          }
+        }
+
+        episodesToShow.push({ number: n, meta });
+      }
+
+      if (episodesToShow.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full py-8 text-center text-slate-500 font-mono text-xs">
+            No episodes matching "${filterQuery}".
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = episodesToShow.map(({ number: n, meta }) => {
+        const isCurrent = n === currentEpisode;
+        const isW = watchedList.includes(n);
+        let borderCls = isCurrent 
+          ? 'border-purple-400 bg-purple-950/40 shadow-[0_0_15px_rgba(168,85,247,0.35)] ring-1 ring-purple-400' 
+          : 'border-white/10 bg-white/[0.02] hover:border-white/20 hover:bg-white/[0.05]';
+
+        return `
+          <div 
+            onclick="selectPlayerEpisode(${n})" 
+            class="group rounded-xl border ${borderCls} p-2 flex flex-col gap-1.5 transition-all cursor-pointer relative overflow-hidden select-none"
+          >
+            <!-- Thumbnail preview -->
+            <div class="aspect-video w-full rounded-lg bg-black/60 overflow-hidden relative">
+              <img 
+                src="${poster}" 
+                alt="Episode ${n}" 
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                onerror="this.src='https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=400&q=80';"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20"></div>
+              
+              <!-- Episode number pill -->
+              <span class="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-black/80 text-white border border-white/10">
+                EP ${n}
+              </span>
+
+              <!-- Watched check badge -->
+              ${isW ? `
+                <span class="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[8px] shadow-md" title="Watched">
+                  <i class="fa-solid fa-check"></i>
+                </span>
+              ` : ''}
+
+              <!-- Duration badge -->
+              <span class="absolute bottom-1 right-1 px-1 rounded text-[8px] font-mono text-slate-300 bg-black/70">
+                24:00
+              </span>
+
+              <!-- Play indicator overlay on current -->
+              ${isCurrent ? `
+                <div class="absolute inset-0 flex items-center justify-center bg-purple-900/40">
+                  <span class="w-6 h-6 rounded-full bg-purple-500 text-white flex items-center justify-center text-[10px] animate-pulse">
+                    <i class="fa-solid fa-play ml-0.5"></i>
+                  </span>
+                </div>
+              ` : ''}
+            </div>
+
+            <!-- Title & meta -->
+            <div class="min-w-0">
+              <h5 class="text-[11px] font-bold text-white truncate group-hover:text-purple-300 transition-colors" title="${meta.title}">
+                ${n}. ${meta.title}
+              </h5>
+              <span class="text-[9px] font-mono text-slate-400 block truncate">
+                ${isCurrent ? 'Now Playing' : (isW ? 'Completed' : 'Available in HD')}
+              </span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
 
     function playAnimeEpisode(title, episodeNumber = 1, serverOverride = null) {
       const modal = $('anime-video-player-modal');
       const titleEl = $('player-anime-title');
-      const epTag = $('player-episode-tag');
-      const epTitle = $('player-episode-title');
+      const subHeadingEl = $('player-subheading-title');
       const epSelect = $('player-episode-select');
       const serverSelect = $('player-server-select');
       const embedIframe = $('soranix-embed-player');
@@ -9353,22 +9920,146 @@
       const statusBanner = $('player-server-status-banner');
       const centerPlayOverlay = $('player-center-play-overlay');
 
-      if (!title) title = 'Anime Series';
+      const anime = AppState.activePlayerAnime || { title: { english: title || 'Anime Series' } };
+      const displayTitle = anime.title?.english || anime.title?.romaji || title || 'Anime Series';
       const episode = parseInt(episodeNumber) || 1;
-      const slug = slugifyAnimeTitle(title);
-      const anilistId = AppState.activePlayerAnime?.id;
+      const totalEpisodes = anime.episodes || 12;
+      const slug = slugifyAnimeTitle(displayTitle);
+      const anilistId = anime.id;
       
       const server = serverOverride || (serverSelect ? serverSelect.value : 'server1');
       AppState.playerServer = server;
-      AppState.activePlayerAnimeTitle = title;
+      AppState.activePlayerAnime = anime;
+      AppState.activePlayerAnimeTitle = displayTitle;
       AppState.activePlayerEpisode = episode;
 
-      if (titleEl) titleEl.textContent = title;
-      if (epTag) epTag.textContent = `Ep ${episode}`;
-      if (epTitle) epTitle.textContent = `Now Playing: Episode ${episode}`;
+      // 1. TOP HEADER NAVIGATION UPDATES
+      if (titleEl) titleEl.textContent = displayTitle;
+      const epMeta = getEpisodeMeta(anime, episode);
+      if (subHeadingEl) {
+        subHeadingEl.textContent = `Season 1 - Episode ${episode} | ${epMeta.title}`;
+      }
+
+      // Metadata pills in top header
+      const metaFormat = $('player-meta-format');
+      const metaYear = $('player-meta-year');
+      const metaEps = $('player-meta-episodes');
+      const metaScoreVal = $('player-meta-score-val');
+      const metaGenres = $('player-meta-genres');
+
+      if (metaFormat) metaFormat.textContent = anime.format || 'TV';
+      if (metaYear) metaYear.textContent = anime.seasonYear || anime.startDate?.year || '2024';
+      if (metaEps) metaEps.textContent = `${totalEpisodes} Episodes`;
+      if (metaScoreVal) {
+        metaScoreVal.textContent = anime.averageScore ? (anime.averageScore / 10).toFixed(1) : '8.8';
+      }
+      if (metaGenres && Array.isArray(anime.genres)) {
+        metaGenres.innerHTML = anime.genres.slice(0, 3).map(g => `
+          <span class="px-2 py-0.5 rounded-md text-[10px] font-mono bg-purple-950/60 text-purple-300 border border-purple-500/30">${g}</span>
+        `).join('');
+      }
+
       if (epSelect) epSelect.value = episode;
       if (serverSelect) serverSelect.value = server;
 
+      // 2. RIGHT COLUMN: EPISODE CONTROL & INFO PANEL UPDATES
+      const panelSeasonEp = $('player-panel-season-ep');
+      const panelServerBadge = $('player-panel-server-badge');
+      const panelEpTitle = $('player-panel-ep-title');
+      const panelAnimeName = $('player-panel-anime-name');
+      const subdubLabel = $('player-subdub-label');
+
+      if (panelSeasonEp) panelSeasonEp.textContent = `S1 • E${episode}`;
+      if (panelServerBadge) panelServerBadge.textContent = getServerLabel(server);
+      if (panelEpTitle) panelEpTitle.textContent = `Episode ${episode} • ${epMeta.title}`;
+      if (panelAnimeName) panelAnimeName.textContent = displayTitle;
+      if (subdubLabel) subdubLabel.textContent = AppState.playerTrack === 'DUB' ? '🎙️ Dub' : '💬 Sub';
+
+      // Mark Watched Button State
+      const isWatched = isEpisodeWatched(anime, episode);
+      const markBtn = $('player-btn-mark-watched');
+      const markIcon = $('player-btn-mark-watched-icon');
+      const markLabel = $('player-btn-mark-watched-label');
+      if (markBtn && markIcon && markLabel) {
+        if (isWatched) {
+          markBtn.className = 'py-2.5 px-3 rounded-xl bg-emerald-950/80 hover:bg-emerald-900/80 border border-emerald-500/50 text-xs font-semibold text-emerald-300 hover:text-white transition-all cursor-pointer flex items-center justify-center gap-2 shadow-sm';
+          markIcon.className = 'fa-solid fa-check text-xs text-emerald-400';
+          markLabel.textContent = '✓ Watched';
+        } else {
+          markBtn.className = 'py-2.5 px-3 rounded-xl bg-white/5 hover:bg-purple-600/30 border border-white/10 hover:border-purple-500/50 text-xs font-semibold text-slate-200 hover:text-white transition-all cursor-pointer flex items-center justify-center gap-2 group';
+          markIcon.className = 'fa-solid fa-check text-xs text-slate-400 group-hover:text-purple-400';
+          markLabel.textContent = 'Mark watched';
+        }
+      }
+
+      // Season Progress Bar & Interactive Pips
+      const watchedList = getWatchedEpisodes(anime);
+      const watchedCount = watchedList.length;
+      const ratioEl = $('player-progress-ratio');
+      const fillEl = $('player-season-progress-fill');
+      if (ratioEl) ratioEl.textContent = `${episode}/${totalEpisodes} • ${watchedCount} watched`;
+      if (fillEl) fillEl.style.width = `${Math.min(100, Math.round((watchedCount / totalEpisodes) * 100))}%`;
+
+      renderPlayerEpisodePips(anime, episode);
+
+      // Synopsis Accordion & Spoilers
+      const spoilersText = $('player-spoilers-text');
+      const spoilersIcon = $('player-spoilers-icon');
+      const spoilersLabel = $('player-spoilers-label');
+      if (spoilersText) {
+        spoilersText.textContent = epMeta.desc;
+        spoilersText.className = 'blur-sm select-none transition-all duration-300';
+      }
+      if (spoilersIcon) spoilersIcon.className = 'fa-solid fa-eye-slash text-[10px]';
+      if (spoilersLabel) spoilersLabel.textContent = 'Show Spoilers';
+
+      // Quick Episode Navigation Cards
+      const prevCard = $('player-quick-prev-card');
+      const prevTitle = $('player-quick-prev-title');
+      const prevThumb = $('player-quick-prev-thumb');
+      const nextCard = $('player-quick-next-card');
+      const nextTitle = $('player-quick-next-title');
+      const nextThumb = $('player-quick-next-thumb');
+      const coverUrl = anime.bannerImage || anime.coverImage?.extraLarge || 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=400&q=80';
+
+      if (episode > 1) {
+        if (prevCard) {
+          prevCard.classList.remove('opacity-40', 'pointer-events-none');
+          prevCard.classList.add('cursor-pointer');
+        }
+        const prevEpMeta = getEpisodeMeta(anime, episode - 1);
+        if (prevTitle) prevTitle.textContent = `Ep ${episode - 1} • ${prevEpMeta.title}`;
+        if (prevThumb) prevThumb.src = coverUrl;
+      } else {
+        if (prevCard) {
+          prevCard.classList.add('opacity-40', 'pointer-events-none');
+          prevCard.classList.remove('cursor-pointer');
+        }
+        if (prevTitle) prevTitle.textContent = 'Episode 1 (First)';
+      }
+
+      if (episode < totalEpisodes) {
+        if (nextCard) {
+          nextCard.classList.remove('opacity-40', 'pointer-events-none');
+          nextCard.classList.add('cursor-pointer');
+        }
+        const nextEpMeta = getEpisodeMeta(anime, episode + 1);
+        if (nextTitle) nextTitle.textContent = `Ep ${episode + 1} • ${nextEpMeta.title}`;
+        if (nextThumb) nextThumb.src = coverUrl;
+      } else {
+        if (nextCard) {
+          nextCard.classList.add('opacity-40', 'pointer-events-none');
+          nextCard.classList.remove('cursor-pointer');
+        }
+        if (nextTitle) nextTitle.textContent = 'Final Episode Reached';
+      }
+
+      // 3. BOTTOM EPISODES DRAWER UPDATES
+      const drawerCount = $('player-drawer-count');
+      if (drawerCount) drawerCount.textContent = `${totalEpisodes} Episodes`;
+      renderPlayerEpisodeDrawer(anime, episode, '', AppState.playerRangeFilter || null);
+
+      // UI Overlays & Countdown Reset
       if (statusBanner) statusBanner.classList.add('hidden');
       if (spinner) spinner.classList.remove('hidden');
       if (centerPlayOverlay) centerPlayOverlay.classList.add('opacity-0', 'pointer-events-none');
@@ -9395,6 +10086,7 @@
       // Active reward tracking when streaming
       setPlayerWatchState(true);
 
+      // Video Source Selection
       if (server === 'server1') {
         // Server 1 (Primary HD Stream Embed)
         if (html5Video) {
@@ -9427,7 +10119,7 @@
         }
         if (embedIframe) {
           embedIframe.classList.remove('hidden');
-          let trailerId = AppState.activePlayerAnime?.trailer?.id;
+          let trailerId = anime?.trailer?.id;
           if (!trailerId) {
             const defaultTrailers = {
               'frieren-beyond-journeys-end': 'qgQunxD0qLk',
@@ -9496,7 +10188,7 @@
         }
       }
 
-      showToast(`Now Streaming: ${title} (Episode ${episode}) &bull; ${getServerLabel(server)}`, 'info');
+      showToast(`Now Streaming: ${displayTitle} (Episode ${episode}) &bull; ${getServerLabel(server)}`, 'info');
     }
 
     function handlePlayerServerChange(newServer) {
@@ -9581,6 +10273,232 @@
         modal.classList.add('hidden');
         document.body.style.overflow = '';
       }
+    }
+
+    // ----------------------------------------------------
+    // SUPPORTING WATCH PAGE & SPLIT-SCREEN ACTIONS
+    // ----------------------------------------------------
+    function navigateBackToSeries() {
+      const currentAnime = AppState.activePlayerAnime;
+      closeAnimePlayerModal();
+      if (currentAnime && currentAnime.id) {
+        openAnimeDetailModal(currentAnime.id);
+      }
+    }
+
+    function toggleCurrentEpisodeWatched() {
+      const anime = AppState.activePlayerAnime;
+      const episode = AppState.activePlayerEpisode || 1;
+      if (!anime) return;
+      const isNowWatched = toggleEpisodeWatched(anime, episode);
+      
+      try {
+        if (window.SoranixAudio && typeof window.SoranixAudio.playCoin === 'function') {
+          window.SoranixAudio.playCoin();
+        }
+      } catch (e) {}
+
+      // Update Mark watched button UI
+      const markBtn = $('player-btn-mark-watched');
+      const markIcon = $('player-btn-mark-watched-icon');
+      const markLabel = $('player-btn-mark-watched-label');
+      if (markBtn && markIcon && markLabel) {
+        if (isNowWatched) {
+          markBtn.className = 'py-2.5 px-3 rounded-xl bg-emerald-950/80 hover:bg-emerald-900/80 border border-emerald-500/50 text-xs font-semibold text-emerald-300 hover:text-white transition-all cursor-pointer flex items-center justify-center gap-2 shadow-sm';
+          markIcon.className = 'fa-solid fa-check text-xs text-emerald-400';
+          markLabel.textContent = '✓ Watched';
+        } else {
+          markBtn.className = 'py-2.5 px-3 rounded-xl bg-white/5 hover:bg-purple-600/30 border border-white/10 hover:border-purple-500/50 text-xs font-semibold text-slate-200 hover:text-white transition-all cursor-pointer flex items-center justify-center gap-2 group';
+          markIcon.className = 'fa-solid fa-check text-xs text-slate-400 group-hover:text-purple-400';
+          markLabel.textContent = 'Mark watched';
+        }
+      }
+
+      // Update Progress Bar
+      const totalEpisodes = anime.episodes || 12;
+      const watchedList = getWatchedEpisodes(anime);
+      const ratioEl = $('player-progress-ratio');
+      const fillEl = $('player-season-progress-fill');
+      if (ratioEl) ratioEl.textContent = `${episode}/${totalEpisodes} • ${watchedList.length} watched`;
+      if (fillEl) fillEl.style.width = `${Math.min(100, Math.round((watchedList.length / totalEpisodes) * 100))}%`;
+
+      // Re-render pips & drawer
+      renderPlayerEpisodePips(anime, episode);
+      const searchInput = $('player-episode-search-input');
+      const query = searchInput ? searchInput.value : '';
+      renderPlayerEpisodeDrawer(anime, episode, query, AppState.playerRangeFilter || null);
+
+      if (isNowWatched) {
+        showToast(`Episode ${episode} marked as watched! (+10 Stardust)`, 'success');
+        try {
+          if (typeof addStardustCoins === 'function') {
+            addStardustCoins(10, `Watched Episode ${episode}`);
+          }
+        } catch (e) {}
+      } else {
+        showToast(`Episode ${episode} marked as unwatched.`, 'info');
+      }
+    }
+
+    function launchWatchTogetherParty() {
+      const anime = AppState.activePlayerAnime;
+      const ep = AppState.activePlayerEpisode || 1;
+      const code = 'SX-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+      const partyUrl = `${window.location.origin}${window.location.pathname}?party=${code}&anime=${anime?.id || 1}&ep=${ep}`;
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(partyUrl).then(() => {
+          showToast(`Watch Together Room: ${code} link copied to clipboard!`, 'success');
+        }).catch(() => {
+          showToast(`Watch Together Room: ${code} (Send code to friends!)`, 'success');
+        });
+      } else {
+        showToast(`Watch Together Room: ${code} (Send code to friends!)`, 'success');
+      }
+    }
+
+    function toggleEpisodeSpoilers() {
+      const textEl = $('player-spoilers-text');
+      const iconEl = $('player-spoilers-icon');
+      const labelEl = $('player-spoilers-label');
+      if (!textEl) return;
+
+      if (textEl.classList.contains('blur-sm')) {
+        textEl.classList.remove('blur-sm', 'select-none');
+        if (iconEl) iconEl.className = 'fa-solid fa-eye text-[10px]';
+        if (labelEl) labelEl.textContent = 'Hide Spoilers';
+      } else {
+        textEl.classList.add('blur-sm', 'select-none');
+        if (iconEl) iconEl.className = 'fa-solid fa-eye-slash text-[10px]';
+        if (labelEl) labelEl.textContent = 'Show Spoilers';
+      }
+    }
+
+    function toggleSynopsisAccordion() {
+      const content = $('player-synopsis-content');
+      const chevron = $('player-synopsis-chevron');
+      if (!content) return;
+
+      if (content.classList.contains('hidden')) {
+        content.classList.remove('hidden');
+        if (chevron) chevron.classList.add('rotate-180');
+      } else {
+        content.classList.add('hidden');
+        if (chevron) chevron.classList.remove('rotate-180');
+      }
+    }
+
+    function toggleSubDubTrack() {
+      const current = AppState.playerTrack || 'SUB';
+      const next = current === 'SUB' ? 'DUB' : 'SUB';
+      setPlayerTrack(next);
+      const label = $('player-subdub-label');
+      if (label) {
+        label.textContent = next === 'DUB' ? '🎙️ Dub' : '💬 Sub';
+      }
+    }
+
+    function takeVideoSnapshot() {
+      const video = $('soranix-html5-video');
+      const title = AppState.activePlayerAnimeTitle || 'Anime';
+      const ep = AppState.activePlayerEpisode || 1;
+      const filename = `Soranix-${slugifyAnimeTitle(title)}-ep${ep}-${Date.now()}.png`;
+
+      if (video && !video.classList.contains('hidden') && video.videoWidth > 0) {
+        try {
+          const canvas = document.createElement('canvas');
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            // Soranix Watermark
+            ctx.fillStyle = 'rgba(7, 5, 14, 0.75)';
+            ctx.fillRect(16, canvas.height - 48, 260, 36);
+            ctx.fillStyle = '#c084fc';
+            ctx.font = 'bold 16px sans-serif';
+            ctx.fillText(`Soranix.to • ${title} Ep ${ep}`, 28, canvas.height - 24);
+
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            showToast(`Snapshot captured: ${filename}`, 'success');
+            return;
+          }
+        } catch (err) {
+          console.warn('Direct canvas capture unavailable:', err);
+        }
+      }
+
+      // Elegant Fallback Card Snapshot
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = 1280;
+        canvas.height = 720;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          const grad = ctx.createLinearGradient(0, 0, 1280, 720);
+          grad.addColorStop(0, '#1a0b2e');
+          grad.addColorStop(1, '#07050e');
+          ctx.fillStyle = grad;
+          ctx.fillRect(0, 0, 1280, 720);
+
+          ctx.fillStyle = '#ffffff';
+          ctx.font = 'bold 44px sans-serif';
+          ctx.fillText(title, 80, 320);
+
+          ctx.fillStyle = '#a855f7';
+          ctx.font = 'bold 26px monospace';
+          ctx.fillText(`Episode ${ep} • Soranix Cinema Snapshot`, 80, 380);
+
+          ctx.fillStyle = '#94a3b8';
+          ctx.font = '18px monospace';
+          ctx.fillText(`Streamed on Soranix.to • ${new Date().toLocaleDateString()}`, 80, 440);
+
+          const link = document.createElement('a');
+          link.download = filename;
+          link.href = canvas.toDataURL('image/png');
+          link.click();
+          showToast(`Snapshot captured: ${filename}`, 'success');
+        }
+      } catch (e) {
+        showToast('Snapshot captured!', 'success');
+      }
+    }
+
+    function togglePlayerSettingsMenu(event) {
+      if (event) event.stopPropagation();
+      const tray = $('player-settings-tray');
+      if (tray) {
+        tray.classList.toggle('hidden');
+      }
+    }
+
+    function setPlayerPlaybackSpeed(speed) {
+      const video = $('soranix-html5-video');
+      const val = parseFloat(speed) || 1.0;
+      if (video) {
+        video.playbackRate = val;
+      }
+      showToast(`Playback speed set to ${val}x`, 'info');
+      const tray = $('player-settings-tray');
+      if (tray) tray.classList.add('hidden');
+    }
+
+    function filterEpisodeDrawer(query) {
+      const anime = AppState.activePlayerAnime;
+      const currentEpisode = AppState.activePlayerEpisode || 1;
+      renderPlayerEpisodeDrawer(anime, currentEpisode, query, AppState.playerRangeFilter || null);
+    }
+
+    function setEpisodeRangeFilter(from, to) {
+      AppState.playerRangeFilter = (from === null && to === null) ? null : { from, to };
+      const anime = AppState.activePlayerAnime;
+      const currentEpisode = AppState.activePlayerEpisode || 1;
+      const searchInput = $('player-episode-search-input');
+      const query = searchInput ? searchInput.value : '';
+      renderPlayerEpisodeDrawer(anime, currentEpisode, query, AppState.playerRangeFilter);
     }
 
     function toggleVideoPlayback() {
@@ -9728,6 +10646,10 @@
       AppState.playerTrack = track;
       const sub = $('track-btn-sub');
       const dub = $('track-btn-dub');
+      const label = $('player-subdub-label');
+      if (label) {
+        label.textContent = track === 'DUB' ? '🎙️ Dub' : '💬 Sub';
+      }
       if (track === 'SUB') {
         if (sub) sub.className = 'px-2 py-1 rounded-lg bg-cyan-600 text-white cursor-pointer';
         if (dub) dub.className = 'px-2 py-1 rounded-lg text-slate-400 hover:text-white cursor-pointer';
@@ -10642,6 +11564,18 @@
     window.renderFavoritesUI = renderFavoritesUI;
     window.toggleDashboardThemeMenu = toggleDashboardThemeMenu;
     window.closeDashboardThemeMenu = closeDashboardThemeMenu;
+    // Split-Screen Cinema Player Methods
+    window.navigateBackToSeries = navigateBackToSeries;
+    window.toggleCurrentEpisodeWatched = toggleCurrentEpisodeWatched;
+    window.launchWatchTogetherParty = launchWatchTogetherParty;
+    window.toggleEpisodeSpoilers = toggleEpisodeSpoilers;
+    window.toggleSynopsisAccordion = toggleSynopsisAccordion;
+    window.toggleSubDubTrack = toggleSubDubTrack;
+    window.takeVideoSnapshot = takeVideoSnapshot;
+    window.togglePlayerSettingsMenu = togglePlayerSettingsMenu;
+    window.setPlayerPlaybackSpeed = setPlayerPlaybackSpeed;
+    window.filterEpisodeDrawer = filterEpisodeDrawer;
+    window.setEpisodeRangeFilter = setEpisodeRangeFilter;
   </script>
 </body>
 </html>
