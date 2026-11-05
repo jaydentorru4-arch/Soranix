@@ -702,7 +702,7 @@
         <div id="player-left-column" class="lg:col-span-8 flex flex-col gap-4 transition-all duration-300">
           
           <!-- Cinema-mode Responsive Video Container (HARD 16:9 ASPECT RATIO & MIN HEIGHT) -->
-          <div id="player-viewport-container" class="aspect-video w-full min-h-[400px] md:min-h-[480px] bg-black relative rounded-2xl overflow-hidden shadow-2xl border border-white/10 group select-none">
+          <div id="player-viewport-container" class="aspect-video w-full min-h-[220px] sm:min-h-[320px] md:min-h-[420px] lg:min-h-[480px] bg-black relative rounded-2xl overflow-hidden shadow-2xl border border-white/10 group select-none">
             
             <!-- In-Player Video Fallback Backdrop -->
             <div id="player-fallback-backdrop" class="hidden absolute inset-0 z-20 flex flex-col items-center justify-center bg-black/90 p-6 text-center select-none backdrop-blur-md">
@@ -1575,12 +1575,12 @@
   <!-- ========================================================== -->
   <!-- VIEW 2: MAIN DASHBOARD & PROFILE APPLICATION               -->
   <!-- ========================================================== -->
-  <div id="view-dashboard" class="relative z-10 min-h-screen w-full hidden flex-col md:flex-row">
+  <div id="view-dashboard" class="relative z-10 min-h-screen w-full hidden flex-col md:flex-row overflow-x-hidden max-w-full">
     
     <!-- -------------------------------------------------------- -->
     <!-- 1. LEFT SIDEBAR WITH GEAR / PROFILE POP-DOWN MENU        -->
     <!-- -------------------------------------------------------- -->
-    <aside class="fixed bottom-0 inset-x-0 z-40 h-16 w-full bg-[#0B0615]/95 backdrop-blur-2xl border-t border-glassBorder flex flex-row items-center justify-around px-2 py-1 md:static md:w-20 lg:w-24 md:h-screen md:min-h-screen md:border-r md:border-t-0 md:flex-col md:justify-between md:py-6 md:px-0 md:sticky md:top-0 shrink-0 shadow-2xl">
+    <aside class="fixed bottom-0 inset-x-0 z-40 h-[calc(4rem+env(safe-area-inset-bottom,0px))] pb-[env(safe-area-inset-bottom,0px)] w-full bg-[#0B0615]/95 backdrop-blur-2xl border-t border-glassBorder flex flex-row items-center justify-around px-1.5 py-1 md:static md:w-20 lg:w-24 md:h-screen md:min-h-screen md:border-r md:border-t-0 md:flex-col md:justify-between md:py-6 md:px-0 md:sticky md:top-0 shrink-0 shadow-2xl">
       
       <!-- Top Logo Button (Hidden on mobile bottom bar to maximize space) -->
       <div class="hidden md:flex items-center gap-2">
@@ -1670,11 +1670,12 @@
           <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-electricCyan shadow-[0_0_6px_#06b6d4]"></span>
         </button>
 
-        <!-- Tab 7: Admin Control Panel (Owner Authority) - Hidden by default, shown ONLY for owner/staff -->
+        <!-- Tab 7: Admin Control Panel (Owner Authority) - Hidden by default, shown ONLY for owner/admin -->
         <button 
           id="nav-tab-btn-admin"
           onclick="openAdminTab()" 
-          class="sidebar-tab-btn hidden w-11 h-11 rounded-2xl items-center justify-center text-red-400/70 hover:text-red-300 hover:bg-red-500/10 border border-transparent hover:border-red-500/30 transition-all cursor-pointer relative"
+          class="sidebar-tab-btn hidden w-10 h-10 sm:w-11 sm:h-11 rounded-2xl items-center justify-center text-red-400/70 hover:text-red-300 hover:bg-red-500/10 border border-transparent hover:border-red-500/30 transition-all cursor-pointer relative"
+          style="display: none !important;"
           title="Admin & Owner Control Panel"
         >
           <i class="fa-solid fa-shield-halved text-base text-red-400"></i>
@@ -1789,11 +1790,12 @@
               <span>Customize Profile</span>
             </button>
 
-            <!-- Admin Control Panel in Gear Menu - Hidden by default, shown ONLY for owner/staff -->
+            <!-- Admin Control Panel in Gear Menu - Hidden by default, shown ONLY for owner/admin -->
             <button 
               id="gear-admin-btn"
               onclick="openAdminTab(); toggleGearMenu();" 
               class="hidden w-full items-center gap-2.5 px-3 py-2 rounded-xl text-red-300 hover:text-white hover:bg-red-950/40 border border-transparent hover:border-red-500/30 transition-all cursor-pointer text-left"
+              style="display: none !important;"
             >
               <i class="fa-solid fa-shield-halved text-red-400 w-4 text-center"></i>
               <span class="font-bold">Admin Control</span>
@@ -1828,7 +1830,7 @@
     <!-- -------------------------------------------------------- -->
     <!-- 2. MAIN DASHBOARD CONTENT AREA                           -->
     <!-- -------------------------------------------------------- -->
-    <div class="flex-1 flex flex-col min-h-screen overflow-y-auto pb-24 md:pb-6">
+    <div class="flex-1 flex flex-col min-h-screen overflow-y-auto pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))] md:pb-6 max-w-full overflow-x-hidden">
       
       <!-- Top Bar Header -->
       <header class="w-full h-16 border-b border-glassBorder glass-panel sticky top-0 z-20 px-3 sm:px-6 md:px-8 flex items-center justify-between gap-2">
@@ -1874,11 +1876,12 @@
             <span id="header-user-display" class="max-w-[120px] truncate">Guest Explorer</span>
           </div>
 
-          <!-- Admin Status Indicator Pill (Shown for Authenticated Owner / Admin) -->
+          <!-- Admin Status Indicator Pill (Shown ONLY for Authenticated Owner / Admin) -->
           <div 
             id="header-admin-pill" 
             onclick="openAdminTab()" 
             class="hidden items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-950/70 hover:bg-red-900/60 border border-red-500/40 text-xs font-bold text-red-300 shadow-[0_0_15px_rgba(239,68,68,0.25)] transition-all cursor-pointer"
+            style="display: none !important;"
             title="System Administrator / Owner Console"
           >
             <i class="fa-solid fa-shield-halved text-red-400 text-[10px]"></i>
@@ -4784,24 +4787,26 @@
       }
     }
 
-    // Administrator & Owner Clearance (Strictly jaydentorru4@gmail.com upon Google Login or granted staff roles)
+    // Administrator & Owner Clearance (Strictly jaydentorru4@gmail.com upon Google Login or authenticated admin)
     const OWNER_EMAIL = 'jaydentorru4@gmail.com';
 
-    function isOwner(u) {
+    function isPlatformAdmin(u) {
       if (!u) return false;
       if (u.isGuest || u.username === 'Guest Explorer') return false;
       const email = (u.email || '').trim().toLowerCase();
-      if (email === OWNER_EMAIL) return true;
-      return u.isOwner === true || u.staffRole === 'owner';
+      const uname = (u.username || '').trim().toLowerCase();
+      // Strictly Jayden Torru - the sole platform admin / owner
+      if (email === OWNER_EMAIL || uname === 'jaydentorru' || uname === 'jaydentorru4@gmail.com') return true;
+      if (u.isOwner === true && (email === OWNER_EMAIL || uname === 'jaydentorru')) return true;
+      return false;
+    }
+
+    function isOwner(u) {
+      return isPlatformAdmin(u);
     }
 
     function checkIsAdmin(u) {
-      if (!u) return false;
-      if (u.isGuest || u.username === 'Guest Explorer') return false;
-      if (isOwner(u)) return true;
-      const role = (u.staffRole || '').trim().toLowerCase();
-      if (['owner', 'admin', 'moderator', 'developer', 'tester'].includes(role)) return true;
-      return false;
+      return isPlatformAdmin(u);
     }
 
     function getUsersDB() {
@@ -5038,9 +5043,13 @@
             AppState.currentUserKey = userKey;
             AppState.user = { ...createInitialUser(users[userKey].username), ...users[userKey] };
             
-            if (checkIsAdmin(AppState.user)) {
+            if (isPlatformAdmin(AppState.user)) {
               AppState.user.isAdmin = true;
+              AppState.user.isOwner = true;
               AppState.user.title = 'System Administrator / Owner';
+            } else {
+              AppState.user.isAdmin = false;
+              AppState.user.isOwner = false;
             }
 
             if (AppState.user.theme) {
@@ -5122,7 +5131,7 @@
     // ----------------------------------------------------
     function switchDashboardTab(tabName) {
       // Access Guard: protect admin tab
-      if (tabName === 'admin' && (AppState.isGuest || !checkIsAdmin(AppState.user))) {
+      if (tabName === 'admin' && (AppState.isGuest || !isPlatformAdmin(AppState.user))) {
         openAdminTab();
         return;
       }
@@ -5172,25 +5181,31 @@
         admin: $('nav-tab-btn-admin')
       };
 
-      const hasAdminClearance = !AppState.isGuest && checkIsAdmin(AppState.user);
+      const hasAdminClearance = !AppState.isGuest && isPlatformAdmin(AppState.user);
 
       Object.entries(btnMap).forEach(([k, btn]) => {
         if (!btn) return;
-        if (k === 'admin' && !hasAdminClearance) {
-          btn.className = 'sidebar-tab-btn hidden';
-          return;
+        if (k === 'admin') {
+          if (!hasAdminClearance) {
+            btn.className = 'sidebar-tab-btn hidden';
+            btn.style.setProperty('display', 'none', 'important');
+            return;
+          } else {
+            btn.style.removeProperty('display');
+            btn.style.display = 'flex';
+          }
         }
         if (k === tabName) {
           if (k === 'admin') {
-            btn.className = 'sidebar-tab-btn w-11 h-11 rounded-2xl flex items-center justify-center text-white bg-red-600 shadow-[0_0_20px_rgba(239,68,68,0.4)] transition-all cursor-pointer relative';
+            btn.className = 'sidebar-tab-btn w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center text-white bg-red-600 shadow-[0_0_20px_rgba(239,68,68,0.4)] transition-all cursor-pointer relative';
           } else {
-            btn.className = 'sidebar-tab-btn w-11 h-11 rounded-2xl flex items-center justify-center text-white bg-purple-600 shadow-accent-glow transition-all cursor-pointer relative';
+            btn.className = 'sidebar-tab-btn w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center text-white bg-purple-600 shadow-accent-glow transition-all cursor-pointer relative';
           }
         } else {
           if (k === 'admin') {
-            btn.className = 'sidebar-tab-btn w-11 h-11 rounded-2xl flex items-center justify-center text-red-400/70 hover:text-red-300 hover:bg-red-500/10 border border-transparent hover:border-red-500/30 transition-all cursor-pointer relative';
+            btn.className = 'sidebar-tab-btn w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center text-red-400/70 hover:text-red-300 hover:bg-red-500/10 border border-transparent hover:border-red-500/30 transition-all cursor-pointer relative';
           } else {
-            btn.className = 'sidebar-tab-btn w-11 h-11 rounded-2xl flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all cursor-pointer relative';
+            btn.className = 'sidebar-tab-btn w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all cursor-pointer relative';
           }
         }
       });
@@ -5217,7 +5232,7 @@
     }
 
     function openAdminTab() {
-      if (AppState.isGuest || !checkIsAdmin(AppState.user)) {
+      if (AppState.isGuest || !isPlatformAdmin(AppState.user)) {
         // Show Access Denied Guard Modal!
         const deniedModal = $('admin-access-denied-modal');
         const userLabel = $('access-denied-current-user');
@@ -5228,8 +5243,16 @@
           deniedModal.classList.remove('hidden');
           deniedModal.classList.add('flex');
         }
+        // Force hide buttons from DOM for regular users
+        const navTabAdmin = $('nav-tab-btn-admin');
+        if (navTabAdmin) navTabAdmin.style.setProperty('display', 'none', 'important');
+        const gearAdminBtn = $('gear-admin-btn');
+        if (gearAdminBtn) gearAdminBtn.style.setProperty('display', 'none', 'important');
+        const headerAdminPill = $('header-admin-pill');
+        if (headerAdminPill) headerAdminPill.style.setProperty('display', 'none', 'important');
+
         SoranixAudio.play('sword');
-        showToast('Access Denied: System Administrator privileges required.', 'error');
+        showToast('Access Denied: Admin Panel is exclusively reserved for Platform Administrator (jaydentorru4@gmail.com).', 'error');
         return;
       }
 
@@ -5490,11 +5513,15 @@
           return;
         }
 
-        if (checkIsAdmin(existing)) {
+        if (isPlatformAdmin(existing)) {
           existing.isAdmin = true;
+          existing.isOwner = true;
           existing.title = 'System Administrator / Owner';
           existing.level = Math.max(existing.level || 1, 999);
           existing.stardust = Math.max(existing.stardust || 0, 999999);
+        } else {
+          existing.isAdmin = false;
+          existing.isOwner = false;
         }
 
         AppState.isGuest = false;
@@ -5884,9 +5911,8 @@
       }
       if (flyoutFavBadge) flyoutFavBadge.textContent = totalFavs;
 
-      // Admin & Owner Authority Badges & Pulse (Strictly visible ONLY for owner / verified staff)
-      const isAdmin = !AppState.isGuest && checkIsAdmin(AppState.user);
-      const isPlatformOwner = !AppState.isGuest && isOwner(AppState.user);
+      // Admin & Owner Authority Badges & Pulse (Strictly visible ONLY for owner / admin)
+      const isPlatformAdminUser = !AppState.isGuest && isPlatformAdmin(AppState.user);
       const navTabAdmin = $('nav-tab-btn-admin');
       const gearAdminBtn = $('gear-admin-btn');
       const headerAdminPill = $('header-admin-pill');
@@ -5894,39 +5920,48 @@
       const gearAdminBadge = $('gear-admin-badge');
 
       if (navTabAdmin) {
-        if (isAdmin) {
+        if (isPlatformAdminUser) {
           navTabAdmin.classList.remove('hidden');
           navTabAdmin.classList.add('flex');
+          navTabAdmin.style.removeProperty('display');
+          navTabAdmin.style.display = 'flex';
         } else {
           navTabAdmin.classList.add('hidden');
           navTabAdmin.classList.remove('flex');
+          navTabAdmin.style.setProperty('display', 'none', 'important');
         }
       }
 
       if (gearAdminBtn) {
-        if (isAdmin) {
+        if (isPlatformAdminUser) {
           gearAdminBtn.classList.remove('hidden');
           gearAdminBtn.classList.add('flex');
+          gearAdminBtn.style.removeProperty('display');
+          gearAdminBtn.style.display = 'flex';
         } else {
           gearAdminBtn.classList.add('hidden');
           gearAdminBtn.classList.remove('flex');
+          gearAdminBtn.style.setProperty('display', 'none', 'important');
         }
       }
 
       if (headerAdminPill) {
-        if (isAdmin) {
+        if (isPlatformAdminUser) {
           headerAdminPill.classList.remove('hidden');
           headerAdminPill.classList.add('flex');
+          headerAdminPill.style.removeProperty('display');
+          headerAdminPill.style.display = 'flex';
           const pillText = headerAdminPill.querySelector('span');
-          if (pillText) pillText.textContent = isPlatformOwner ? 'Owner' : (AppState.user.staffRole ? AppState.user.staffRole.toUpperCase() : 'Staff');
+          if (pillText) pillText.textContent = 'Owner';
         } else {
           headerAdminPill.classList.remove('flex');
           headerAdminPill.classList.add('hidden');
+          headerAdminPill.style.setProperty('display', 'none', 'important');
         }
       }
 
       if (sidebarAdminPulse) {
-        if (isAdmin) {
+        if (isPlatformAdminUser) {
           sidebarAdminPulse.classList.remove('hidden');
         } else {
           sidebarAdminPulse.classList.add('hidden');
@@ -5934,12 +5969,11 @@
       }
 
       if (gearAdminBadge) {
-        if (isAdmin) {
-          gearAdminBadge.textContent = isPlatformOwner ? 'OWNER' : (AppState.user.staffRole ? AppState.user.staffRole.toUpperCase() : 'STAFF');
+        if (isPlatformAdminUser) {
+          gearAdminBadge.textContent = 'OWNER';
           gearAdminBadge.className = 'ml-auto text-[9px] px-2 py-0.5 rounded-full bg-red-950/80 text-red-300 border border-red-500/40 font-mono font-bold';
         } else {
-          gearAdminBadge.textContent = 'LOCKED';
-          gearAdminBadge.className = 'ml-auto text-[9px] px-2 py-0.5 rounded-full bg-white/10 text-slate-400 font-mono';
+          gearAdminBadge.textContent = '';
         }
       }
 
@@ -10242,24 +10276,32 @@
         let hasNextPage = true;
         let allEpisodesData = [];
 
-        while (hasNextPage && page <= 20) { // Support long anime up to 2000 eps (20 pages)
+        while (hasNextPage && page <= 10) { // Support long anime up to 1000 eps (10 pages) with polite rate limits
+          if (page > 1) {
+            await new Promise(r => setTimeout(r, 350));
+          }
           const controller = new AbortController();
           const timeoutId = setTimeout(() => controller.abort(), 6000);
-          const res = await fetch(`https://api.jikan.moe/v4/anime/${animeId}/episodes?page=${page}`, {
-            signal: controller.signal
-          });
-          clearTimeout(timeoutId);
+          try {
+            const res = await fetch(`https://api.jikan.moe/v4/anime/${animeId}/episodes?page=${page}`, {
+              signal: controller.signal
+            });
+            clearTimeout(timeoutId);
 
-          if (!res.ok) break;
-          const json = await res.json();
-          if (json && Array.isArray(json.data)) {
-            allEpisodesData = allEpisodesData.concat(json.data);
-          }
+            if (!res.ok) break;
+            const json = await res.json();
+            if (json && Array.isArray(json.data)) {
+              allEpisodesData = allEpisodesData.concat(json.data);
+            }
 
-          if (json && json.pagination && json.pagination.has_next_page) {
-            page++;
-          } else {
-            hasNextPage = false;
+            if (json && json.pagination && json.pagination.has_next_page) {
+              page++;
+            } else {
+              hasNextPage = false;
+            }
+          } catch (fetchErr) {
+            clearTimeout(timeoutId);
+            break;
           }
         }
 
@@ -12214,6 +12256,10 @@
               const prevLevel = AppState.user.level;
 
               AppState.user = { ...AppState.user, ...localDB[key] };
+              if (!isPlatformAdmin(AppState.user)) {
+                AppState.user.isAdmin = false;
+                AppState.user.isOwner = false;
+              }
               updateViewableProfileUI();
               updateStatsCounters();
 
