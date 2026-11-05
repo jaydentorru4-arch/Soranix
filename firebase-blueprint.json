@@ -2,12 +2,12 @@
   "entities": {
     "UserProfile": {
       "title": "UserProfile",
-      "description": "User profile data including stardust balance, streak, equipped cosmetics, and bio.",
+      "description": "User profile data including stardust balance, streak, equipped cosmetics, roles, and bio.",
       "type": "object",
       "properties": {
         "id": {
           "type": "string",
-          "description": "Unique user ID matching auth.uid",
+          "description": "Unique user ID or username identifier",
           "maxLength": 128
         },
         "displayName": {
@@ -15,10 +15,23 @@
           "description": "User display name",
           "maxLength": 64
         },
+        "username": {
+          "type": "string",
+          "description": "Unique handle of user",
+          "maxLength": 64
+        },
         "email": {
           "type": "string",
           "description": "User email address",
           "maxLength": 128
+        },
+        "avatarDataUrl": {
+          "type": "string",
+          "description": "Avatar image data URL or photo URL"
+        },
+        "bannerDataUrl": {
+          "type": "string",
+          "description": "Profile background banner URL"
         },
         "stardust": {
           "type": "number",
@@ -28,20 +41,51 @@
           "type": "number",
           "description": "Current consecutive daily login streak"
         },
-        "lastClaimedDate": {
+        "level": {
+          "type": "number",
+          "description": "Account experience rank level"
+        },
+        "xp": {
+          "type": "number",
+          "description": "Accumulated experience points"
+        },
+        "title": {
           "type": "string",
-          "description": "Date string of last claimed daily reward (YYYY-MM-DD)",
+          "description": "Equipped rank or role title",
+          "maxLength": 64
+        },
+        "staffRole": {
+          "type": "string",
+          "description": "Assigned administrative or moderation staff role",
           "maxLength": 32
         },
-        "equippedBorder": {
+        "isAdmin": {
+          "type": "boolean",
+          "description": "Whether user has administrative staff clearance"
+        },
+        "isOwner": {
+          "type": "boolean",
+          "description": "Whether user is the platform system owner"
+        },
+        "equippedFrame": {
           "type": "string",
-          "description": "Currently equipped avatar border cosmetic",
+          "description": "Currently equipped PFP avatar border frame",
+          "maxLength": 64
+        },
+        "equippedNameGlow": {
+          "type": "string",
+          "description": "Currently equipped username glow effect CSS class",
+          "maxLength": 64
+        },
+        "equippedChatBadge": {
+          "type": "string",
+          "description": "Currently equipped chat badge tag",
           "maxLength": 64
         },
         "bio": {
           "type": "string",
           "description": "Cadet profile transmission biography",
-          "maxLength": 256
+          "maxLength": 500
         },
         "createdAt": {
           "type": "string",
@@ -88,6 +132,135 @@
         }
       },
       "required": ["id", "userId", "animeId", "title"]
+    },
+    "ChatMessage": {
+      "title": "ChatMessage",
+      "description": "Global chatroom transmission message.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique message ID",
+          "maxLength": 128
+        },
+        "sender": {
+          "type": "string",
+          "description": "Sender username",
+          "maxLength": 64
+        },
+        "senderTitle": {
+          "type": "string",
+          "description": "Role or rank title of sender",
+          "maxLength": 64
+        },
+        "senderStaffRole": {
+          "type": "string",
+          "description": "Staff role of sender",
+          "maxLength": 32
+        },
+        "senderAvatar": {
+          "type": "string",
+          "description": "Sender avatar photo or data URL"
+        },
+        "senderFrame": {
+          "type": "string",
+          "description": "Sender equipped avatar frame",
+          "maxLength": 64
+        },
+        "senderGlow": {
+          "type": "string",
+          "description": "Sender name glow CSS class",
+          "maxLength": 64
+        },
+        "senderLevel": {
+          "type": "number",
+          "description": "Sender level"
+        },
+        "isAdmin": {
+          "type": "boolean",
+          "description": "Whether sender is admin or staff"
+        },
+        "isOwner": {
+          "type": "boolean",
+          "description": "Whether sender is platform owner"
+        },
+        "message": {
+          "type": "string",
+          "description": "Message text content",
+          "maxLength": 1000
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "Formatted time string",
+          "maxLength": 32
+        },
+        "time": {
+          "type": "number",
+          "description": "Unix millisecond timestamp"
+        }
+      },
+      "required": ["id", "sender", "message"]
+    },
+    "DirectMessage": {
+      "title": "DirectMessage",
+      "description": "Peer-to-peer direct chat message.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Message ID",
+          "maxLength": 128
+        },
+        "threadKey": {
+          "type": "string",
+          "description": "Composite thread key for recipient pair",
+          "maxLength": 128
+        },
+        "sender": {
+          "type": "string",
+          "description": "Sender username",
+          "maxLength": 64
+        },
+        "recipient": {
+          "type": "string",
+          "description": "Recipient username",
+          "maxLength": 64
+        },
+        "text": {
+          "type": "string",
+          "description": "Message text",
+          "maxLength": 1000
+        },
+        "timestamp": {
+          "type": "number",
+          "description": "Epoch timestamp"
+        }
+      },
+      "required": ["id", "threadKey", "sender", "recipient", "text"]
+    },
+    "AdminConfig": {
+      "title": "AdminConfig",
+      "description": "Platform global configuration and broadcast alert.",
+      "type": "object",
+      "properties": {
+        "maintenanceMode": {
+          "type": "boolean",
+          "description": "Whether platform maintenance gateway lock is enabled"
+        },
+        "maintenanceReason": {
+          "type": "string",
+          "description": "Reason shown on maintenance screen",
+          "maxLength": 500
+        },
+        "watchMultiplier": {
+          "type": "number",
+          "description": "Stardust earning multiplier"
+        },
+        "announcement": {
+          "type": "object",
+          "description": "Active global announcement banner data"
+        }
+      }
     }
   },
   "firestore": {
@@ -95,13 +268,31 @@
       "schema": {
         "$ref": "#/entities/UserProfile"
       },
-      "description": "Stores private user profile, stardust currency, and streak info."
+      "description": "Stores user profile, stardust currency, friends, and cosmetic customization."
     },
     "/users/{userId}/favorites/{favoriteId}": {
       "schema": {
         "$ref": "#/entities/UserFavorite"
       },
       "description": "Subcollection of favorited anime titles for the user."
+    },
+    "/globalChat/{msgId}": {
+      "schema": {
+        "$ref": "#/entities/ChatMessage"
+      },
+      "description": "Global anime chatroom message broadcasts."
+    },
+    "/directMessages/{msgId}": {
+      "schema": {
+        "$ref": "#/entities/DirectMessage"
+      },
+      "description": "Direct peer-to-peer user messages."
+    },
+    "/adminConfig/{configId}": {
+      "schema": {
+        "$ref": "#/entities/AdminConfig"
+      },
+      "description": "Global platform settings and active broadcasts."
     }
   }
 }

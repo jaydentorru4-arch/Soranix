@@ -134,45 +134,69 @@ export interface UserProfileData {
   displayName: string;
   username?: string;
   email: string;
+  avatarDataUrl?: string | null;
+  bannerDataUrl?: string | null;
   stardust: number;
   streak: number;
   level?: number;
   xp?: number;
-  lastClaimedDate?: string;
+  title?: string;
+  role?: string;
+  staffRole?: string;
+  isAdmin?: boolean;
+  isOwner?: boolean;
   equippedBorder?: string;
   equippedFrame?: string;
+  equippedNameGlow?: string | null;
+  equippedChatBadge?: string | null;
+  inventory?: string[];
   bio?: string;
-  staffRole?: string;
+  friends?: string[];
+  incomingRequests?: string[];
+  outgoingRequests?: string[];
   isBanned?: boolean;
+  bannedReason?: string;
+  appealMessage?: string;
+  appealStatus?: string;
   mutedUntil?: number;
   ipSessionLog?: string;
+  lastClaimedDate?: string;
   createdAt?: string;
   updatedAt?: string;
 }
 
 // Sync or initialize user profile in Firestore
 export async function syncUserProfile(user: User): Promise<UserProfileData> {
-  const userRef = doc(db, 'users', user.uid);
+  const isOwner = (user.email || '').trim().toLowerCase() === 'jaydentorru4@gmail.com';
+  const cleanUsername = (user.displayName || (isOwner ? 'JaydenTorru' : 'Voyager')).replace(/\s+/g, '');
+  const userRef = doc(db, 'users', cleanUsername.toLowerCase());
   try {
     const snap = await getDoc(userRef);
     if (snap.exists()) {
       return snap.data() as UserProfileData;
     } else {
-      const isOwner = (user.email || '').trim().toLowerCase() === 'jaydentorru4@gmail.com';
       const newProfile: UserProfileData = {
-        id: user.uid,
+        id: cleanUsername.toLowerCase(),
         displayName: user.displayName || (isOwner ? 'JaydenTorru' : 'Starlight Voyager'),
-        username: user.displayName ? user.displayName.replace(/\s+/g, '') : (isOwner ? 'JaydenTorru' : 'Voyager'),
+        username: cleanUsername,
         email: user.email || '',
+        avatarDataUrl: user.photoURL || null,
         stardust: isOwner ? 999999 : 100,
         streak: isOwner ? 99 : 1,
         level: isOwner ? 999 : 1,
         xp: isOwner ? 99900 : 0,
+        title: isOwner ? 'System Administrator / Owner' : 'Novice Voyager',
         staffRole: isOwner ? 'owner' : '',
+        isAdmin: isOwner,
+        isOwner: isOwner,
         lastClaimedDate: '',
         equippedBorder: isOwner ? 'void' : 'Standard Voyager Frame',
         equippedFrame: isOwner ? 'void' : 'galaxy',
         bio: isOwner ? 'System Administrator & Soranix Platform Owner.' : 'Stargazing through infinite space, collecting rare celestial soundtracks, and indexing deep universe cyberpunk archives.',
+        inventory: ['frame_galaxy', 'theme_violet', 'audio_coin'],
+        friends: [],
+        incomingRequests: [],
+        outgoingRequests: [],
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
@@ -182,9 +206,9 @@ export async function syncUserProfile(user: User): Promise<UserProfileData> {
   } catch (error) {
     console.warn('Sync profile notice:', error);
     return {
-      id: user.uid,
+      id: cleanUsername.toLowerCase(),
       displayName: user.displayName || 'Voyager',
-      username: user.displayName ? user.displayName.replace(/\s+/g, '') : 'Voyager',
+      username: cleanUsername,
       email: user.email || '',
       stardust: 100,
       streak: 1
@@ -192,28 +216,42 @@ export async function syncUserProfile(user: User): Promise<UserProfileData> {
   }
 }
 
-// Save any user profile to Firestore so admin can see new registrations across devices
+// Save any user profile to Firestore so all users and admins sync across all devices
 export async function saveUserToFirestore(userData: any): Promise<void> {
   try {
-    const currentUid = auth.currentUser?.uid;
-    const cleanUsername = (userData.username || userData.displayName || 'user').toLowerCase().replace(/[^a-zA-Z0-9_-]/g, '_');
-    const docId = userData.uid || userData.id || (cleanUsername !== 'user' ? cleanUsername : null) || currentUid || ('user_' + Date.now());
+    const cleanUsername = (userData.username || userData.displayName || 'user').trim().toLowerCase().replace(/[^a-zA-Z0-9_-]/g, '_');
+    const docId = cleanUsername;
     const userRef = doc(db, 'users', docId);
 
     const payload: UserProfileData = {
       id: docId,
-      displayName: userData.username || userData.displayName || 'Voyager',
+      displayName: userData.displayName || userData.username || 'Voyager',
       username: userData.username || userData.displayName || 'Voyager',
       email: userData.email || '',
+      avatarDataUrl: userData.avatarDataUrl || userData.photoURL || null,
+      bannerDataUrl: userData.bannerDataUrl || null,
       stardust: typeof userData.stardust === 'number' ? userData.stardust : 0,
       streak: typeof userData.streakDays === 'number' ? userData.streakDays : (userData.streak || 0),
       level: userData.level || 1,
       xp: userData.xp || 0,
-      bio: (userData.bio || '').slice(0, 250),
+      title: userData.title || 'Novice Voyager',
+      role: userData.role || userData.staffRole || '',
+      staffRole: userData.staffRole || userData.role || '',
+      isAdmin: !!userData.isAdmin,
+      isOwner: !!userData.isOwner,
       equippedBorder: userData.equippedFrame || 'galaxy',
       equippedFrame: userData.equippedFrame || 'galaxy',
-      staffRole: userData.staffRole || '',
+      equippedNameGlow: userData.equippedNameGlow || null,
+      equippedChatBadge: userData.equippedChatBadge || null,
+      inventory: Array.isArray(userData.inventory) ? userData.inventory : ['frame_galaxy', 'theme_violet', 'audio_coin'],
+      bio: (userData.bio || '').slice(0, 500),
+      friends: Array.isArray(userData.friends) ? userData.friends : [],
+      incomingRequests: Array.isArray(userData.incomingRequests) ? userData.incomingRequests : [],
+      outgoingRequests: Array.isArray(userData.outgoingRequests) ? userData.outgoingRequests : [],
       isBanned: !!userData.isBanned,
+      bannedReason: userData.bannedReason || '',
+      appealMessage: userData.appealMessage || '',
+      appealStatus: userData.appealStatus || '',
       mutedUntil: userData.mutedUntil || 0,
       ipSessionLog: userData.ipSessionLog || 'Web Session • Active',
       createdAt: userData.createdAt || new Date().toISOString(),
@@ -226,7 +264,7 @@ export async function saveUserToFirestore(userData: any): Promise<void> {
   }
 }
 
-// Fetch all registered users from Firestore for the Admin Panel
+// Fetch all registered users from Firestore
 export async function fetchAllUsers(): Promise<UserProfileData[]> {
   try {
     const usersCol = collection(db, 'users');
@@ -237,7 +275,7 @@ export async function fetchAllUsers(): Promise<UserProfileData[]> {
     });
     return users;
   } catch (error) {
-    console.warn('fetchAllUsers notice (admin clearance required or network):', error);
+    console.warn('fetchAllUsers notice:', error);
     return [];
   }
 }
@@ -255,7 +293,7 @@ export async function updateUserProfile(userId: string, data: Partial<UserProfil
   }
 }
 
-// Listen to real-time updates for user profile
+// Listen to real-time updates for single user profile
 export function subscribeToUserProfile(userId: string, onUpdate: (data: UserProfileData) => void): Unsubscribe {
   const userRef = doc(db, 'users', userId);
   return onSnapshot(userRef, (docSnap) => {
@@ -266,3 +304,113 @@ export function subscribeToUserProfile(userId: string, onUpdate: (data: UserProf
     console.warn(`subscribeToUserProfile notice for users/${userId}:`, error);
   });
 }
+
+// Listen to real-time updates for ALL users across devices & browsers
+export function subscribeToAllUsers(onUpdate: (users: UserProfileData[]) => void): Unsubscribe {
+  const usersCol = collection(db, 'users');
+  return onSnapshot(usersCol, (snap) => {
+    const users: UserProfileData[] = [];
+    snap.forEach((d) => {
+      users.push(d.data() as UserProfileData);
+    });
+    onUpdate(users);
+  }, (error) => {
+    console.warn('subscribeToAllUsers notice:', error);
+  });
+}
+
+// Listen to real-time updates for Global Chat across devices & browsers
+export function subscribeToGlobalChat(onUpdate: (messages: any[]) => void): Unsubscribe {
+  const chatCol = collection(db, 'globalChat');
+  return onSnapshot(chatCol, (snap) => {
+    const msgs: any[] = [];
+    snap.forEach((d) => {
+      msgs.push({ id: d.id, ...d.data() });
+    });
+    msgs.sort((a, b) => (a.time || 0) - (b.time || 0));
+    onUpdate(msgs);
+  }, (error) => {
+    console.warn('subscribeToGlobalChat notice:', error);
+  });
+}
+
+// Send real-time Global Chat message to Firestore
+export async function sendFirestoreChatMessage(msgData: any): Promise<void> {
+  try {
+    const msgId = msgData.id || `msg_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`;
+    const msgRef = doc(db, 'globalChat', msgId);
+    await setDoc(msgRef, {
+      ...msgData,
+      id: msgId,
+      time: msgData.time || Date.now()
+    });
+  } catch (error) {
+    console.warn('sendFirestoreChatMessage notice:', error);
+  }
+}
+
+// Purge all Global Chat messages from Firestore
+export async function purgeFirestoreChat(): Promise<void> {
+  try {
+    const chatCol = collection(db, 'globalChat');
+    const snap = await getDocs(chatCol);
+    const deleteDocModule = await import('firebase/firestore');
+    const promises = snap.docs.map(d => deleteDocModule.deleteDoc(d.ref));
+    await Promise.all(promises);
+  } catch (error) {
+    console.warn('purgeFirestoreChat notice:', error);
+  }
+}
+
+// Listen to real-time updates for Direct Messages across devices & browsers
+export function subscribeToDirectMessages(onUpdate: (messages: any[]) => void): Unsubscribe {
+  const dmCol = collection(db, 'directMessages');
+  return onSnapshot(dmCol, (snap) => {
+    const msgs: any[] = [];
+    snap.forEach((d) => {
+      msgs.push({ id: d.id, ...d.data() });
+    });
+    msgs.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
+    onUpdate(msgs);
+  }, (error) => {
+    console.warn('subscribeToDirectMessages notice:', error);
+  });
+}
+
+// Send Direct Message to Firestore
+export async function sendFirestoreDirectMessage(dmData: any): Promise<void> {
+  try {
+    const msgId = dmData.id || `dm_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`;
+    const dmRef = doc(db, 'directMessages', msgId);
+    await setDoc(dmRef, {
+      ...dmData,
+      id: msgId,
+      timestamp: dmData.timestamp || Date.now()
+    });
+  } catch (error) {
+    console.warn('sendFirestoreDirectMessage notice:', error);
+  }
+}
+
+// Listen to Admin Platform Config updates (announcements & maintenance mode)
+export function subscribeToAdminConfig(onUpdate: (config: any) => void): Unsubscribe {
+  const configRef = doc(db, 'adminConfig', 'main');
+  return onSnapshot(configRef, (docSnap) => {
+    if (docSnap.exists()) {
+      onUpdate(docSnap.data());
+    }
+  }, (error) => {
+    console.warn('subscribeToAdminConfig notice:', error);
+  });
+}
+
+// Save Admin Platform Config to Firestore
+export async function saveAdminConfigToFirestore(cfg: any): Promise<void> {
+  try {
+    const configRef = doc(db, 'adminConfig', 'main');
+    await setDoc(configRef, cfg, { merge: true });
+  } catch (error) {
+    console.warn('saveAdminConfigToFirestore notice:', error);
+  }
+}
+

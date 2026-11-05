@@ -157,6 +157,20 @@
       justify-content: center;
       border-radius: 9999px;
     }
+    .pfp-frame-container::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 9999px;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .frame-default {
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: 9999px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    }
 
     .frame-standard {
       border: 2px solid rgba(255, 255, 255, 0.2);
@@ -1936,6 +1950,19 @@
                 <p class="text-xs font-semibold text-slate-300">All caught up, Voyager!</p>
                 <p class="text-[11px] text-slate-500">No unread alerts or transmission requests.</p>
               </div>
+
+              <!-- Notifications Footer with Clear All Button -->
+              <div class="pt-2 mt-2 border-t border-white/5 flex items-center justify-between">
+                <span class="text-[10px] text-slate-500 font-mono">Transmission Feed</span>
+                <button 
+                  onclick="clearAllNotifications()" 
+                  class="px-3 py-1.5 rounded-xl text-xs font-semibold text-red-400 hover:text-red-300 bg-red-950/40 hover:bg-red-900/60 border border-red-500/30 transition-all cursor-pointer flex items-center gap-1.5"
+                  title="Clear all alerts"
+                >
+                  <i class="fa-solid fa-trash-can text-[10px]"></i>
+                  <span>Clear All</span>
+                </button>
+              </div>
             </div>
           </div>
 
@@ -2261,18 +2288,21 @@
           <!-- Catalog Search Bar & Category Filter Engine -->
           <div class="space-y-4">
             
-            <!-- Global Catalog Search Bar (300ms Debounce) -->
+            <!-- Global Catalog Search Bar (300ms Debounce) with Persistent Search History -->
             <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-              <div class="relative flex-1">
+              <div class="relative flex-1" id="anime-search-container">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
                   <i class="fa-solid fa-magnifying-glass text-xs"></i>
                 </span>
                 <input 
                   id="anime-catalog-search" 
                   type="text" 
+                  autocomplete="off"
                   placeholder="Search over 10,000+ anime titles across the galaxy (Naruto, Frieren, Bleach, Steins;Gate...)" 
                   class="w-full pl-10 pr-10 py-3 text-xs bg-[#07050e]/95 border border-purple-500/30 rounded-2xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400 transition-all shadow-inner"
                   oninput="handleAnimeCatalogSearchInput(this.value)"
+                  onfocus="showAnimeSearchHistoryDropdown()"
+                  onkeydown="handleAnimeSearchKeydown(event)"
                 />
                 <button 
                   id="anime-search-clear-btn"
@@ -2282,6 +2312,30 @@
                 >
                   <i class="fa-solid fa-circle-xmark text-sm"></i>
                 </button>
+
+                <!-- Persistent Search History Dropdown -->
+                <div 
+                  id="anime-search-history-dropdown" 
+                  class="hidden absolute top-full left-0 right-0 mt-2 z-40 glass-card rounded-2xl p-2.5 shadow-2xl border border-purple-500/30 backdrop-blur-2xl transition-all"
+                >
+                  <div class="flex items-center justify-between px-2.5 py-1.5 border-b border-white/5 text-[11px] font-bold text-slate-400">
+                    <span class="flex items-center gap-1.5 text-purple-300">
+                      <i class="fa-solid fa-clock-rotate-left text-[10px]"></i>
+                      <span>Recent Searches</span>
+                    </span>
+                    <button 
+                      type="button" 
+                      onclick="clearAllAnimeSearchHistory(event)" 
+                      class="text-[10px] text-red-400 hover:text-red-300 transition-colors cursor-pointer flex items-center gap-1"
+                    >
+                      <i class="fa-solid fa-trash-can text-[9px]"></i>
+                      <span>Clear All</span>
+                    </button>
+                  </div>
+                  <div id="anime-search-history-list" class="mt-1 space-y-0.5 max-h-60 overflow-y-auto custom-scrollbar">
+                    <!-- Populated dynamically via JS -->
+                  </div>
+                </div>
               </div>
 
               <!-- Refresh Catalog Button -->
@@ -4666,7 +4720,16 @@
       testConnection,
       app,
       db,
-      googleProvider
+      googleProvider,
+      subscribeToUserProfile,
+      subscribeToAllUsers,
+      subscribeToGlobalChat,
+      sendFirestoreChatMessage,
+      purgeFirestoreChat,
+      subscribeToDirectMessages,
+      sendFirestoreDirectMessage,
+      subscribeToAdminConfig,
+      saveAdminConfigToFirestore
     } from '/src/firebase.ts';
     import { onAuthStateChanged } from 'firebase/auth';
 
@@ -5109,8 +5172,14 @@
         admin: $('nav-tab-btn-admin')
       };
 
+      const hasAdminClearance = !AppState.isGuest && checkIsAdmin(AppState.user);
+
       Object.entries(btnMap).forEach(([k, btn]) => {
         if (!btn) return;
+        if (k === 'admin' && !hasAdminClearance) {
+          btn.className = 'sidebar-tab-btn hidden';
+          return;
+        }
         if (k === tabName) {
           if (k === 'admin') {
             btn.className = 'sidebar-tab-btn w-11 h-11 rounded-2xl flex items-center justify-center text-white bg-red-600 shadow-[0_0_20px_rgba(239,68,68,0.4)] transition-all cursor-pointer relative';
@@ -5589,6 +5658,15 @@
       const users = getUsersDB();
       users[AppState.currentUserKey] = { ...AppState.user };
       saveUsersDB(users);
+
+      // Async sync to Firestore across all devices and browsers
+      try {
+        saveUserToFirestore(AppState.user).catch((err) => {
+          console.warn('saveUserToFirestore sync notice:', err);
+        });
+      } catch (e) {
+        console.warn('saveUserToFirestore trigger notice:', e);
+      }
     }
 
     // ----------------------------------------------------
@@ -5625,12 +5703,33 @@
       const flyoutName = $('flyout-username');
       const flyoutRank = $('flyout-rank');
 
-      if (nameEl) nameEl.textContent = u.username;
+      const glowClass = (!AppState.isGuest && u.equippedNameGlow) ? u.equippedNameGlow : '';
+      const allGlowClasses = ['name-glow-cyan','name-glow-gold','name-glow-crimson','name-glow-purple','name-glow-emerald','name-glow-pink','name-glow-rainbow','name-glow-ice','name-glow-fire','name-glow-white','name-glow-lime','name-glow-lavender'];
+
+      if (nameEl) {
+        nameEl.textContent = u.username;
+        nameEl.classList.remove(...allGlowClasses);
+        if (glowClass) nameEl.classList.add(glowClass);
+      }
       if (bioEl) bioEl.textContent = u.bio;
-      if (titleEl) titleEl.textContent = AppState.isGuest ? 'Guest Explorer' : u.title;
-      if (headerDisplay) headerDisplay.textContent = AppState.isGuest ? 'Guest Explorer' : u.username;
-      if (flyoutName) flyoutName.textContent = u.username;
-      if (flyoutRank) flyoutRank.textContent = AppState.isGuest ? 'Guest (Account Required)' : u.title;
+      if (titleEl) {
+        const badgePrefix = (!AppState.isGuest && u.equippedChatBadge) ? `[${u.equippedChatBadge}] ` : '';
+        titleEl.textContent = AppState.isGuest ? 'Guest Explorer' : `${badgePrefix}${u.title}`;
+      }
+      if (headerDisplay) {
+        headerDisplay.textContent = AppState.isGuest ? 'Guest Explorer' : u.username;
+        headerDisplay.classList.remove(...allGlowClasses);
+        if (glowClass) headerDisplay.classList.add(glowClass);
+      }
+      if (flyoutName) {
+        flyoutName.textContent = u.username;
+        flyoutName.classList.remove(...allGlowClasses);
+        if (glowClass) flyoutName.classList.add(glowClass);
+      }
+      if (flyoutRank) {
+        const badgePrefix = (!AppState.isGuest && u.equippedChatBadge) ? `[${u.equippedChatBadge}] ` : '';
+        flyoutRank.textContent = AppState.isGuest ? 'Guest (Account Required)' : `${badgePrefix}${u.title}`;
+      }
 
       // 2. Avatar Display
       const sBadge = $('default-s-badge');
@@ -5665,11 +5764,12 @@
       // 4. Equipped Frame
       const frameWrapper = $('pfp-frame-wrapper');
       const flyoutFrameWrapper = $('flyout-frame-wrapper');
+      const curFrame = AppState.isGuest ? 'default' : (u.equippedFrame || 'galaxy');
       if (frameWrapper) {
-        frameWrapper.className = `pfp-frame-container frame-${AppState.isGuest ? 'default' : u.equippedFrame} p-1.5 transition-all duration-300`;
+        frameWrapper.className = `pfp-frame-container frame-${curFrame} p-1.5 transition-all duration-300`;
       }
       if (flyoutFrameWrapper) {
-        flyoutFrameWrapper.className = `pfp-frame-container frame-${AppState.isGuest ? 'default' : u.equippedFrame} p-0.5 shrink-0 transition-all duration-300`;
+        flyoutFrameWrapper.className = `pfp-frame-container frame-${curFrame} p-0.5 shrink-0 transition-all duration-300`;
       }
 
       // 5. XP Progress Bar & Level
@@ -7391,6 +7491,13 @@
       msgs.push(newMsg);
       saveGlobalChatMessages(msgs);
 
+      // Transmit to Firestore real-time collection
+      try {
+        sendFirestoreChatMessage(newMsg).catch(err => console.warn('sendFirestoreChatMessage notice:', err));
+      } catch (e) {
+        console.warn('sendFirestoreChatMessage error:', e);
+      }
+
       input.value = '';
       SoranixAudio.play('laser');
       renderGlobalChatMessages();
@@ -7421,7 +7528,6 @@
       }
     }
 
-    // ====================================================
     // 18. MEMBER PROFILE PREVIEW MODAL
     // ====================================================
     function openUserProfilePreviewModal(targetUsername) {
@@ -7429,14 +7535,23 @@
       AppState.previewTargetUser = targetUsername;
 
       const users = getUsersDB();
-      const targetUser = users[targetUsername.toLowerCase()] || {
-        username: targetUsername,
-        title: 'Cosmic Voyager',
-        level: 8,
-        bio: 'Cruising through anime stargates, compiling stellar soundtracks.',
-        animeWatched: 42,
-        equippedFrame: 'galaxy'
-      };
+      const targetKey = targetUsername.toLowerCase().trim();
+      let targetUser = users[targetKey];
+
+      // If not in local usersDB, check if we have data cached in window.currentChatAvatars or create a clean voyager profile
+      if (!targetUser) {
+        const cached = (window.currentChatAvatars && window.currentChatAvatars[targetKey]) || null;
+        targetUser = {
+          username: targetUsername,
+          title: cached?.title || 'Cosmic Voyager',
+          level: cached?.level || 1,
+          bio: 'Cruising through anime stargates, compiling stellar soundtracks.',
+          animeWatched: 0,
+          equippedFrame: cached?.frame || 'galaxy',
+          equippedNameGlow: cached?.glow || null,
+          avatarDataUrl: cached?.avatar || null
+        };
+      }
 
       const modal = $('user-profile-preview-modal');
       const nameEl = $('preview-modal-username');
@@ -7450,30 +7565,39 @@
       const btnFriendText = $('preview-modal-btn-friend-text');
       const btnFriend = $('preview-modal-btn-friend');
 
-      if (nameEl) nameEl.textContent = targetUser.username;
+      const allGlowClasses = ['name-glow-cyan','name-glow-gold','name-glow-crimson','name-glow-purple','name-glow-emerald','name-glow-pink','name-glow-rainbow','name-glow-ice','name-glow-fire','name-glow-white','name-glow-lime','name-glow-lavender'];
+
+      if (nameEl) {
+        nameEl.textContent = targetUser.username;
+        nameEl.classList.remove(...allGlowClasses);
+        if (targetUser.equippedNameGlow) {
+          nameEl.classList.add(targetUser.equippedNameGlow);
+        }
+      }
       if (titleEl) titleEl.textContent = targetUser.title || 'Novice Voyager';
       if (bioEl) bioEl.textContent = targetUser.bio || 'Exploring the anime multiverse.';
       if (lvlEl) lvlEl.textContent = `Lv ${targetUser.level || 1}`;
       if (animeEl) animeEl.textContent = targetUser.animeWatched || 0;
 
       if (frameEl) {
-        frameEl.className = `pfp-frame-container frame-${targetUser.equippedFrame || 'galaxy'} p-1 mb-3`;
+        frameEl.className = `pfp-frame-container frame-${targetUser.equippedFrame || 'galaxy'} p-1 mb-3 rounded-full`;
       }
 
-      if (targetUser.avatarDataUrl && imgEl && sBadge) {
-        imgEl.src = targetUser.avatarDataUrl;
+      const avatarSrc = targetUser.avatarDataUrl || targetUser.photoURL || null;
+      if (avatarSrc && imgEl && sBadge) {
+        imgEl.src = avatarSrc;
         imgEl.classList.remove('hidden');
         sBadge.classList.add('hidden');
       } else if (imgEl && sBadge) {
         imgEl.classList.add('hidden');
         sBadge.classList.remove('hidden');
-        sBadge.textContent = targetUser.username[0].toUpperCase();
+        sBadge.textContent = (targetUser.username[0] || 'V').toUpperCase();
       }
 
       // Configure Friend Button State
       const isSelf = !AppState.isGuest && targetUser.username.toLowerCase() === AppState.user.username.toLowerCase();
-      const isFriend = (AppState.user.friends || []).includes(targetUser.username);
-      const isPending = (AppState.user.outgoingRequests || []).includes(targetUser.username);
+      const isFriend = (AppState.user.friends || []).some(f => f.toLowerCase() === targetUser.username.toLowerCase());
+      const isPending = (AppState.user.outgoingRequests || []).some(f => f.toLowerCase() === targetUser.username.toLowerCase());
 
       if (btnFriend && btnFriendText) {
         if (isSelf) {
@@ -7836,19 +7960,27 @@
       }
 
       const users = getUsersDB();
-      const targetUser = users[cleanTarget.toLowerCase()];
+      const targetKey = cleanTarget.toLowerCase();
+      let targetUser = users[targetKey];
 
+      // If user is from another device/browser or chat and not yet in local usersDB, construct an account record
       if (!targetUser) {
-        showToast(`No voyager account found matching "${cleanTarget}".`, 'error');
-        return;
+        const cached = (window.currentChatAvatars && window.currentChatAvatars[targetKey]) || null;
+        targetUser = createInitialUser(cleanTarget);
+        if (cached) {
+          targetUser.avatarDataUrl = cached.avatar || null;
+          targetUser.equippedFrame = cached.frame || 'galaxy';
+          targetUser.level = cached.level || 1;
+        }
+        users[targetKey] = targetUser;
       }
 
-      if ((AppState.user.friends || []).includes(targetUser.username)) {
+      if ((AppState.user.friends || []).some(f => f.toLowerCase() === cleanTarget.toLowerCase())) {
         showToast(`You and ${targetUser.username} are already cosmic friends!`, 'info');
         return;
       }
 
-      if ((AppState.user.outgoingRequests || []).includes(targetUser.username)) {
+      if ((AppState.user.outgoingRequests || []).some(f => f.toLowerCase() === cleanTarget.toLowerCase())) {
         showToast(`Friend request already sent to ${targetUser.username}. Awaiting response.`, 'info');
         return;
       }
@@ -7860,11 +7992,16 @@
 
       // Add to target user's incoming requests
       if (!targetUser.incomingRequests) targetUser.incomingRequests = [];
-      if (!targetUser.incomingRequests.includes(currentUsername)) {
+      if (!targetUser.incomingRequests.some(u => u.toLowerCase() === currentUsername.toLowerCase())) {
         targetUser.incomingRequests.push(currentUsername);
       }
-      users[cleanTarget.toLowerCase()] = targetUser;
+      users[targetKey] = targetUser;
       saveUsersDB(users);
+
+      // Async sync recipient to Firestore across devices
+      try {
+        saveUserToFirestore(targetUser).catch(err => console.warn('Target user friend sync notice:', err));
+      } catch (e) {}
 
       // Add notification for the recipient
       addNotification(targetUser.username, {
@@ -7895,6 +8032,12 @@
       }
       saveUserToLocalStorage();
 
+      // Immediately remove the friend_request notification object
+      const currentNotifs = getNotifications(currentUsername);
+      const cleanedNotifs = currentNotifs.filter(n => !(n.type === 'friend_request' && n.body && n.body.toLowerCase().includes(senderKey)));
+      saveNotifications(currentUsername, cleanedNotifs);
+      renderNotificationsUI();
+
       // Update sender account
       if (senderUser) {
         senderUser.outgoingRequests = (senderUser.outgoingRequests || []).filter(u => u.toLowerCase() !== currentUsername.toLowerCase());
@@ -7904,6 +8047,9 @@
         }
         users[senderKey] = senderUser;
         saveUsersDB(users);
+        try {
+          saveUserToFirestore(senderUser).catch(e => console.warn('sender sync notice:', e));
+        } catch (e) {}
 
         addNotification(senderUsername, {
           type: 'friend_accept',
@@ -7930,11 +8076,20 @@
       AppState.user.outgoingRequests = (AppState.user.outgoingRequests || []).filter(u => u.toLowerCase() !== senderKey);
       saveUserToLocalStorage();
 
+      // Immediately delete the friend_request notification object
+      const currentNotifs = getNotifications(currentUsername);
+      const cleanedNotifs = currentNotifs.filter(n => !(n.type === 'friend_request' && n.body && n.body.toLowerCase().includes(senderKey)));
+      saveNotifications(currentUsername, cleanedNotifs);
+      renderNotificationsUI();
+
       if (senderUser) {
         senderUser.outgoingRequests = (senderUser.outgoingRequests || []).filter(u => u.toLowerCase() !== currentUsername.toLowerCase());
         senderUser.incomingRequests = (senderUser.incomingRequests || []).filter(u => u.toLowerCase() !== currentUsername.toLowerCase());
         users[senderKey] = senderUser;
         saveUsersDB(users);
+        try {
+          saveUserToFirestore(senderUser).catch(e => console.warn('sender decline sync notice:', e));
+        } catch (e) {}
       }
 
       updateStatsCounters();
@@ -8511,6 +8666,10 @@
           statusPill = `<span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-amber-950 text-amber-300 border border-amber-500/40">Muted (${remainingMins}m left)</span>`;
         }
 
+        const isPrimaryOwner = isOwner(u);
+        const hasStaffRole = !isPrimaryOwner && (u.role || u.staffRole);
+        const displayRole = isPrimaryOwner ? 'OWNER' : (u.role || u.staffRole || '').toUpperCase();
+
         return `
           <div class="glass-card rounded-2xl p-4 border border-white/5 hover:border-purple-500/30 transition-all flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             
@@ -8524,7 +8683,7 @@
               <div class="min-w-0">
                 <div class="flex items-center gap-2 flex-wrap">
                   <h4 class="text-sm font-bold text-white truncate ${u.equippedNameGlow || ''}">${u.username}</h4>
-                  ${isOwner ? `<span class="px-2 py-0.2 rounded-full text-[9px] font-mono font-extrabold bg-red-950 text-red-300 border border-red-500/40">OWNER</span>` : ''}
+                  ${isPrimaryOwner ? `<span class="px-2 py-0.2 rounded-full text-[9px] font-mono font-extrabold bg-red-950 text-red-300 border border-red-500/40">OWNER</span>` : (hasStaffRole ? `<span class="px-2 py-0.2 rounded-full text-[9px] font-mono font-bold bg-purple-950 text-purple-300 border border-purple-500/40">${displayRole}</span>` : '')}
                   ${statusPill}
                 </div>
                 <div class="text-[11px] text-slate-400 flex items-center gap-2 mt-0.5 flex-wrap">
@@ -8533,6 +8692,8 @@
                   <span class="text-purple-300 font-mono">Lv ${u.level || 1}</span>
                   <span>&bull;</span>
                   <span class="text-amber-300 font-mono">${(u.stardust || 0).toLocaleString()} Stardust</span>
+                  <span>&bull;</span>
+                  <span class="text-cyan-300 font-medium">${u.title || 'Novice Voyager'}</span>
                 </div>
                 <div class="text-[10px] text-slate-500 font-mono mt-1">
                   <i class="fa-solid fa-network-wired text-[9px] mr-1"></i> ${u.ipSessionLog || '192.168.1.104 • Linux Chrome • Active'}
@@ -8656,6 +8817,10 @@
 
       users[key] = u;
       saveUsersDB(users);
+      try {
+        saveUserToFirestore(u).catch(e => console.warn('Ban status Firestore sync notice:', e));
+      } catch (e) {}
+
       renderAdminUsersList();
       SoranixAudio.play('sword');
       showToast(`${username} is now ${u.isBanned ? 'BANNED from Soranix' : 'UNBANNED'}.`, u.isBanned ? 'error' : 'success');
@@ -8815,6 +8980,16 @@
       users[targetKey] = targetUser;
       saveUsersDB(users);
 
+      addNotification(targetUser.username, {
+        title: 'Balance Overridden by Admin',
+        body: `Your Stardust coin balance has been overridden by an Admin. New balance: ${targetUser.stardust.toLocaleString()} Stardust.`,
+        type: 'level_up'
+      });
+
+      try {
+        saveUserToFirestore(targetUser).catch(e => console.warn('Coin override Firestore sync notice:', e));
+      } catch (e) {}
+
       if (!AppState.isGuest && AppState.currentUserKey === targetKey) {
         AppState.user.stardust = targetUser.stardust;
         updateViewableProfileUI();
@@ -8846,6 +9021,16 @@
 
       users[targetKey] = targetUser;
       saveUsersDB(users);
+
+      addNotification(targetUser.username, {
+        title: 'Level Overridden by Admin',
+        body: `Your level has been overridden by an Admin. New Level: Level ${newLvl} (${targetUser.title}).`,
+        type: 'level_up'
+      });
+
+      try {
+        saveUserToFirestore(targetUser).catch(e => console.warn('Level override Firestore sync notice:', e));
+      } catch (e) {}
 
       if (!AppState.isGuest && AppState.currentUserKey === targetKey) {
         AppState.user.level = targetUser.level;
@@ -8879,6 +9064,16 @@
 
       users[targetKey] = targetUser;
       saveUsersDB(users);
+
+      addNotification(targetUser.username, {
+        title: 'XP Overridden by Admin',
+        body: `Your account received +${addAmount} XP from an Admin. Current Level: ${targetUser.level}.`,
+        type: 'level_up'
+      });
+
+      try {
+        saveUserToFirestore(targetUser).catch(e => console.warn('XP add Firestore sync notice:', e));
+      } catch (e) {}
 
       if (!AppState.isGuest && AppState.currentUserKey === targetKey) {
         AppState.user.level = targetUser.level;
@@ -9072,6 +9267,10 @@
     }
 
     function adminPurgeGlobalChat() {
+      if (!isOwner(AppState.user) && !checkIsAdmin(AppState.user)) {
+        showToast('Permission Denied: Only Admins and Staff can purge Global Chat.', 'error');
+        return;
+      }
       if (!confirm('Are you sure you want to permanently purge all Global Chat history? This will clear the chatroom for everyone immediately.')) {
         return;
       }
@@ -9079,6 +9278,13 @@
       renderGlobalChatMessages();
       const countEl = $('admin-stat-total-msgs');
       if (countEl) countEl.textContent = '0';
+
+      try {
+        purgeFirestoreChat().catch(e => console.warn('purgeFirestoreChat notice:', e));
+      } catch (e) {
+        console.warn('purgeFirestoreChat trigger notice:', e);
+      }
+
       showToast('Global chat wiped clean by Administrator.', 'success');
       SoranixAudio.play('sword');
     }
@@ -9086,10 +9292,8 @@
     // ====================================================
     // 21. REAL-TIME CROSS-TAB SYNC EVENT LISTENER
     // ====================================================
+    // Note: Global chat is strictly synchronized via Firestore onSnapshot for cross-browser sync
     window.addEventListener('storage', (e) => {
-      if (e.key === GLOBAL_CHAT_KEY && AppState.isGlobalChatOpen) {
-        renderGlobalChatMessages();
-      }
       if (e.key === DM_THREADS_KEY && AppState.activeDMFriend) {
         renderDMConversation();
       }
@@ -9573,6 +9777,141 @@
       }).join('');
     }
 
+    const ANIME_SEARCH_HISTORY_KEY = 'soranix_anime_search_history';
+
+    function getAnimeSearchHistory() {
+      try {
+        const raw = localStorage.getItem(ANIME_SEARCH_HISTORY_KEY);
+        return raw ? JSON.parse(raw) : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveAnimeSearchHistory(history) {
+      try {
+        localStorage.setItem(ANIME_SEARCH_HISTORY_KEY, JSON.stringify(history.slice(0, 10)));
+      } catch (e) {
+        console.warn('Search history save notice:', e);
+      }
+    }
+
+    function addAnimeSearchTermToHistory(term) {
+      if (!term || !term.trim()) return;
+      const cleanTerm = term.trim();
+      let history = getAnimeSearchHistory();
+      // Remove duplicate if already exists (case-insensitive)
+      history = history.filter(item => item.toLowerCase() !== cleanTerm.toLowerCase());
+      // Prepend to top
+      history.unshift(cleanTerm);
+      saveAnimeSearchHistory(history);
+      renderAnimeSearchHistoryDropdown();
+    }
+
+    function removeAnimeSearchTermFromHistory(event, term) {
+      if (event) event.stopPropagation();
+      let history = getAnimeSearchHistory();
+      history = history.filter(item => item.toLowerCase() !== term.toLowerCase());
+      saveAnimeSearchHistory(history);
+      renderAnimeSearchHistoryDropdown();
+    }
+
+    function clearAllAnimeSearchHistory(event) {
+      if (event) event.stopPropagation();
+      localStorage.removeItem(ANIME_SEARCH_HISTORY_KEY);
+      renderAnimeSearchHistoryDropdown();
+      showToast('Search history cleared.', 'info');
+    }
+
+    function renderAnimeSearchHistoryDropdown() {
+      const dropdown = $('anime-search-history-dropdown');
+      const list = $('anime-search-history-list');
+      if (!dropdown || !list) return;
+
+      const history = getAnimeSearchHistory();
+
+      if (history.length === 0) {
+        list.innerHTML = `
+          <div class="py-4 text-center text-slate-400 text-xs flex flex-col items-center justify-center gap-1.5">
+            <i class="fa-solid fa-clock-rotate-left text-slate-500 text-sm"></i>
+            <span>No recent searches yet</span>
+          </div>
+        `;
+        return;
+      }
+
+      list.innerHTML = history.map((term, idx) => {
+        const escaped = term.replace(/"/g, '&quot;');
+        return `
+          <div 
+            onclick="selectAnimeSearchHistoryItem('${escaped}')"
+            class="group flex items-center justify-between px-3 py-2 rounded-xl text-xs text-slate-300 hover:text-white hover:bg-purple-950/40 hover:border-purple-500/30 border border-transparent transition-all cursor-pointer"
+          >
+            <div class="flex items-center gap-2.5 truncate flex-1 mr-2">
+              <i class="fa-solid fa-clock text-[10px] text-purple-400/70 group-hover:text-purple-300 shrink-0"></i>
+              <span class="truncate font-medium text-slate-200 group-hover:text-white">${escaped}</span>
+            </div>
+            <button 
+              type="button" 
+              onclick="removeAnimeSearchTermFromHistory(event, '${escaped}')" 
+              class="opacity-0 group-hover:opacity-100 p-1 text-slate-500 hover:text-red-400 transition-all cursor-pointer shrink-0"
+              title="Remove from history"
+            >
+              <i class="fa-solid fa-xmark text-xs"></i>
+            </button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function showAnimeSearchHistoryDropdown() {
+      const dropdown = $('anime-search-history-dropdown');
+      if (!dropdown) return;
+      renderAnimeSearchHistoryDropdown();
+      dropdown.classList.remove('hidden');
+    }
+
+    function hideAnimeSearchHistoryDropdown() {
+      const dropdown = $('anime-search-history-dropdown');
+      if (dropdown) dropdown.classList.add('hidden');
+    }
+
+    function selectAnimeSearchHistoryItem(term) {
+      const input = $('anime-catalog-search');
+      if (input) {
+        input.value = term;
+      }
+      const clearBtn = $('anime-search-clear-btn');
+      if (clearBtn) clearBtn.classList.remove('hidden');
+
+      hideAnimeSearchHistoryDropdown();
+      fetchAniListCatalog({ search: term });
+      addAnimeSearchTermToHistory(term);
+    }
+
+    function handleAnimeSearchKeydown(event) {
+      if (event.key === 'Enter') {
+        const input = $('anime-catalog-search');
+        const val = input ? input.value.trim() : '';
+        if (val) {
+          addAnimeSearchTermToHistory(val);
+          clearTimeout(catalogSearchDebounceTimer);
+          fetchAniListCatalog({ search: val });
+          hideAnimeSearchHistoryDropdown();
+        }
+      } else if (event.key === 'Escape') {
+        hideAnimeSearchHistoryDropdown();
+      }
+    }
+
+    // Close search history dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      const container = $('anime-search-container');
+      if (container && !container.contains(e.target)) {
+        hideAnimeSearchHistoryDropdown();
+      }
+    });
+
     function handleAnimeCatalogSearchInput(val) {
       const clearBtn = $('anime-search-clear-btn');
       if (clearBtn) {
@@ -9580,10 +9919,19 @@
         else clearBtn.classList.add('hidden');
       }
 
+      if (val && val.trim().length > 0) {
+        hideAnimeSearchHistoryDropdown();
+      } else {
+        showAnimeSearchHistoryDropdown();
+      }
+
       clearTimeout(catalogSearchDebounceTimer);
       catalogSearchDebounceTimer = setTimeout(() => {
+        if (val && val.trim().length >= 2) {
+          addAnimeSearchTermToHistory(val);
+        }
         fetchAniListCatalog({ search: val });
-      }, 300);
+      }, 350);
     }
 
     function clearAnimeCatalogSearch() {
@@ -9592,6 +9940,7 @@
       const clearBtn = $('anime-search-clear-btn');
       if (clearBtn) clearBtn.classList.add('hidden');
       fetchAniListCatalog({ search: '' });
+      showAnimeSearchHistoryDropdown();
     }
 
     function setAnimeCatalogCategory(category) {
@@ -11568,6 +11917,17 @@
       const username = AppState.user.username;
       saveNotifications(username, []);
       renderNotificationsUI();
+
+      // Empty notifications array in user's Firestore document
+      try {
+        if (AppState.user) {
+          AppState.user.notifications = [];
+          saveUserToFirestore(AppState.user).catch(e => console.warn('Clear notifications Firestore sync notice:', e));
+        }
+      } catch (e) {
+        console.warn('Clear notifications notice:', e);
+      }
+
       showToast('All notifications cleared.', 'success');
     }
 
@@ -11754,11 +12114,15 @@
       const titleLabel = isRevoke ? 'Novice Voyager' : ((customTitleInput?.value || '').trim() || roleTitleMap[role] || `${role.toUpperCase()} of Soranix`);
 
       targetUser.staffRole = isRevoke ? '' : role;
+      targetUser.role = isRevoke ? '' : titleLabel;
       targetUser.title = titleLabel;
       targetUser.isAdmin = !isRevoke;
 
       users[targetKey] = targetUser;
       saveUsersDB(users);
+      try {
+        saveUserToFirestore(targetUser).catch(e => console.warn('Role assign Firestore sync notice:', e));
+      } catch (e) {}
 
       if (isRevoke) {
         addNotification(targetUser.username, {
@@ -11793,6 +12157,157 @@
       // Start 3-second auto-preview anime carousel
       renderFeaturedHeroShowcase(0);
       startFeaturedHeroCarousel();
+
+      // ----------------------------------------------------
+      // FIRESTORE REAL-TIME CROSS-DEVICE SYNC
+      // ----------------------------------------------------
+      try {
+        // 1. Sync All Users across devices & browsers
+        subscribeToAllUsers((cloudUsers) => {
+          if (!cloudUsers || !cloudUsers.length) return;
+          const localDB = getUsersDB();
+          let modified = false;
+
+          cloudUsers.forEach((cu) => {
+            if (!cu.username && !cu.displayName) return;
+            const uname = cu.username || cu.displayName;
+            const key = uname.toLowerCase().trim();
+
+            // Cache avatar & cosmetics globally for fast rendering
+            if (!window.currentChatAvatars) window.currentChatAvatars = {};
+            window.currentChatAvatars[key] = {
+              avatar: cu.avatarDataUrl || null,
+              frame: cu.equippedFrame || 'galaxy',
+              glow: cu.equippedNameGlow || null,
+              title: cu.title || 'Novice Voyager',
+              level: cu.level || 1
+            };
+
+            const existing = localDB[key] || {};
+            localDB[key] = {
+              ...existing,
+              username: uname,
+              email: cu.email || existing.email || '',
+              level: cu.level || existing.level || 1,
+              stardust: cu.stardust !== undefined ? cu.stardust : (existing.stardust || 0),
+              title: cu.title || existing.title || 'Novice Voyager',
+              staffRole: cu.staffRole !== undefined ? cu.staffRole : (existing.staffRole || ''),
+              isAdmin: cu.isAdmin !== undefined ? cu.isAdmin : (existing.isAdmin || false),
+              isOwner: cu.isOwner !== undefined ? cu.isOwner : (existing.isOwner || false),
+              isBanned: cu.isBanned !== undefined ? cu.isBanned : (existing.isBanned || false),
+              avatarDataUrl: cu.avatarDataUrl !== undefined ? cu.avatarDataUrl : existing.avatarDataUrl,
+              bannerDataUrl: cu.bannerDataUrl !== undefined ? cu.bannerDataUrl : existing.bannerDataUrl,
+              equippedFrame: cu.equippedFrame || existing.equippedFrame || 'galaxy',
+              equippedNameGlow: cu.equippedNameGlow || existing.equippedNameGlow || null,
+              equippedChatBadge: cu.equippedChatBadge || existing.equippedChatBadge || null,
+              friends: cu.friends || existing.friends || [],
+              incomingRequests: cu.incomingRequests || existing.incomingRequests || [],
+              outgoingRequests: cu.outgoingRequests || existing.outgoingRequests || []
+            };
+            modified = true;
+
+            // If this is the active user, update AppState.user and re-render
+            if (!AppState.isGuest && AppState.user && AppState.user.username.toLowerCase() === key) {
+              const prevRole = AppState.user.role || AppState.user.staffRole;
+              const prevBanned = AppState.user.isBanned;
+              const prevCoins = AppState.user.stardust;
+              const prevLevel = AppState.user.level;
+
+              AppState.user = { ...AppState.user, ...localDB[key] };
+              updateViewableProfileUI();
+              updateStatsCounters();
+
+              // 2. Instant ban enforcement & overlay
+              if (AppState.user.isBanned) {
+                // Instantly halt all media playback
+                const videoEl = $('soranix-video-element');
+                if (videoEl && typeof videoEl.pause === 'function') {
+                  videoEl.pause();
+                }
+                const playerIframe = $('player-stream-iframe');
+                if (playerIframe) {
+                  playerIframe.src = 'about:blank';
+                }
+                closeAnimePlayerModal();
+                closeGlobalChatPanel();
+
+                const banOverlay = $('banned-account-overlay') || $('ban-enforcement-overlay');
+                const banName = $('banned-overlay-username');
+                const banReason = $('banned-overlay-reason');
+                if (banName) banName.innerHTML = `Account: <span class="text-red-400 font-bold">${AppState.user.username}</span>`;
+                if (banReason) banReason.textContent = AppState.user.bannedReason || 'Your account was suspended by Administrator due to a violation of platform community rules.';
+                if (banOverlay) {
+                  banOverlay.classList.remove('hidden');
+                  banOverlay.classList.add('flex');
+                }
+              } else if (!AppState.user.isBanned && prevBanned) {
+                const banOverlay = $('banned-account-overlay') || $('ban-enforcement-overlay');
+                if (banOverlay) {
+                  banOverlay.classList.remove('flex');
+                  banOverlay.classList.add('hidden');
+                }
+              }
+
+              // 3. Real-time Role Assignment notification & unlock
+              const newRole = AppState.user.role || AppState.user.staffRole;
+              if (!prevRole && newRole) {
+                addNotification(AppState.user.username, {
+                  title: 'Role Granted!',
+                  body: 'You have received a role and can now access the admin panel.',
+                  type: 'level_up'
+                });
+                showToast('You have received a role and can now access the admin panel.', 'success');
+                updateStatsCounters();
+              }
+
+              // 4. Coin & Level Override notifications
+              if (prevCoins !== undefined && AppState.user.stardust !== undefined && prevCoins !== AppState.user.stardust) {
+                addNotification(AppState.user.username, {
+                  title: 'Balance Overridden',
+                  body: 'Your level/balance has been overridden by an Admin.',
+                  type: 'level_up'
+                });
+                showToast('Your level/balance has been overridden by an Admin.', 'info');
+              } else if (prevLevel !== undefined && AppState.user.level !== undefined && prevLevel !== AppState.user.level) {
+                addNotification(AppState.user.username, {
+                  title: 'Level Overridden',
+                  body: 'Your level/balance has been overridden by an Admin.',
+                  type: 'level_up'
+                });
+                showToast('Your level/balance has been overridden by an Admin.', 'info');
+              }
+            }
+          });
+
+          if (modified) {
+            saveUsersDB(localDB);
+            if (AppState.currentTab === 'friends') renderFriendsUI();
+            if (AppState.currentTab === 'admin') renderAdminUsersList();
+          }
+        });
+
+        // 2. Sync Global Chat across devices & browsers
+        subscribeToGlobalChat((cloudMsgs) => {
+          if (!cloudMsgs) return;
+          saveGlobalChatMessages(cloudMsgs);
+          if (AppState.isGlobalChatOpen) {
+            renderGlobalChatMessages();
+          }
+        });
+
+        // 3. Sync Admin Config (announcements & maintenance)
+        subscribeToAdminConfig((cloudCfg) => {
+          if (!cloudCfg) return;
+          const current = getAdminConfig();
+          const merged = { ...current, ...cloudCfg };
+          saveAdminConfig(merged);
+          renderAnnouncementBannerUI();
+          updateMaintenanceGuardUI();
+          if (AppState.currentTab === 'admin') initAdminPlatformUI();
+        });
+      } catch (err) {
+        console.warn('Real-time Firestore listeners boot notice:', err);
+      }
     }, 50);
 
     // Expose all functions to global window for HTML onclick / oninput bindings
@@ -11925,6 +12440,12 @@
     window.renderAnimeGrid = renderAnimeGrid;
     window.handleAnimeCatalogSearchInput = handleAnimeCatalogSearchInput;
     window.clearAnimeCatalogSearch = clearAnimeCatalogSearch;
+    window.showAnimeSearchHistoryDropdown = showAnimeSearchHistoryDropdown;
+    window.hideAnimeSearchHistoryDropdown = hideAnimeSearchHistoryDropdown;
+    window.selectAnimeSearchHistoryItem = selectAnimeSearchHistoryItem;
+    window.removeAnimeSearchTermFromHistory = removeAnimeSearchTermFromHistory;
+    window.clearAllAnimeSearchHistory = clearAllAnimeSearchHistory;
+    window.handleAnimeSearchKeydown = handleAnimeSearchKeydown;
     window.setAnimeCatalogCategory = setAnimeCatalogCategory;
     window.setAnimeCatalogGenre = setAnimeCatalogGenre;
     window.refreshAnimeCatalog = refreshAnimeCatalog;

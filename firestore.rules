@@ -13,7 +13,7 @@ service cloud.firestore {
 
     // User Profile Documents
     match /users/{userId} {
-      // Allow reading and listing of user accounts so profiles and admin panel can sync across devices
+      // Allow reading and listing of user accounts so profiles and friends sync across all devices
       allow get, list: if true;
       
       // Allow creating and updating user profile documents
@@ -29,6 +29,27 @@ service cloud.firestore {
       match /favorites/{favoriteId} {
         allow read, write: if isValidId(userId);
       }
+    }
+
+    // Global Chat Transmissions - real-time cross-device sync
+    match /globalChat/{msgId} {
+      allow read, list: if true;
+      allow create, update: if isValidId(msgId);
+      allow delete: if true;
+    }
+
+    // Direct Messages - real-time peer-to-peer sync
+    match /directMessages/{msgId} {
+      allow read, list: if true;
+      allow create, update: if isValidId(msgId);
+      allow delete: if true;
+    }
+
+    // Platform Configuration and Alerts
+    match /adminConfig/{configId} {
+      allow read, list: if true;
+      allow create, update: if isValidId(configId);
+      allow delete: if true;
     }
 
     // Default-deny all other unmatched paths
