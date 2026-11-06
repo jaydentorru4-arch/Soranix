@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">SORANIX</title>
+  <desc id="desc">SORANIX — The Ultimate Galaxy of Anime</desc>
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="45%" r="75%"><stop offset="0" stop-color="#241044"/><stop offset="1" stop-color="#05030b"/></radialGradient>
+    <linearGradient id="word" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff"/><stop offset="1" stop-color="#d9c7ff"/></linearGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="9" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <circle cx="600" cy="300" r="180" fill="#8500ff" opacity=".12" filter="url(#glow)"/>
+  <path d="M0 510 Q300 430 600 510 T1200 510" fill="none" stroke="#8500ff" stroke-opacity=".22" stroke-width="2"/>
+  <text x="600" y="300" text-anchor="middle" dominant-baseline="middle" fill="url(#word)" font-family="Arial, Helvetica, sans-serif" font-size="116" font-weight="900" letter-spacing="10">SORANIX</text>
+  <rect x="475" y="380" width="250" height="4" rx="2" fill="#8500ff"/>
+  <text x="600" y="435" text-anchor="middle" fill="#c5c0d0" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="700" letter-spacing="5">THE ULTIMATE GALAXY OF ANIME</text>
+  <text x="600" y="560" text-anchor="middle" fill="#8d7aa9" font-family="Arial, Helvetica, sans-serif" font-size="17" letter-spacing="4">STREAM • WATCH • ENJOY</text>
+</svg>
