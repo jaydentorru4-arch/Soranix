@@ -10556,24 +10556,14 @@
     }
 
     function getEpisodeMeta(anime, episodeNumber) {
-      const slug = anime ? slugifyAnimeTitle(anime.title?.english || anime.title?.romaji || '') : '';
       const episodeNumberValue = Math.max(1, parseInt(episodeNumber, 10) || 1);
-
-      // Prefer the title fetched for this exact AniList/MAL entry.
       const fetchedMeta = JIKAN_EPISODES_CACHE[anime?.id]?.[episodeNumberValue];
+
       if (fetchedMeta?.title && fetchedMeta.title !== `Episode ${episodeNumberValue}`) {
         return fetchedMeta;
       }
 
-      // Use the hand-checked catalogue only when the live metadata has no title.
-      const canonicalKey = Object.keys(CANONICAL_EPISODES).find(key =>
-        slug === key || slug.startsWith(`${key}-`) || key.startsWith(`${slug}-`)
-      );
-      const canonicalMeta = canonicalKey
-        ? CANONICAL_EPISODES[canonicalKey]?.[episodeNumberValue - 1]
-        : null;
-      if (canonicalMeta) return canonicalMeta;
-
+      // Do not guess an episode title when the metadata provider has no verified title.
       return {
         title: `Episode ${episodeNumberValue}`,
         desc: 'The official episode title is not available from the metadata source yet.'
@@ -10724,6 +10714,13 @@
       grid.innerHTML = episodesToShow.map(({ number: n, meta }) => {
         const isCurrent = n === currentEpisode;
         const isW = watchedList.includes(n);
+        const safeTitle = escapeEpisodeTitle(meta.title);
+        const officialSource = getAniOneAsiaEpisodeSource(anime, n);
+        const episodeStatus = isW
+          ? 'Completed'
+          : (officialSource
+            ? (isCurrent ? 'Now Playing' : 'Official video ready')
+            : 'Official link unavailable');
         let borderCls = isCurrent 
           ? 'border-purple-400 bg-purple-950/40 shadow-[0_0_15px_rgba(168,85,247,0.35)] ring-1 ring-purple-400' 
           : 'border-white/10 bg-white/[0.02] hover:border-white/20 hover:bg-white/[0.05]';
@@ -10772,11 +10769,11 @@
 
             <!-- Title & meta -->
             <div class="min-w-0">
-              <h5 class="text-[11px] font-bold text-white truncate group-hover:text-purple-300 transition-colors" title="${meta.title}">
-                ${n}. ${meta.title}
+              <h5 class="text-[11px] font-bold text-white truncate group-hover:text-purple-300 transition-colors" title="${safeTitle}">
+                ${n}. ${safeTitle}
               </h5>
               <span class="text-[9px] font-mono text-slate-400 block truncate">
-                ${isCurrent ? 'Now Playing' : (isW ? 'Completed' : 'Available in HD')}
+                ${episodeStatus}
               </span>
             </div>
           </div>
