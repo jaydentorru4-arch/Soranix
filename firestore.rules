@@ -29,11 +29,11 @@ service cloud.firestore {
     }
 
     function canManageProfiles() {
-      return owner() || hasStaffRole(['admin', 'developer']);
+      return owner() || hasStaffRole(['admin']);
     }
 
     function canModerateProfiles() {
-      return owner() || hasStaffRole(['admin', 'developer', 'moderator']);
+      return owner() || hasStaffRole(['admin', 'moderator']);
     }
 
     function isOwnProfile(uid) {
@@ -125,7 +125,9 @@ service cloud.firestore {
         request.resource.data.message is string &&
         request.resource.data.message.size() > 0 &&
         request.resource.data.message.size() <= 2000 &&
-        request.resource.data.time is number;
+        request.resource.data.time is number &&
+        request.resource.data.isAdmin == (owner() || hasStaffRole(['admin', 'developer', 'tester', 'moderator'])) &&
+        request.resource.data.isOwner == owner();
       allow update: if owner() || hasStaffRole(['admin', 'developer', 'moderator']);
       allow delete: if owner() || hasStaffRole(['admin', 'developer', 'moderator']);
     }
