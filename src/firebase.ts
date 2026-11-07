@@ -18,6 +18,9 @@ import {
   getDocFromServer,
   collection,
   getDocs,
+  query,
+  orderBy,
+  limit,
   type Unsubscribe
 } from 'firebase/firestore';
 import firebaseConfig from '../firebase-applet-config.json';
@@ -321,13 +324,19 @@ export function subscribeToAllUsers(onUpdate: (users: UserProfileData[]) => void
 
 // Listen to real-time updates for Global Chat across devices & browsers
 export function subscribeToGlobalChat(onUpdate: (messages: any[]) => void): Unsubscribe {
-  const chatCol = collection(db, 'globalChat');
+  // Keep a bounded live window so chat snapshots do not download the entire
+  // conversation history every time a new message arrives.
+  const chatCol = query(
+    collection(db, 'globalChat'),
+    orderBy('time', 'desc'),
+    limit(100)
+  );
   return onSnapshot(chatCol, (snap) => {
     const msgs: any[] = [];
     snap.forEach((d) => {
       msgs.push({ id: d.id, ...d.data() });
     });
-    msgs.sort((a, b) => (a.time || 0) - (b.time || 0));
+    msgs.reverse();
     onUpdate(msgs);
   }, (error) => {
     console.warn('subscribeToGlobalChat notice:', error);
