@@ -313,14 +313,41 @@ export async function saveUserToFirestore(userData: any): Promise<void> {
       (currentUser.email || '').trim().toLowerCase() === 'jaydentorru4@gmail.com';
     const isSelf = targetUid === currentUser.uid;
 
-    let callerRole = '';
-    if (!isVerifiedOwner && !isSelf) {
+    // Staff updates must touch only fields their Firestore role allows.
+    if (!isSelf && !isVerifiedOwner) {
       const callerProfile = await getDoc(doc(db, 'users', currentUser.uid));
-      callerRole = String(callerProfile.data()?.staffRole || '').toLowerCase();
-      if (!['admin', 'moderator'].includes(callerRole)) {
-        console.warn('Blocked cross-account profile write.');
-        return;
+      const callerRole = String(callerProfile.data()?.staffRole || '').toLowerCase();
+      if (!['admin', 'moderator'].includes(callerRole)) return;
+
+      const isModerationChange = Object.prototype.hasOwnProperty.call(userData, 'isBanned') ||
+        Object.prototype.hasOwnProperty.call(userData, 'mutedUntil') ||
+        Object.prototype.hasOwnProperty.call(userData, 'bannedReason');
+
+      if (isModerationChange) {
+        await updateDoc(doc(db, 'users', targetUid), {
+          isBanned: !!userData.isBanned,
+          bannedReason: userData.bannedReason || '',
+          mutedUntil: userData.mutedUntil || 0,
+          updatedAt: new Date().toISOString()
+        });
+      } else {
+        if (callerRole !== 'admin') return;
+        const adminChanges = {
+          stardust: typeof userData.stardust === 'number' ? userData.stardust : 0,
+          level: userData.level || 1,
+          xp: userData.xp || 0,
+          title: userData.title || 'Novice Voyager',
+          inventory: Array.isArray(userData.inventory) ? userData.inventory : [],
+          updatedAt: new Date().toISOString()
+        };
+        await updateDoc(doc(db, 'users', targetUid), adminChanges);
+        await updateDoc(doc(db, 'publicProfiles', targetUid), {
+          level: adminChanges.level,
+          title: adminChanges.title,
+          updatedAt: adminChanges.updatedAt
+        });
       }
+      return;
     }
 
     const username = String(userData.username || userData.displayName || 'Voyager').trim().slice(0, 24);
@@ -329,7 +356,7 @@ export async function saveUserToFirestore(userData: any): Promise<void> {
       authUid: targetUid,
       displayName: String(userData.displayName || username).slice(0, 80),
       username,
-      email: isSelf ? (currentUser.email || '') : String(userData.email || ''),
+      email: currentUser.email || '',
       avatarDataUrl: userData.avatarDataUrl || userData.photoURL || null,
       bannerDataUrl: userData.bannerDataUrl || null,
       stardust: typeof userData.stardust === 'number' ? userData.stardust : 0,
@@ -362,31 +389,10 @@ export async function saveUserToFirestore(userData: any): Promise<void> {
         appealStatus: userData.appealStatus || '',
         ipSessionLog: userData.ipSessionLog || 'Web Session • Active'
       });
-    } else if (!isSelf) {
-      // The rules also restrict the affected fields, but only include the
-      // fields this staff role is authorised to change in the client payload.
-      if (callerRole === 'admin') {
-        Object.assign(payload, {
-          stardust: typeof userData.stardust === 'number' ? userData.stardust : 0,
-          level: userData.level || 1,
-          xp: userData.xp || 0,
-          title: userData.title || 'Novice Voyager',
-          inventory: Array.isArray(userData.inventory) ? userData.inventory : []
-        });
-      }
-      if (['admin', 'moderator'].includes(callerRole)) {
-        Object.assign(payload, {
-          isBanned: !!userData.isBanned,
-          bannedReason: userData.bannedReason || '',
-          mutedUntil: userData.mutedUntil || 0
-        });
-      }
     }
 
     await setDoc(doc(db, 'users', targetUid), payload, { merge: true });
-    if (isSelf || isVerifiedOwner || callerRole === 'admin') {
-      await writePublicProfile(targetUid, payload);
-    }
+    await writePublicProfile(targetUid, payload);
   } catch (error) {
     console.warn('saveUserToFirestore notice:', error);
   }
@@ -552,13 +558,19 @@ export async function sendFirestoreFriendRequest(requestData: any): Promise<stri
   if (requestData.senderUid !== currentUser.uid || !requestData.recipientUid ||
       requestData.recipientUid === currentUser.uid) throw new Error('Invalid friend-request participants.');
 
-  const requestId = `${currentUser.uid}_${requestData.recipientUid}`;
-  const requestRef = doc(db, 'friendRequests', requestId);
-  const existing = await getDoc(requestRef);
-  if (existing.exists() && existing.data().status === 'pending') {
-    throw new Error('A friend request is already pending.');
-  }
-  await setDoc(requestRef, {
+  const pendingQuery = query(
+    collection(db, 'friendRequests'),
+    where('participantUids', 'array-contains', currentUser.uid),
+    where('senderUid', '==', currentUser.uid),
+    where('recipientUid', '==', requestData.recipientUid),
+    where('status', '==', 'pending'),
+    limit(1)
+  );
+  const pending = await getDocs(pendingQuery);
+  if (!pending.empty) throw new Error('A friend request is already pending.');
+
+  const requestId = `fr_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
+  await setDoc(doc(db, 'friendRequests', requestId), {
     id: requestId,
     senderUid: currentUser.uid,
     recipientUid: requestData.recipientUid,
@@ -603,17 +615,14 @@ export async function createFirestoreFriendship(friendshipData: any): Promise<vo
     .sort((a: any, b: any) => a.uid.localeCompare(b.uid));
   const sortedUids = orderedMembers.map((member: any) => member.uid);
   const friendshipId = sortedUids.join('_');
-  const friendshipRef = doc(db, 'friendships', friendshipId);
-  const existing = await getDoc(friendshipRef);
-  if (!existing.exists()) {
-    await setDoc(friendshipRef, {
-      id: friendshipId,
-      memberUids: sortedUids,
-      memberUsernames: orderedMembers.map((member: any) => member.username),
-      requestId: friendshipData.requestId,
-      createdAt: Date.now()
-    });
-  }
+
+  await setDoc(doc(db, 'friendships', friendshipId), {
+    id: friendshipId,
+    memberUids: sortedUids,
+    memberUsernames: orderedMembers.map((member: any) => member.username),
+    requestId: friendshipData.requestId,
+    createdAt: Date.now()
+  });
 }
 
 export function subscribeToFriendships(uid: string, onUpdate: (friendships: any[]) => void): Unsubscribe {
