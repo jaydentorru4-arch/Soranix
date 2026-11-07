@@ -5192,12 +5192,6 @@
       }
     }
 
-    function quickLoginAsOwner() {
-      closeAuthModal();
-      closeAdminAccessDeniedModal();
-      authenticateAsOwnerDirectly();
-    }
-
     function renderAnnouncementBannerUI() {
       const banner = $('global-admin-announcement-banner');
       const textEl = $('global-announcement-text');
@@ -8077,197 +8071,141 @@
       input.value = '';
     }
 
-    function sendFriendRequestTo(targetUsername) {
-      if (AppState.isGuest) {
-        showToast('Account Required: Sign Up or Log In to add cosmic friends!', 'error');
-        openAuthModal('signup');
+    async function sendFriendRequestTo(targetUsername) {
+      if (AppState.isGuest || !auth.currentUser || auth.currentUser.isAnonymous || !AppState.user?.authUid) {
+        showToast('Sign in with Google or email to add friends across devices.', 'error');
+        openAuthModal('login');
         return;
       }
 
-      const cleanTarget = targetUsername.trim();
+      const targetName = String(targetUsername || '').trim();
+      if (!targetName) return;
       const currentUsername = AppState.user.username;
-
-      if (cleanTarget.toLowerCase() === currentUsername.toLowerCase()) {
-        showToast('You cannot send a friend request to yourself!', 'error');
+      if (targetName.toLowerCase() === currentUsername.toLowerCase()) {
+        showToast('You cannot send a friend request to yourself.', 'error');
         return;
       }
 
       const users = getUsersDB();
-      const targetKey = cleanTarget.toLowerCase();
-      let targetUser = users[targetKey];
-
-      // If user is from another device/browser or chat and not yet in local usersDB, construct an account record
-      if (!targetUser) {
-        const cached = (window.currentChatAvatars && window.currentChatAvatars[targetKey]) || null;
-        targetUser = createInitialUser(cleanTarget);
-        if (cached) {
-          targetUser.avatarDataUrl = cached.avatar || null;
-          targetUser.equippedFrame = cached.frame || 'galaxy';
-          targetUser.level = cached.level || 1;
-        }
-        users[targetKey] = targetUser;
+      const targetUser = users[targetName.toLowerCase()];
+      if (!targetUser?.authUid) {
+        showToast('That account has not completed secure cloud sign-in yet, so it cannot receive a friend request.', 'info');
+        return;
       }
-
-      if ((AppState.user.friends || []).some(f => f.toLowerCase() === cleanTarget.toLowerCase())) {
-        showToast(`You and ${targetUser.username} are already cosmic friends!`, 'info');
+      if ((AppState.user.friends || []).some(name => name.toLowerCase() === targetName.toLowerCase())) {
+        showToast(`You and ${targetUser.username} are already friends.`, 'info');
+        return;
+      }
+      if ((AppState.user.outgoingRequests || []).some(name => name.toLowerCase() === targetName.toLowerCase())) {
+        showToast(`Your friend request to ${targetUser.username} is already pending.`, 'info');
         return;
       }
 
-      if ((AppState.user.outgoingRequests || []).some(f => f.toLowerCase() === cleanTarget.toLowerCase())) {
-        showToast(`Friend request already sent to ${targetUser.username}. Awaiting response.`, 'info');
-        return;
-      }
-
-      // Add to current user's outgoing requests
-      if (!AppState.user.outgoingRequests) AppState.user.outgoingRequests = [];
-      AppState.user.outgoingRequests.push(targetUser.username);
-      saveUserToLocalStorage();
       try {
-        saveUserToFirestore(AppState.user).catch(e => console.warn('Sender friend sync notice:', e));
-      } catch (e) {}
-
-      // Add to target user's incoming requests
-      if (!targetUser.incomingRequests) targetUser.incomingRequests = [];
-      if (!targetUser.incomingRequests.some(u => u.toLowerCase() === currentUsername.toLowerCase())) {
-        targetUser.incomingRequests.push(currentUsername);
-      }
-      users[targetKey] = targetUser;
-      saveUsersDB(users);
-
-      // Async sync recipient and sender to Firestore across devices
-      try {
-        saveUserToFirestore(targetUser).catch(err => console.warn('Target user friend sync notice:', err));
-      } catch (e) {}
-
-      // Add notification for the recipient
-      addNotification(targetUser.username, {
-        type: 'friend_request',
-        title: 'New Friend Request',
-        body: `${currentUsername} sent you a cosmic transmission to connect.`
-      });
-
-      SoranixAudio.play('power_up');
-      updateStatsCounters();
-      renderFriendsUI();
-      showToast(`Friend request transmitted to ${targetUser.username}!`, 'success');
-    }
-
-    function acceptFriendRequest(senderUsername) {
-      if (AppState.isGuest) return;
-
-      const currentUsername = AppState.user.username;
-      const users = getUsersDB();
-      const senderKey = senderUsername.toLowerCase();
-      const senderUser = users[senderKey];
-
-      // Remove from incoming on current user
-      AppState.user.incomingRequests = (AppState.user.incomingRequests || []).filter(u => u.toLowerCase() !== senderKey);
-      if (!AppState.user.friends) AppState.user.friends = [];
-      if (!AppState.user.friends.includes(senderUsername)) {
-        AppState.user.friends.push(senderUsername);
-      }
-      saveUserToLocalStorage();
-      try {
-        saveUserToFirestore(AppState.user).catch(e => console.warn('Current user friend accept sync notice:', e));
-      } catch (e) {}
-
-      // Immediately remove the friend_request notification object
-      const currentNotifs = getNotifications(currentUsername);
-      const cleanedNotifs = currentNotifs.filter(n => !(n.type === 'friend_request' && n.body && n.body.toLowerCase().includes(senderKey)));
-      saveNotifications(currentUsername, cleanedNotifs);
-      renderNotificationsUI();
-
-      // Update sender account
-      if (senderUser) {
-        senderUser.outgoingRequests = (senderUser.outgoingRequests || []).filter(u => u.toLowerCase() !== currentUsername.toLowerCase());
-        if (!senderUser.friends) senderUser.friends = [];
-        if (!senderUser.friends.includes(currentUsername)) {
-          senderUser.friends.push(currentUsername);
-        }
-        users[senderKey] = senderUser;
-        saveUsersDB(users);
-        try {
-          saveUserToFirestore(senderUser).catch(e => console.warn('sender sync notice:', e));
-        } catch (e) {}
-
-        addNotification(senderUsername, {
-          type: 'friend_accept',
-          title: 'Friend Request Accepted!',
-          body: `${currentUsername} accepted your friend request. You can now chat and stream together!`
+        await sendFirestoreFriendRequest({
+          senderUid: auth.currentUser.uid,
+          recipientUid: targetUser.authUid,
+          senderUsername: currentUsername,
+          recipientUsername: targetUser.username
         });
+        AppState.user.outgoingRequests = [...(AppState.user.outgoingRequests || []), targetUser.username];
+        const localDB = getUsersDB();
+        localDB[AppState.currentUserKey] = { ...AppState.user };
+        saveUsersDB(localDB);
+        SoranixAudio.play('power_up');
+        updateStatsCounters();
+        renderFriendsUI();
+        showToast(`Friend request sent to ${targetUser.username}.`, 'success');
+      } catch (error) {
+        console.warn('Friend request send error:', error);
+        showToast(error?.message || 'Could not send the friend request. Please try again.', 'error');
       }
-
-      SoranixAudio.play('bell');
-      updateStatsCounters();
-      renderFriendsUI();
-      showToast(`You and ${senderUsername} are now connected as cosmic friends!`, 'success');
     }
 
-    function declineFriendRequest(senderUsername) {
-      if (AppState.isGuest) return;
+    async function acceptFriendRequest(senderUsername) {
+      if (AppState.isGuest || !auth.currentUser || !AppState.user?.authUid) return;
+      const senderName = String(senderUsername || '').trim();
+      const request = (AppState.friendRequestsCache || []).find(item =>
+        item.status === 'pending' &&
+        item.recipientUid === auth.currentUser.uid &&
+        String(item.senderUsername || '').toLowerCase() === senderName.toLowerCase()
+      );
+      if (!request) {
+        showToast('This friend request is no longer pending. Refresh your friends list.', 'info');
+        return;
+      }
 
-      const currentUsername = AppState.user.username;
-      const users = getUsersDB();
-      const senderKey = senderUsername.toLowerCase();
-      const senderUser = users[senderKey];
-
-      AppState.user.incomingRequests = (AppState.user.incomingRequests || []).filter(u => u.toLowerCase() !== senderKey);
-      AppState.user.outgoingRequests = (AppState.user.outgoingRequests || []).filter(u => u.toLowerCase() !== senderKey);
-      saveUserToLocalStorage();
       try {
-        saveUserToFirestore(AppState.user).catch(e => console.warn('Current user decline sync notice:', e));
-      } catch (e) {}
+        await setFirestoreFriendRequestStatus(request.id, 'accepted');
+        await createFirestoreFriendship({
+          memberUids: [auth.currentUser.uid, request.senderUid],
+          memberUsernames: [AppState.user.username, request.senderUsername],
+          requestId: request.id
+        });
 
-      // Immediately delete the friend_request notification object
-      const currentNotifs = getNotifications(currentUsername);
-      const cleanedNotifs = currentNotifs.filter(n => !(n.type === 'friend_request' && n.body && n.body.toLowerCase().includes(senderKey)));
-      saveNotifications(currentUsername, cleanedNotifs);
-      renderNotificationsUI();
-
-      if (senderUser) {
-        senderUser.outgoingRequests = (senderUser.outgoingRequests || []).filter(u => u.toLowerCase() !== currentUsername.toLowerCase());
-        senderUser.incomingRequests = (senderUser.incomingRequests || []).filter(u => u.toLowerCase() !== currentUsername.toLowerCase());
-        users[senderKey] = senderUser;
-        saveUsersDB(users);
-        try {
-          saveUserToFirestore(senderUser).catch(e => console.warn('sender decline sync notice:', e));
-        } catch (e) {}
+        AppState.user.incomingRequests = (AppState.user.incomingRequests || [])
+          .filter(name => name.toLowerCase() !== senderName.toLowerCase());
+        AppState.user.friends = [...new Set([...(AppState.user.friends || []), request.senderUsername])];
+        const localDB = getUsersDB();
+        localDB[AppState.currentUserKey] = { ...AppState.user };
+        saveUsersDB(localDB);
+        SoranixAudio.play('bell');
+        updateStatsCounters();
+        renderFriendsUI();
+        showToast(`You and ${request.senderUsername} are now friends.`, 'success');
+      } catch (error) {
+        console.warn('Friend request acceptance error:', error);
+        showToast(error?.message || 'Could not accept this friend request.', 'error');
       }
-
-      updateStatsCounters();
-      renderFriendsUI();
-      showToast(`Friend request from ${senderUsername} dismissed.`, 'info');
     }
 
-    function removeFriend(friendUsername) {
-      if (AppState.isGuest) return;
+    async function declineFriendRequest(senderUsername) {
+      if (AppState.isGuest || !auth.currentUser) return;
+      const senderName = String(senderUsername || '').trim();
+      const request = (AppState.friendRequestsCache || []).find(item =>
+        item.status === 'pending' &&
+        item.recipientUid === auth.currentUser.uid &&
+        String(item.senderUsername || '').toLowerCase() === senderName.toLowerCase()
+      );
+      if (!request) return;
 
-      const currentUsername = AppState.user.username;
-      const users = getUsersDB();
-      const friendKey = friendUsername.toLowerCase();
-      const friendUser = users[friendKey];
-
-      AppState.user.friends = (AppState.user.friends || []).filter(f => f.toLowerCase() !== friendKey);
-      saveUserToLocalStorage();
       try {
-        saveUserToFirestore(AppState.user).catch(e => console.warn('Current user remove friend sync notice:', e));
-      } catch (e) {}
-
-      if (friendUser) {
-        friendUser.friends = (friendUser.friends || []).filter(f => f.toLowerCase() !== currentUsername.toLowerCase());
-        users[friendKey] = friendUser;
-        saveUsersDB(users);
-        try {
-          saveUserToFirestore(friendUser).catch(e => console.warn('Friend remove sync notice:', e));
-        } catch (e) {}
+        await setFirestoreFriendRequestStatus(request.id, 'declined');
+        AppState.user.incomingRequests = (AppState.user.incomingRequests || [])
+          .filter(name => name.toLowerCase() !== senderName.toLowerCase());
+        renderFriendsUI();
+        showToast(`Friend request from ${senderName} declined.`, 'info');
+      } catch (error) {
+        console.warn('Friend request decline error:', error);
+        showToast(error?.message || 'Could not decline this friend request.', 'error');
       }
-
-      updateStatsCounters();
-      renderFriendsUI();
-      showToast(`Removed ${friendUsername} from your friends list.`, 'info');
     }
 
-    // Direct Message (DM) Engine
+    async function removeFriend(friendUsername) {
+      if (AppState.isGuest || !auth.currentUser) return;
+      const friendKey = String(friendUsername || '').toLowerCase();
+      const friendUser = getUsersDB()[friendKey];
+      if (!friendUser?.authUid) {
+        showToast('Could not find the cloud account for this friend.', 'error');
+        return;
+      }
+
+      try {
+        await deleteFirestoreFriendship(friendUser.authUid);
+        AppState.user.friends = (AppState.user.friends || []).filter(name => name.toLowerCase() !== friendKey);
+        const localDB = getUsersDB();
+        localDB[AppState.currentUserKey] = { ...AppState.user };
+        saveUsersDB(localDB);
+        updateStatsCounters();
+        renderFriendsUI();
+        showToast(`Removed ${friendUsername} from your friends list.`, 'info');
+      } catch (error) {
+        console.warn('Friend removal error:', error);
+        showToast(error?.message || 'Could not remove this friend.', 'error');
+      }
+    }
+
+    // Direct Message (DM) Engine    // Direct Message (DM) Engine
     function openDMChat(friendUsername) {
       if (AppState.isGuest) {
         showToast('Please Sign Up or Log In to send direct transmissions!', 'error');
@@ -8275,9 +8213,30 @@
         return;
       }
 
-      AppState.activeDMFriend = friendUsername;
       const users = getUsersDB();
-      const friendData = users[friendUsername.toLowerCase()] || { username: friendUsername, level: 1, title: 'Novice Voyager', equippedFrame: 'galaxy' };
+      const friendData = users[friendUsername.toLowerCase()];
+      if (!auth.currentUser || auth.currentUser.isAnonymous || !AppState.user?.authUid || !friendData?.authUid) {
+        showToast('Direct messages require both accounts to use secure cloud sign-in.', 'info');
+        return;
+      }
+
+      if (activeDMUnsubscribe) {
+        try { activeDMUnsubscribe(); } catch (error) {}
+        activeDMUnsubscribe = null;
+      }
+      AppState.activeDMFriend = friendUsername;
+      const participantUids = [auth.currentUser.uid, friendData.authUid].sort();
+      activeDMFirestoreThreadKey = participantUids.join('_');
+      activeDMUnsubscribe = subscribeToDirectMessages(activeDMFirestoreThreadKey, cloudMessages => {
+        const allThreads = getDMThreads();
+        allThreads[getThreadKey(AppState.user.username, friendUsername)] = cloudMessages.map(message => ({
+          ...message,
+          sender: message.sender || message.senderUsername || '',
+          timestamp: message.timestampLabel || new Date(message.time || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        }));
+        saveDMThreads(allThreads);
+        if (AppState.activeDMFriend === friendUsername) renderDMConversation();
+      });
 
       const drawer = $('dm-chat-drawer');
       const nameEl = $('dm-header-username');
@@ -8312,6 +8271,11 @@
       if (drawer) {
         drawer.classList.add('translate-x-full');
       }
+      if (activeDMUnsubscribe) {
+        try { activeDMUnsubscribe(); } catch (error) {}
+        activeDMUnsubscribe = null;
+      }
+      activeDMFirestoreThreadKey = '';
       AppState.activeDMFriend = null;
     }
 
@@ -8359,75 +8323,96 @@
       container.scrollTop = container.scrollHeight;
     }
 
-    function sendDirectMessage() {
-      if (AppState.isGuest) return;
-      if (!AppState.activeDMFriend) return;
+    async function sendDirectMessage() {
+      if (AppState.isGuest || !AppState.activeDMFriend || !auth.currentUser || auth.currentUser.isAnonymous) return;
 
       if (AppState.user.isBanned) {
-        showToast('Direct Transmission Blocked: Your account has been suspended by Administrator.', 'error');
+        showToast('Direct messages are disabled for this account.', 'error');
         return;
       }
-
       if (AppState.user.mutedUntil && AppState.user.mutedUntil > Date.now()) {
-        const remainingMin = Math.ceil((AppState.user.mutedUntil - Date.now()) / 60000);
-        showToast(`Direct Transmission Muted: Timed out (${remainingMin}m remaining).`, 'error');
+        const remaining = Math.ceil((AppState.user.mutedUntil - Date.now()) / 60000);
+        showToast(`Messaging is muted for another ${remaining} minute(s).`, 'error');
         return;
       }
 
       const input = $('dm-chat-input');
-      if (!input) return;
-      const text = input.value.trim();
-      if (!text) return;
+      const friend = getUsersDB()[AppState.activeDMFriend.toLowerCase()];
+      if (!input || !friend?.authUid || !activeDMFirestoreThreadKey) {
+        showToast('This conversation is not connected to a cloud account.', 'error');
+        return;
+      }
+      const messageText = input.value.trim();
+      if (!messageText) return;
 
-      const threadKey = getThreadKey(AppState.user.username, AppState.activeDMFriend);
-      const allThreads = getDMThreads();
-      if (!allThreads[threadKey]) allThreads[threadKey] = [];
-
-      allThreads[threadKey].push({
-        id: `dm_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
+      const sentAt = Date.now();
+      const message = {
+        id: `dm_${sentAt}_${Math.random().toString(36).slice(2, 8)}`,
+        threadKey: activeDMFirestoreThreadKey,
+        participantUids: [auth.currentUser.uid, friend.authUid].sort(),
+        senderUid: auth.currentUser.uid,
         sender: AppState.user.username,
-        text: text,
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        time: Date.now()
-      });
+        senderUsername: AppState.user.username,
+        recipientUsername: friend.username,
+        text: messageText,
+        time: sentAt,
+        timestampLabel: new Date(sentAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
 
-      saveDMThreads(allThreads);
+      const threadKey = getThreadKey(AppState.user.username, friend.username);
+      const localThreads = getDMThreads();
+      if (!localThreads[threadKey]) localThreads[threadKey] = [];
+      localThreads[threadKey].push(message);
+      saveDMThreads(localThreads);
       input.value = '';
-
-      SoranixAudio.play('laser');
       renderDMConversation();
-
-      addNotification(AppState.activeDMFriend, {
-        type: 'dm',
-        title: `DM from ${AppState.user.username}`,
-        body: text.length > 40 ? `${text.substring(0, 40)}...` : text
-      });
+      try {
+        await sendFirestoreDirectMessage(message);
+        SoranixAudio.play('laser');
+      } catch (error) {
+        console.warn('Direct message send error:', error);
+        showToast(error?.message || 'Message could not be sent.', 'error');
+      }
     }
 
-    function sendAnimeRecommendation(title, genre) {
-      if (AppState.isGuest || !AppState.activeDMFriend) return;
+    async function sendAnimeRecommendation(title, genre) {
+      if (AppState.isGuest || !AppState.activeDMFriend || !auth.currentUser || auth.currentUser.isAnonymous) return;
+      const friend = getUsersDB()[AppState.activeDMFriend.toLowerCase()];
+      if (!friend?.authUid || !activeDMFirestoreThreadKey) {
+        showToast('This conversation is not connected to a cloud account.', 'error');
+        return;
+      }
 
-      const threadKey = getThreadKey(AppState.user.username, AppState.activeDMFriend);
-      const allThreads = getDMThreads();
-      if (!allThreads[threadKey]) allThreads[threadKey] = [];
-
-      allThreads[threadKey].push({
-        id: `dm_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
+      const sentAt = Date.now();
+      const message = {
+        id: `dm_${sentAt}_${Math.random().toString(36).slice(2, 8)}`,
+        threadKey: activeDMFirestoreThreadKey,
+        participantUids: [auth.currentUser.uid, friend.authUid].sort(),
+        senderUid: auth.currentUser.uid,
         sender: AppState.user.username,
+        senderUsername: AppState.user.username,
+        recipientUsername: friend.username,
         text: `Hey, let's watch ${title} together on Soranix!`,
         recommendation: { title, genre },
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        time: Date.now()
-      });
+        time: sentAt,
+        timestampLabel: new Date(sentAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
 
-      saveDMThreads(allThreads);
-
-      const popover = $('dm-recommend-menu');
-      if (popover) popover.classList.add('hidden');
-
-      SoranixAudio.play('bell');
+      const threadKey = getThreadKey(AppState.user.username, friend.username);
+      const localThreads = getDMThreads();
+      if (!localThreads[threadKey]) localThreads[threadKey] = [];
+      localThreads[threadKey].push(message);
+      saveDMThreads(localThreads);
+      const menu = $('dm-recommend-menu');
+      if (menu) menu.classList.add('hidden');
       renderDMConversation();
-      showToast(`Recommended "${title}" to ${AppState.activeDMFriend}!`, 'success');
+      try {
+        await sendFirestoreDirectMessage(message);
+        showToast(`Recommended "${title}" to ${friend.username}.`, 'success');
+      } catch (error) {
+        console.warn('Anime recommendation send error:', error);
+        showToast(error?.message || 'Could not send this recommendation.', 'error');
+      }
     }
 
     function toggleRecommendMenu(event) {
@@ -12630,11 +12615,6 @@
     window.validateAuthUsernameRealtime = validateAuthUsernameRealtime;
     window.handleEditUsernameInput = handleEditUsernameInput;
     window.triggerFirebaseGoogleLogin = triggerFirebaseGoogleLogin;
-    window.showGoogleAuthOptionsModal = showGoogleAuthOptionsModal;
-    window.closeGoogleAuthOptionsModal = closeGoogleAuthOptionsModal;
-    window.authenticateAsOwnerDirectly = authenticateAsOwnerDirectly;
-    window.authenticateWithOtherGoogleEmail = authenticateWithOtherGoogleEmail;
-    window.processSuccessfulGoogleAuth = processSuccessfulGoogleAuth;
     window.claimDay1Reward = claimDay1Reward;
     window.renderDailyRewardsUI = renderDailyRewardsUI;
     window.openBugReportModal = openBugReportModal;
@@ -12685,7 +12665,6 @@
     // Admin & Owner Controls
     window.openAdminTab = openAdminTab;
     window.closeAdminAccessDeniedModal = closeAdminAccessDeniedModal;
-    window.quickLoginAsOwner = quickLoginAsOwner;
     window.renderAnnouncementBannerUI = renderAnnouncementBannerUI;
     window.dismissAnnouncementBanner = dismissAnnouncementBanner;
     window.updateMaintenanceGuardUI = updateMaintenanceGuardUI;
