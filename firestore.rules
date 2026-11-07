@@ -162,8 +162,8 @@ service cloud.firestore {
         request.resource.data.time is number &&
         request.resource.data.isAdmin == (owner() || hasStaffRole(['admin', 'developer', 'tester', 'moderator'])) &&
         request.resource.data.isOwner == owner();
-      allow update: if owner() || hasStaffRole(['admin', 'developer', 'moderator']);
-      allow delete: if owner() || hasStaffRole(['admin', 'developer', 'moderator']);
+      allow update: if owner() || hasStaffRole(['admin', 'moderator']);
+      allow delete: if owner() || hasStaffRole(['admin', 'moderator']);
     }
 
     // Only the sender and the intended recipient can read this thread.
