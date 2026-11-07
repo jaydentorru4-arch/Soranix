@@ -570,16 +570,18 @@ export async function sendFirestoreFriendRequest(requestData: any): Promise<stri
   if (requestData.senderUid !== currentUser.uid || !requestData.recipientUid ||
       requestData.recipientUid === currentUser.uid) throw new Error('Invalid friend-request participants.');
 
-  const pendingQuery = query(
+  const participantQuery = query(
     collection(db, 'friendRequests'),
     where('participantUids', 'array-contains', currentUser.uid),
-    where('senderUid', '==', currentUser.uid),
-    where('recipientUid', '==', requestData.recipientUid),
-    where('status', '==', 'pending'),
-    limit(1)
+    limit(100)
   );
-  const pending = await getDocs(pendingQuery);
-  if (!pending.empty) throw new Error('A friend request is already pending.');
+  const existingRequests = await getDocs(participantQuery);
+  const hasPendingRequest = existingRequests.docs.some(item =>
+    item.data().senderUid === currentUser.uid &&
+    item.data().recipientUid === requestData.recipientUid &&
+    item.data().status === 'pending'
+  );
+  if (hasPendingRequest) throw new Error('A friend request is already pending.');
 
   const requestId = `fr_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
   await setDoc(doc(db, 'friendRequests', requestId), {
