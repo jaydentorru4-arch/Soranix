@@ -12411,6 +12411,17 @@
     // Initialize initial state on load
     setTimeout(() => {
       initAutoLogin();
+      getGoogleRedirectResult()
+        .then(firebaseUser => {
+          if (firebaseUser) return processSuccessfulFirebaseAuth(firebaseUser, true);
+          return null;
+        })
+        .catch(error => {
+          console.warn('Google redirect sign-in notice:', error);
+          if (error?.code === 'auth/unauthorized-domain') {
+            showToast('Add this website domain to Firebase Authentication authorised domains.', 'error');
+          }
+        });
       if (!AppState.catalogInitialised) {
         fetchAniListCatalog();
       }
@@ -12422,160 +12433,6 @@
       renderFeaturedHeroShowcase(0);
       startFeaturedHeroCarousel();
 
-      // ----------------------------------------------------
-      // FIRESTORE REAL-TIME CROSS-DEVICE SYNC
-      // ----------------------------------------------------
-      try {
-        // 1. Sync All Users across devices & browsers
-        subscribeToAllUsers((cloudUsers) => {
-          if (!cloudUsers || !cloudUsers.length) return;
-          const localDB = getUsersDB();
-          let modified = false;
-
-          cloudUsers.forEach((cu) => {
-            if (!cu.username && !cu.displayName) return;
-            const uname = cu.username || cu.displayName;
-            const key = uname.toLowerCase().trim();
-
-            // Cache avatar & cosmetics globally for fast rendering
-            if (!window.currentChatAvatars) window.currentChatAvatars = {};
-            window.currentChatAvatars[key] = {
-              avatar: cu.avatarDataUrl || null,
-              frame: cu.equippedFrame || 'galaxy',
-              glow: cu.equippedNameGlow || null,
-              title: cu.title || 'Novice Voyager',
-              level: cu.level || 1
-            };
-
-            const existing = localDB[key] || {};
-            localDB[key] = {
-              ...existing,
-              username: uname,
-              email: cu.email || existing.email || '',
-              level: cu.level || existing.level || 1,
-              stardust: cu.stardust !== undefined ? cu.stardust : (existing.stardust || 0),
-              title: cu.title || existing.title || 'Novice Voyager',
-              staffRole: cu.staffRole !== undefined ? cu.staffRole : (existing.staffRole || ''),
-              isAdmin: cu.isAdmin !== undefined ? cu.isAdmin : (existing.isAdmin || false),
-              isOwner: cu.isOwner !== undefined ? cu.isOwner : (existing.isOwner || false),
-              isBanned: cu.isBanned !== undefined ? cu.isBanned : (existing.isBanned || false),
-              avatarDataUrl: cu.avatarDataUrl !== undefined ? cu.avatarDataUrl : existing.avatarDataUrl,
-              bannerDataUrl: cu.bannerDataUrl !== undefined ? cu.bannerDataUrl : existing.bannerDataUrl,
-              equippedFrame: cu.equippedFrame || existing.equippedFrame || 'galaxy',
-              equippedNameGlow: cu.equippedNameGlow || existing.equippedNameGlow || null,
-              equippedChatBadge: cu.equippedChatBadge || existing.equippedChatBadge || null,
-              friends: cu.friends || existing.friends || [],
-              incomingRequests: cu.incomingRequests || existing.incomingRequests || [],
-              outgoingRequests: cu.outgoingRequests || existing.outgoingRequests || []
-            };
-            modified = true;
-
-            // If this is the active user, update AppState.user and re-render
-            if (!AppState.isGuest && AppState.user && AppState.user.username.toLowerCase() === key) {
-              const prevRole = AppState.user.role || AppState.user.staffRole;
-              const prevBanned = AppState.user.isBanned;
-              const prevCoins = AppState.user.stardust;
-              const prevLevel = AppState.user.level;
-
-              AppState.user = { ...AppState.user, ...localDB[key] };
-              if (!isPlatformAdmin(AppState.user)) {
-                AppState.user.isAdmin = false;
-                AppState.user.isOwner = false;
-              }
-              updateViewableProfileUI();
-              updateStatsCounters();
-
-              // 2. Instant ban enforcement & overlay
-              if (AppState.user.isBanned) {
-                // Instantly halt all media playback
-                const videoEl = $('soranix-video-element');
-                if (videoEl && typeof videoEl.pause === 'function') {
-                  videoEl.pause();
-                }
-                const playerIframe = $('player-stream-iframe');
-                if (playerIframe) {
-                  playerIframe.src = 'about:blank';
-                }
-                closeAnimePlayerModal();
-                closeGlobalChatPanel();
-
-                const banOverlay = $('banned-account-overlay') || $('ban-enforcement-overlay');
-                const banName = $('banned-overlay-username');
-                const banReason = $('banned-overlay-reason');
-                if (banName) banName.innerHTML = `Account: <span class="text-red-400 font-bold">${AppState.user.username}</span>`;
-                if (banReason) banReason.textContent = AppState.user.bannedReason || 'Your account was suspended by Administrator due to a violation of platform community rules.';
-                if (banOverlay) {
-                  banOverlay.classList.remove('hidden');
-                  banOverlay.classList.add('flex');
-                }
-              } else if (!AppState.user.isBanned && prevBanned) {
-                const banOverlay = $('banned-account-overlay') || $('ban-enforcement-overlay');
-                if (banOverlay) {
-                  banOverlay.classList.remove('flex');
-                  banOverlay.classList.add('hidden');
-                }
-              }
-
-              // 3. Real-time Role Assignment notification & unlock
-              const newRole = AppState.user.role || AppState.user.staffRole;
-              if (!prevRole && newRole) {
-                addNotification(AppState.user.username, {
-                  title: 'Role Granted!',
-                  body: 'You have received a role and can now access the admin panel.',
-                  type: 'level_up'
-                });
-                showToast('You have received a role and can now access the admin panel.', 'success');
-                updateStatsCounters();
-              }
-
-              // 4. Coin & Level Override notifications
-              if (prevCoins !== undefined && AppState.user.stardust !== undefined && prevCoins !== AppState.user.stardust) {
-                addNotification(AppState.user.username, {
-                  title: 'Balance Overridden',
-                  body: 'Your level/balance has been overridden by an Admin.',
-                  type: 'level_up'
-                });
-                showToast('Your level/balance has been overridden by an Admin.', 'info');
-              } else if (prevLevel !== undefined && AppState.user.level !== undefined && prevLevel !== AppState.user.level) {
-                addNotification(AppState.user.username, {
-                  title: 'Level Overridden',
-                  body: 'Your level/balance has been overridden by an Admin.',
-                  type: 'level_up'
-                });
-                showToast('Your level/balance has been overridden by an Admin.', 'info');
-              }
-            }
-          });
-
-          if (modified) {
-            saveUsersDB(localDB);
-            if (AppState.currentTab === 'friends') renderFriendsUI();
-            if (AppState.currentTab === 'admin') renderAdminUsersList();
-          }
-        });
-
-        // 2. Sync Global Chat across devices & browsers
-        subscribeToGlobalChat((cloudMsgs) => {
-          if (!cloudMsgs) return;
-          saveGlobalChatMessages(cloudMsgs);
-          if (AppState.isGlobalChatOpen) {
-            renderGlobalChatMessages();
-          }
-        });
-
-        // 3. Sync Admin Config (announcements & maintenance)
-        subscribeToAdminConfig((cloudCfg) => {
-          if (!cloudCfg) return;
-          const current = getAdminConfig();
-          const merged = { ...current, ...cloudCfg };
-          saveAdminConfig(merged);
-          renderAnnouncementBannerUI();
-          updateMaintenanceGuardUI();
-          if (AppState.currentTab === 'admin') initAdminPlatformUI();
-        });
-      } catch (err) {
-        console.warn('Real-time Firestore listeners boot notice:', err);
-      }
     }, 50);
 
     // Expose all functions to global window for HTML onclick / oninput bindings
