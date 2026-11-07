@@ -1,58 +1,218 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    
-    // Connection test document
-    match /test/connection {
-      allow read, write: if true;
+
+    function signedIn() {
+      return request.auth != null &&
+        request.auth.token.firebase.sign_in_provider != 'anonymous';
     }
 
-    function isValidId(id) {
-      return id is string && id.size() > 0 && id.size() <= 128;
+    function owner() {
+      return signedIn() &&
+        request.auth.token.email == 'jaydentorru4@gmail.com' &&
+        request.auth.token.email_verified == true;
     }
 
-    // User Profile Documents
-    match /users/{userId} {
-      // Allow reading and listing of user accounts so profiles and friends sync across all devices
-      allow get, list: if true;
-      
-      // Allow creating and updating user profile documents
-      allow create, update: if isValidId(userId);
-      
-      // Delete reserved for owner/admin
-      allow delete: if request.auth != null && (
-        (request.auth.token.email is string && request.auth.token.email == 'jaydentorru4@gmail.com') ||
-        request.auth.uid == 'jaydentorru4@gmail.com'
-      );
+    function userProfilePath(uid) {
+      return /databases/$(database)/documents/users/$(uid);
+    }
 
-      // User Favorites Subcollection
+    function hasStaffRole(roles) {
+      return signedIn() &&
+        exists(userProfilePath(request.auth.uid)) &&
+        get(userProfilePath(request.auth.uid)).data.authUid == request.auth.uid &&
+        get(userProfilePath(request.auth.uid)).data.staffRole in roles;
+    }
+
+    function canOpenStaffPanel() {
+      return owner() || hasStaffRole(['admin', 'developer', 'tester', 'moderator']);
+    }
+
+    function canManageProfiles() {
+      return owner() || hasStaffRole(['admin', 'developer']);
+    }
+
+    function canModerateProfiles() {
+      return owner() || hasStaffRole(['admin', 'developer', 'moderator']);
+    }
+
+    function isOwnProfile(uid) {
+      return signedIn() &&
+        request.auth.uid == uid &&
+        resource.data.authUid == uid &&
+        request.resource.data.authUid == uid &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'displayName',
+          'username',
+          'email',
+          'avatarDataUrl',
+          'bannerDataUrl',
+          'stardust',
+          'streak',
+          'level',
+          'xp',
+          'title',
+          'equippedBorder',
+          'equippedFrame',
+          'equippedNameGlow',
+          'equippedChatBadge',
+          'inventory',
+          'bio',
+          'friends',
+          'lastClaimedDate',
+          'createdAt',
+          'updatedAt'
+        ]);
+    }
+
+    function validOwnProfileCreate(uid) {
+      return signedIn() &&
+        request.auth.uid == uid &&
+        request.resource.data.authUid == uid &&
+        request.resource.data.email == request.auth.token.email &&
+        request.resource.data.staffRole == '' &&
+        request.resource.data.role == '' &&
+        request.resource.data.isAdmin == false &&
+        request.resource.data.isOwner == false &&
+        request.resource.data.isBanned == false;
+    }
+
+    function adminProfileUpdate() {
+      return canManageProfiles() &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'stardust',
+          'level',
+          'xp',
+          'title',
+          'inventory',
+          'updatedAt'
+        ]);
+    }
+
+    function moderatorProfileUpdate() {
+      return canModerateProfiles() &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'isBanned',
+          'bannedReason',
+          'mutedUntil',
+          'updatedAt'
+        ]);
+    }
+
+    // Account data is keyed by immutable Firebase Auth UID.
+    match /users/{uid} {
+      allow get, list: if signedIn();
+      allow create: if owner() || validOwnProfileCreate(uid);
+      allow update: if owner() ||
+        isOwnProfile(uid) ||
+        adminProfileUpdate() ||
+        moderatorProfileUpdate();
+      allow delete: if owner();
+
       match /favorites/{favoriteId} {
-        allow read, write: if isValidId(userId);
+        allow get, list, create, update, delete: if owner() ||
+          (signedIn() && request.auth.uid == uid);
       }
     }
 
-    // Global Chat Transmissions - real-time cross-device sync
-    match /globalChat/{msgId} {
-      allow read, list: if true;
-      allow create, update: if isValidId(msgId);
-      allow delete: if true;
+    // Global chat is readable by signed-in members; message authors cannot
+    // set privileged moderation flags for themselves.
+    match /globalChat/{messageId} {
+      allow get, list: if signedIn();
+      allow create: if signedIn() &&
+        request.resource.data.senderUid == request.auth.uid &&
+        request.resource.data.sender is string &&
+        request.resource.data.message is string &&
+        request.resource.data.message.size() > 0 &&
+        request.resource.data.message.size() <= 2000 &&
+        request.resource.data.time is number;
+      allow update: if owner() || hasStaffRole(['admin', 'developer', 'moderator']);
+      allow delete: if owner() || hasStaffRole(['admin', 'developer', 'moderator']);
     }
 
-    // Direct Messages - real-time peer-to-peer sync
-    match /directMessages/{msgId} {
-      allow read, list: if true;
-      allow create, update: if isValidId(msgId);
-      allow delete: if true;
+    // A direct message is visible only to its two declared participants.
+    match /directMessages/{messageId} {
+      allow get, list: if signedIn() &&
+        resource.data.participantUids is list &&
+        resource.data.participantUids.hasAny([request.auth.uid]);
+      allow create: if signedIn() &&
+        request.resource.data.senderUid == request.auth.uid &&
+        request.resource.data.participantUids is list &&
+        request.resource.data.participantUids.size() == 2 &&
+        request.resource.data.participantUids.hasAny([request.auth.uid]) &&
+        request.resource.data.threadKey is string &&
+        request.resource.data.text is string &&
+        request.resource.data.text.size() > 0 &&
+        request.resource.data.text.size() <= 2000;
+      allow update: if false;
+      allow delete: if signedIn() &&
+        resource.data.participantUids.hasAny([request.auth.uid]);
     }
 
-    // Platform Configuration and Alerts
+    // Friend requests can be created by the sender, read by either participant,
+    // and accepted/declined only by the recipient.
+    match /friendRequests/{requestId} {
+      allow get, list: if signedIn() &&
+        resource.data.participantUids is list &&
+        resource.data.participantUids.hasAny([request.auth.uid]);
+      allow create: if signedIn() &&
+        request.resource.data.senderUid == request.auth.uid &&
+        request.resource.data.recipientUid is string &&
+        request.resource.data.recipientUid != request.auth.uid &&
+        request.resource.data.participantUids is list &&
+        request.resource.data.participantUids.size() == 2 &&
+        request.resource.data.participantUids.hasAll([
+          request.auth.uid,
+          request.resource.data.recipientUid
+        ]) &&
+        request.resource.data.status == 'pending';
+      allow update: if signedIn() &&
+        resource.data.recipientUid == request.auth.uid &&
+        resource.data.status == 'pending' &&
+        request.resource.data.status in ['accepted', 'declined'] &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'status',
+          'updatedAt'
+        ]);
+      allow delete: if owner() ||
+        (signedIn() && resource.data.participantUids.hasAny([request.auth.uid]));
+    }
+
+    // Friendships are created only after their associated request is accepted.
+    match /friendships/{friendshipId} {
+      allow get, list: if signedIn() &&
+        resource.data.memberUids is list &&
+        resource.data.memberUids.hasAny([request.auth.uid]);
+      allow create: if signedIn() &&
+        request.resource.data.memberUids is list &&
+        request.resource.data.memberUids.size() == 2 &&
+        request.resource.data.memberUids.hasAny([request.auth.uid]) &&
+        request.resource.data.requestId is string &&
+        exists(/databases/$(database)/documents/friendRequests/$(request.resource.data.requestId)) &&
+        get(/databases/$(database)/documents/friendRequests/$(request.resource.data.requestId)).data.status == 'accepted' &&
+        get(/databases/$(database)/documents/friendRequests/$(request.resource.data.requestId)).data.recipientUid == request.auth.uid &&
+        request.resource.data.memberUids.hasAll(
+          get(/databases/$(database)/documents/friendRequests/$(request.resource.data.requestId)).data.participantUids
+        );
+      allow update: if false;
+      allow delete: if signedIn() &&
+        resource.data.memberUids.hasAny([request.auth.uid]);
+    }
+
+    // Announcements are visible to signed-in members; only owner and assigned
+    // platform administrators/developers can change platform configuration.
     match /adminConfig/{configId} {
-      allow read, list: if true;
-      allow create, update: if isValidId(configId);
-      allow delete: if true;
+      allow get, list: if signedIn();
+      allow create, update: if owner() || hasStaffRole(['admin', 'developer']);
+      allow delete: if owner();
     }
 
-    // Default-deny all other unmatched paths
+    // Minimal public read-only connection probe.
+    match /test/connection {
+      allow get: if true;
+      allow create, update, delete: if false;
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }
