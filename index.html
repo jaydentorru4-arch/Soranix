@@ -4832,7 +4832,8 @@
       return {
         username: username,
         email: email,
-        password: password,
+        password: '',
+        authUid: null,
         level: 1,
         xp: 0,
         stardust: 0,
@@ -5365,97 +5366,109 @@
       }
     }
 
-    function handleAuthSubmit(event) {
+    async function handleAuthSubmit(event) {
       event.preventDefault();
-      const usernameInput = $('auth-username')?.value.trim();
-      const emailInput = $('auth-email')?.value.trim() || '';
-      const passwordInput = $('auth-password')?.value;
-      const confirmInput = $('auth-confirm-password')?.value;
+      const usernameInput = $('auth-username')?.value.trim() || '';
+      const emailInput = $('auth-email')?.value.trim().toLowerCase() || '';
+      const passwordInput = $('auth-password')?.value || '';
+      const confirmInput = $('auth-confirm-password')?.value || '';
 
       if (!usernameInput || !passwordInput) {
-        showToast('Please fill in all required fields.', 'error');
+        showToast('Enter your username or email and password.', 'error');
         return;
       }
 
       const users = getUsersDB();
-      const userKey = usernameInput.toLowerCase();
+      const existing = usernameInput.includes('@')
+        ? Object.values(users).find(user => (user.email || '').toLowerCase() === usernameInput.toLowerCase())
+        : users[usernameInput.toLowerCase()];
 
-      if (AppState.authModalMode === 'signup') {
-        // 1. Validate Unique Username
-        const check = checkUsernameAvailability(usernameInput);
-        if (!check.valid) {
-          showToast(check.reason, 'error');
+      try {
+        if (AppState.authModalMode === 'signup') {
+          if (!emailInput || !emailInput.includes('@')) {
+            showToast('Enter a valid email address to create a cloud account.', 'error');
+            return;
+          }
+          const check = checkUsernameAvailability(usernameInput);
+          if (!check.valid) {
+            showToast(check.reason, 'error');
+            return;
+          }
+          if (passwordInput.length < 6) {
+            showToast('Passwords must contain at least 6 characters.', 'error');
+            return;
+          }
+          if (passwordInput !== confirmInput) {
+            showToast('Passwords do not match. Please re-enter.', 'error');
+            return;
+          }
+
+          showToast('Creating your secure Soranix account...', 'info');
+          const firebaseUser = await createEmailAccount(emailInput, passwordInput, usernameInput);
+          await processSuccessfulFirebaseAuth(firebaseUser, true);
           return;
         }
 
-        // 2. Validate Password Match
-        if (passwordInput !== confirmInput) {
-          showToast('Passwords do not match. Please re-enter.', 'error');
-          return;
+        const email = usernameInput.includes('@') ? usernameInput.toLowerCase() : (existing?.email || '').toLowerCase();
+        if (email) {
+          showToast('Signing in securely...', 'info');
+          try {
+            const firebaseUser = await loginWithEmail(email, passwordInput);
+            await processSuccessfulFirebaseAuth(firebaseUser, true);
+            return;
+          } catch (firebaseError) {
+            if (existing?.password === passwordInput &&
+                ['auth/user-not-found', 'auth/invalid-credential'].includes(firebaseError?.code)) {
+              const firebaseUser = await createEmailAccount(email, passwordInput, existing.username);
+              await processSuccessfulFirebaseAuth(firebaseUser, true);
+              showToast('Your older account has been upgraded to secure cross-device sign-in.', 'success');
+              return;
+            }
+            throw firebaseError;
+          }
         }
 
-        // 3. Create Zeroed Account at Level 1
-        const newUser = createInitialUser(usernameInput, emailInput, passwordInput);
-        users[userKey] = newUser;
-        saveUsersDB(users);
-
-        // Sync new account with Cloud Firestore for admin visibility across devices
-        saveUserToFirestore(newUser);
-        signInAnonymouslyUser().then((fbUser) => {
-          if (fbUser) saveUserToFirestore({ ...newUser, uid: fbUser.uid });
-        });
-
-        // 4. Set Session
-        AppState.isGuest = false;
-        AppState.currentUserKey = userKey;
-        AppState.user = newUser;
-        setActiveSession({ username: usernameInput, isGuest: false });
-
-        closeAuthModal();
-        updateViewableProfileUI();
-        enterDashboard('profile');
-        showToast(`Account created! Welcome, ${usernameInput}! (Level 1 Novice Voyager)`, 'success');
-
-      } else {
-        // Log In Flow
-        const existing = users[userKey];
+        // Legacy accounts without an email remain local to this browser only.
         if (!existing) {
-          showToast('No account found with this username. Please Sign Up.', 'error');
+          showToast('No account found. Sign up with an email address for cloud sign-in.', 'error');
           return;
         }
         if (existing.isBanned) {
-          showToast(`Account Suspended: This account has been banned by Administrator (${existing.bannedReason || 'Violation of terms'}).`, 'error');
+          showToast('This account is suspended. Contact the platform owner.', 'error');
           return;
         }
-        if (existing.password && existing.password !== passwordInput) {
-          showToast('Incorrect password for this account.', 'error');
+        if (!existing.password || existing.password !== passwordInput) {
+          showToast('Incorrect password for this legacy local account.', 'error');
           return;
         }
 
-        if (isPlatformAdmin(existing)) {
-          existing.isAdmin = true;
-          existing.isOwner = true;
-          existing.title = 'System Administrator / Owner';
-          existing.level = Math.max(existing.level || 1, 999);
-          existing.stardust = Math.max(existing.stardust || 0, 999999);
-        } else {
-          existing.isAdmin = false;
-          existing.isOwner = false;
-        }
-
+        if (auth.currentUser) await signOutUser();
+        existing.authUid = null;
+        existing.isAdmin = false;
+        existing.isOwner = false;
+        existing.staffRole = '';
+        existing.role = '';
         AppState.isGuest = false;
-        AppState.currentUserKey = userKey;
-        AppState.user = { ...createInitialUser(existing.username), ...existing };
+        AppState.currentUserKey = existing.username.toLowerCase();
+        AppState.user = { ...createInitialUser(existing.username), ...existing, authUid: null };
         setActiveSession({ username: existing.username, isGuest: false });
-
-        if (AppState.user.theme) {
-          setCosmicTheme(AppState.user.theme, false);
-        }
-
         closeAuthModal();
         updateViewableProfileUI();
         enterDashboard('home');
-        showToast(`Welcome back, ${existing.username}!`, 'success');
+        showToast('Signed in locally. Use an email-based account for cross-device sync.', 'info');
+      } catch (error) {
+        console.error('Soranix authentication error:', error);
+        const messages = {
+          'auth/invalid-credential': 'Incorrect email or password.',
+          'auth/user-not-found': 'No account exists for that email. Please sign up.',
+          'auth/email-already-in-use': 'That email already has an account. Sign in instead.',
+          'auth/weak-password': 'Choose a password with at least 6 characters.',
+          'auth/invalid-email': 'That email address is not valid.',
+          'auth/operation-not-allowed': 'Email/password sign-in is disabled in Firebase Authentication. Enable the Email/Password provider.',
+          'auth/unauthorized-domain': 'This website domain is not authorised in Firebase Authentication.',
+          'auth/network-request-failed': 'Connection failed. Check your internet connection and try again.'
+        };
+        showToast(messages[error?.code] || error?.message || 'Sign-in failed. Please try again.', 'error');
       }
     }
 
@@ -6421,144 +6434,284 @@
       }
     });
 
-    function showGoogleAuthOptionsModal() {
-      const modal = $('google-auth-options-modal');
-      if (modal) {
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
+    let processingFirebaseAuthUid = '';
+    let authNavigationRequested = false;
+    let cloudSyncUid = '';
+    let cloudSyncUnsubscribers = [];
+    let socialSyncUid = '';
+    let socialSyncUnsubscribers = [];
+    let activeDMUnsubscribe = null;
+    let activeDMFirestoreThreadKey = '';
+
+    function stopUnsubscribers(unsubscribers) {
+      unsubscribers.forEach(unsubscribe => {
+        try { unsubscribe?.(); } catch (error) {
+          console.warn('Realtime listener cleanup notice:', error);
+        }
+      });
+      unsubscribers.length = 0;
+    }
+
+    function stopSocialCloudSync() {
+      stopUnsubscribers(socialSyncUnsubscribers);
+      socialSyncUid = '';
+    }
+
+    function stopCloudSync() {
+      stopUnsubscribers(cloudSyncUnsubscribers);
+      cloudSyncUid = '';
+      stopSocialCloudSync();
+    }
+
+    function refreshCloudDirectory(cloudUsers) {
+      if (!Array.isArray(cloudUsers)) return;
+      const localDB = getUsersDB();
+
+      cloudUsers.forEach(profile => {
+        if (!profile?.username || !profile.authUid) return;
+        const key = profile.username.toLowerCase();
+        const existing = localDB[key] || createInitialUser(profile.username, profile.email || '');
+        localDB[key] = {
+          ...existing,
+          ...profile,
+          authUid: profile.authUid,
+          username: profile.username,
+          password: '',
+          friends: Array.isArray(existing.friends) ? existing.friends : []
+        };
+
+        if (!window.currentChatAvatars) window.currentChatAvatars = {};
+        window.currentChatAvatars[key] = {
+          avatar: profile.avatarDataUrl || null,
+          frame: profile.equippedFrame || 'galaxy',
+          glow: profile.equippedNameGlow || null,
+          title: profile.title || 'Novice Voyager',
+          level: profile.level || 1
+        };
+      });
+
+      saveUsersDB(localDB);
+      if (AppState.currentTab === 'friends') renderFriendsUI();
+      if (AppState.currentTab === 'admin' && canAccessAdminPanel(AppState.user)) renderAdminUsersList();
+
+      const activeKey = (AppState.user?.username || '').toLowerCase();
+      const currentProfile = localDB[activeKey];
+      if (!AppState.isGuest && currentProfile?.authUid === auth.currentUser?.uid) {
+        const previousRole = AppState.user.staffRole || '';
+        const previousBanned = AppState.user.isBanned;
+        AppState.user = { ...AppState.user, ...currentProfile };
+
+        if (AppState.user.isBanned) {
+          closeAnimePlayerModal();
+          closeGlobalChatPanel();
+          const overlay = $('banned-account-overlay') || $('ban-enforcement-overlay');
+          const name = $('banned-overlay-username');
+          const reason = $('banned-overlay-reason');
+          if (name) name.textContent = `Account: ${AppState.user.username}`;
+          if (reason) reason.textContent = AppState.user.bannedReason || 'Your account was suspended by the platform owner.';
+          if (overlay) {
+            overlay.classList.remove('hidden');
+            overlay.classList.add('flex');
+          }
+        } else if (previousBanned) {
+          const overlay = $('banned-account-overlay') || $('ban-enforcement-overlay');
+          if (overlay) {
+            overlay.classList.remove('flex');
+            overlay.classList.add('hidden');
+          }
+        }
+
+        if (previousRole !== (AppState.user.staffRole || '') &&
+            AppState.currentTab === 'admin' && !canAccessAdminPanel(AppState.user)) {
+          switchDashboardTab('home');
+          showToast('Your administrative role has changed. The admin panel has been closed.', 'info');
+        }
+        updateViewableProfileUI();
+        updateStatsCounters();
       }
     }
 
-    function closeGoogleAuthOptionsModal() {
-      const modal = $('google-auth-options-modal');
-      if (modal) {
-        modal.classList.remove('flex');
-        modal.classList.add('hidden');
-      }
+    function startSocialCloudSync(firebaseUser) {
+      if (!firebaseUser?.uid || firebaseUser.isAnonymous || socialSyncUid === firebaseUser.uid) return;
+      stopSocialCloudSync();
+      socialSyncUid = firebaseUser.uid;
+
+      socialSyncUnsubscribers.push(subscribeToFriendActivity(firebaseUser.uid, requests => {
+        AppState.friendRequestsCache = requests || [];
+        if (!AppState.user || AppState.user.authUid !== firebaseUser.uid) return;
+
+        AppState.user.incomingRequests = requests
+          .filter(request => request.recipientUid === firebaseUser.uid && request.status === 'pending')
+          .map(request => request.senderUsername);
+        AppState.user.outgoingRequests = requests
+          .filter(request => request.senderUid === firebaseUser.uid && request.status === 'pending')
+          .map(request => request.recipientUsername);
+
+        const users = getUsersDB();
+        users[AppState.user.username.toLowerCase()] = { ...AppState.user };
+        saveUsersDB(users);
+        if (AppState.currentTab === 'friends') renderFriendsUI();
+      }));
+
+      socialSyncUnsubscribers.push(subscribeToFriendships(firebaseUser.uid, friendships => {
+        AppState.friendshipsCache = friendships || [];
+        if (!AppState.user || AppState.user.authUid !== firebaseUser.uid) return;
+
+        const friends = friendships.map(friendship => {
+          const ids = friendship.memberUids || [];
+          const names = friendship.memberUsernames || [];
+          const index = ids.indexOf(firebaseUser.uid);
+          return index >= 0 ? names[1 - index] : null;
+        }).filter(Boolean);
+
+        AppState.user.friends = [...new Set(friends)];
+        const users = getUsersDB();
+        users[AppState.user.username.toLowerCase()] = { ...AppState.user };
+        saveUsersDB(users);
+        if (AppState.currentTab === 'friends') renderFriendsUI();
+      }));
     }
 
-    async function processSuccessfulGoogleAuth(email, displayName = '', photoURL = '', uid = '') {
-      const userEmail = (email || '').trim().toLowerCase();
-      const isGoogleOwner = userEmail === OWNER_EMAIL;
-      const googleUsername = displayName ? displayName.replace(/\s+/g, '') : (isGoogleOwner ? 'JaydenTorru' : `Voyager_${Math.floor(Math.random()*1000)}`);
-      const users = getUsersDB();
-      let finalUsername = googleUsername;
-      let counter = 1;
+    function startCloudSync(firebaseUser) {
+      if (!firebaseUser?.uid || firebaseUser.isAnonymous || cloudSyncUid === firebaseUser.uid) return;
+      stopCloudSync();
+      cloudSyncUid = firebaseUser.uid;
 
-      while (users[finalUsername.toLowerCase()] && users[finalUsername.toLowerCase()].email !== userEmail) {
-        finalUsername = `${googleUsername}${counter++}`;
-      }
-
-      let existingUser = users[finalUsername.toLowerCase()];
-      if (!existingUser) {
-        existingUser = createInitialUser(finalUsername, userEmail);
-      }
-
-      existingUser.email = userEmail;
-      if (photoURL && !existingUser.avatarDataUrl) {
-        existingUser.avatarDataUrl = photoURL;
-      }
-
-      // STRICT CHECK: IF LOGIN IS JAYDENTORRU4@GMAIL.COM -> GRANT OWNER ACCESS!
-      if (isGoogleOwner) {
-        existingUser.isOwner = true;
-        existingUser.isAdmin = true;
-        existingUser.staffRole = 'owner';
-        existingUser.title = 'System Administrator / Owner';
-        existingUser.level = Math.max(existingUser.level || 1, 999);
-        existingUser.stardust = Math.max(existingUser.stardust || 0, 999999);
-        existingUser.equippedFrame = 'void';
-        existingUser.equippedNameGlow = 'rainbow';
-        existingUser.equippedChatBadge = 'badge_soranix_admin';
-        existingUser.inventory = ['frame_galaxy', 'frame_void', 'frame_crown', 'frame_cybergrid', 'theme_violet', 'audio_coin', 'badge_soranix_admin'];
-      } else {
-        existingUser.isOwner = false;
-        existingUser.isAdmin = false;
-      }
-
-      users[finalUsername.toLowerCase()] = existingUser;
-      saveUsersDB(users);
-
-      // Sync profile document to Cloud Firestore
-      try {
-        await saveUserToFirestore({ 
-          ...existingUser, 
-          uid: uid || (isGoogleOwner ? 'jaydentorru4_gmail_com' : 'user_' + finalUsername.toLowerCase()) 
-        });
-      } catch (syncErr) {
-        console.warn('Firestore cloud sync notice:', syncErr);
-      }
-
-      AppState.isGuest = false;
-      AppState.currentUserKey = finalUsername.toLowerCase();
-      AppState.user = existingUser;
-      setActiveSession({ username: finalUsername, isGuest: false });
-
-      updateViewableProfileUI();
-      enterDashboard('profile');
-      if (isGoogleOwner) {
-        SoranixAudio.play('power_up');
-        showToast('Owner Authenticated (jaydentorru4@gmail.com)! Administrator clearance granted.', 'success');
-        syncAdminFirestoreUsers(false);
-      } else {
-        showToast(`Google Sign-In successful! Welcome, ${finalUsername}.`, 'success');
-      }
+      cloudSyncUnsubscribers.push(subscribeToAllUsers(refreshCloudDirectory));
+      cloudSyncUnsubscribers.push(subscribeToGlobalChat(messages => {
+        saveGlobalChatMessages(messages || []);
+        if (AppState.isGlobalChatOpen) renderGlobalChatMessages();
+      }));
+      cloudSyncUnsubscribers.push(subscribeToAdminConfig(config => {
+        saveAdminConfig({ ...getAdminConfig(), ...config });
+        renderAnnouncementBannerUI();
+        updateMaintenanceGuardUI();
+        if (AppState.currentTab === 'admin' && canAccessAdminPanel(AppState.user)) initAdminPlatformUI();
+      }));
+      startSocialCloudSync(firebaseUser);
     }
 
-    async function authenticateAsOwnerDirectly() {
-      closeGoogleAuthOptionsModal();
-      closeAuthModal();
-      await processSuccessfulGoogleAuth(OWNER_EMAIL, 'JaydenTorru', null, 'jaydentorru4_gmail_com');
-    }
+    async function processSuccessfulFirebaseAuth(firebaseUser, navigate = true) {
+      if (!firebaseUser?.uid || firebaseUser.isAnonymous || !firebaseUser.email) {
+        throw new Error('A verified Google or email account is required.');
+      }
 
-    async function authenticateWithOtherGoogleEmail() {
-      const input = $('input-other-google-email');
-      const email = input?.value.trim().toLowerCase();
-      if (!email || !email.includes('@')) {
-        showToast('Please enter a valid Google email address.', 'error');
+      if (processingFirebaseAuthUid === firebaseUser.uid) {
+        if (navigate) authNavigationRequested = true;
         return;
       }
-      closeGoogleAuthOptionsModal();
-      closeAuthModal();
-      const defaultName = email.split('@')[0].replace(/[^a-zA-Z0-9_]/g, '');
-      await processSuccessfulGoogleAuth(email, defaultName || 'Voyager', null, 'user_' + Date.now());
+      if (AppState.user?.authUid === firebaseUser.uid) {
+        startCloudSync(firebaseUser);
+        if (navigate) {
+          closeAuthModal();
+          updateViewableProfileUI();
+          enterDashboard('profile');
+        }
+        return;
+      }
+
+      processingFirebaseAuthUid = firebaseUser.uid;
+      authNavigationRequested = navigate;
+      try {
+        const remote = await syncUserProfile(firebaseUser);
+        const email = (firebaseUser.email || '').trim().toLowerCase();
+        const isVerifiedOwner = !!firebaseUser.emailVerified && email === OWNER_EMAIL;
+        const username = String(remote.username || firebaseUser.displayName || email.split('@')[0])
+          .replace(/\s+/g, '')
+          .slice(0, 24);
+        const users = getUsersDB();
+        const cached = users[username.toLowerCase()] || {};
+        const profile = {
+          ...createInitialUser(username, email, ''),
+          ...cached,
+          ...remote,
+          username,
+          email,
+          authUid: firebaseUser.uid,
+          password: '',
+          friends: Array.isArray(remote.friends) ? remote.friends : [],
+          incomingRequests: [],
+          outgoingRequests: []
+        };
+
+        if (isVerifiedOwner) {
+          Object.assign(profile, {
+            isOwner: true,
+            isAdmin: true,
+            staffRole: 'owner',
+            role: 'owner',
+            title: 'System Administrator / Owner',
+            level: Math.max(profile.level || 1, 999),
+            stardust: Math.max(profile.stardust || 0, 999999),
+            equippedFrame: 'void',
+            equippedNameGlow: 'rainbow',
+            equippedChatBadge: 'badge_soranix_admin'
+          });
+        } else {
+          const role = String(remote.staffRole || '').toLowerCase();
+          profile.isOwner = false;
+          profile.isAdmin = STAFF_PANEL_ROLES.includes(role);
+          profile.staffRole = STAFF_PANEL_ROLES.includes(role) ? role : '';
+          profile.role = STAFF_PANEL_ROLES.includes(role) ? (remote.role || role) : '';
+        }
+
+        users[username.toLowerCase()] = profile;
+        saveUsersDB(users);
+        AppState.isGuest = false;
+        AppState.currentUserKey = username.toLowerCase();
+        AppState.user = profile;
+        setActiveSession({ username, isGuest: false });
+        startCloudSync(firebaseUser);
+        closeAuthModal();
+        updateViewableProfileUI();
+        updateMaintenanceGuardUI();
+        if (navigate || authNavigationRequested) enterDashboard('profile');
+
+        if (isVerifiedOwner) {
+          SoranixAudio.play('power_up');
+          showToast('Owner Google account verified. Administrator access granted.', 'success');
+        } else {
+          showToast(`Signed in successfully. Welcome, ${username}!`, 'success');
+        }
+      } finally {
+        processingFirebaseAuthUid = '';
+        authNavigationRequested = false;
+      }
     }
 
     async function triggerFirebaseGoogleLogin() {
+      closeAuthModal();
+      showToast('Connecting to Google securely...', 'info');
       try {
-        closeAuthModal();
-        showToast('Connecting with Google...', 'info');
-        let user = null;
-        try {
-          user = await signInWithGoogle();
-        } catch (popupErr) {
-          console.warn('Firebase popup notice (opening Google account verification dialog):', popupErr);
-          showGoogleAuthOptionsModal();
-          return;
-        }
-
-        if (user) {
-          await processSuccessfulGoogleAuth(user.email, user.displayName, user.photoURL, user.uid);
-        } else {
-          showGoogleAuthOptionsModal();
-        }
-      } catch (err) {
-        console.warn('Google Sign-in status:', err);
-        showGoogleAuthOptionsModal();
+        const firebaseUser = await signInWithGoogle();
+        if (firebaseUser) await processSuccessfulFirebaseAuth(firebaseUser, true);
+        // A null result means redirect sign-in is taking over or the popup was closed.
+      } catch (error) {
+        console.error('Google Sign-in Error:', error);
+        const messages = {
+          'auth/unauthorized-domain': 'This website domain is not authorised in Firebase Authentication.',
+          'auth/operation-not-allowed': 'Google sign-in is disabled in Firebase Authentication.',
+          'auth/popup-blocked': 'The browser blocked the Google popup. Please allow popups and retry.',
+          'auth/network-request-failed': 'Google sign-in could not reach Firebase. Check your connection.'
+        };
+        showToast(messages[error?.code] || error?.message || 'Google sign-in failed.', 'error');
       }
     }
 
-    // Auto-sync Firebase Auth state
-    onAuthStateChanged(auth, (user) => {
-      if (user && user.email && user.email.trim().toLowerCase() === OWNER_EMAIL) {
-        if (!AppState.isGuest && AppState.user) {
-          AppState.user.email = OWNER_EMAIL;
-          AppState.user.isOwner = true;
-          AppState.user.isAdmin = true;
-          AppState.user.title = 'System Administrator / Owner';
-          saveUserToLocalStorage();
-          updateViewableProfileUI();
-        }
+    onAuthStateChanged(auth, firebaseUser => {
+      if (!firebaseUser || firebaseUser.isAnonymous) {
+        stopCloudSync();
+        return;
+      }
+      if (AppState.user?.authUid === firebaseUser.uid) {
+        startCloudSync(firebaseUser);
+        return;
+      }
+
+      const savedSession = getActiveSession();
+      if (!savedSession || savedSession.isGuest || !AppState.user?.authUid) {
+        processSuccessfulFirebaseAuth(firebaseUser, !savedSession || savedSession.isGuest)
+          .catch(error => console.warn('Firebase session restore notice:', error));
       }
     });
 
