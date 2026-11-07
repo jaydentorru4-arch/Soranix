@@ -319,12 +319,17 @@ export async function saveUserToFirestore(userData: any): Promise<void> {
       const callerRole = String(callerProfile.data()?.staffRole || '').toLowerCase();
       if (!['admin', 'moderator'].includes(callerRole)) return;
 
-      const isModerationChange = Object.prototype.hasOwnProperty.call(userData, 'isBanned') ||
-        Object.prototype.hasOwnProperty.call(userData, 'mutedUntil') ||
-        Object.prototype.hasOwnProperty.call(userData, 'bannedReason');
+      const targetRef = doc(db, 'users', targetUid);
+      const targetSnapshot = await getDoc(targetRef);
+      if (!targetSnapshot.exists()) return;
+      const existing = targetSnapshot.data();
+      const moderationChanged =
+        !!existing.isBanned !== !!userData.isBanned ||
+        Number(existing.mutedUntil || 0) !== Number(userData.mutedUntil || 0) ||
+        String(existing.bannedReason || '') !== String(userData.bannedReason || '');
 
-      if (isModerationChange) {
-        await updateDoc(doc(db, 'users', targetUid), {
+      if (moderationChanged) {
+        await updateDoc(targetRef, {
           isBanned: !!userData.isBanned,
           bannedReason: userData.bannedReason || '',
           mutedUntil: userData.mutedUntil || 0,
@@ -340,7 +345,14 @@ export async function saveUserToFirestore(userData: any): Promise<void> {
           inventory: Array.isArray(userData.inventory) ? userData.inventory : [],
           updatedAt: new Date().toISOString()
         };
-        await updateDoc(doc(db, 'users', targetUid), adminChanges);
+        const adminChanged =
+          Number(existing.stardust || 0) !== adminChanges.stardust ||
+          Number(existing.level || 1) !== adminChanges.level ||
+          Number(existing.xp || 0) !== adminChanges.xp ||
+          String(existing.title || '') !== adminChanges.title ||
+          JSON.stringify(existing.inventory || []) !== JSON.stringify(adminChanges.inventory);
+        if (!adminChanged) return;
+        await updateDoc(targetRef, adminChanges);
         await updateDoc(doc(db, 'publicProfiles', targetUid), {
           level: adminChanges.level,
           title: adminChanges.title,
