@@ -1,0 +1,7 @@
+{
+  "firestore": {
+    "database": "ai-studio-soranixtogalaxya-a90b3696-bc3f-4c3f-abe5-33c4c25b0094",
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  }
+}
