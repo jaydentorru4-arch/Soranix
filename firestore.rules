@@ -190,7 +190,10 @@ service cloud.firestore {
         request.resource.data.participantUids is list &&
         request.resource.data.participantUids.size() == 2 &&
         request.resource.data.participantUids.hasAny([request.auth.uid]) &&
+        request.resource.data.participantUids[0] != request.resource.data.participantUids[1] &&
         request.resource.data.threadKey is string &&
+        exists(/databases/$(database)/documents/friendships/$(request.resource.data.threadKey)) &&
+        get(/databases/$(database)/documents/friendships/$(request.resource.data.threadKey)).data.memberUids.hasAll(request.resource.data.participantUids) &&
         request.resource.data.text is string &&
         request.resource.data.text.size() > 0 &&
         request.resource.data.text.size() <= 2000;
