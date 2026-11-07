@@ -302,7 +302,7 @@ export async function saveUserToFirestore(userData: any): Promise<void> {
     if (!isVerifiedOwner && !isSelf) {
       const callerProfile = await getDoc(doc(db, 'users', currentUser.uid));
       callerRole = String(callerProfile.data()?.staffRole || '').toLowerCase();
-      if (!['admin', 'developer', 'moderator'].includes(callerRole)) {
+      if (!['admin', 'moderator'].includes(callerRole)) {
         console.warn('Blocked cross-account profile write.');
         return;
       }
@@ -350,7 +350,7 @@ export async function saveUserToFirestore(userData: any): Promise<void> {
     } else if (!isSelf) {
       // The rules also restrict the affected fields, but only include the
       // fields this staff role is authorised to change in the client payload.
-      if (['admin', 'developer'].includes(callerRole)) {
+      if (callerRole === 'admin') {
         Object.assign(payload, {
           stardust: typeof userData.stardust === 'number' ? userData.stardust : 0,
           level: userData.level || 1,
@@ -359,7 +359,7 @@ export async function saveUserToFirestore(userData: any): Promise<void> {
           inventory: Array.isArray(userData.inventory) ? userData.inventory : []
         });
       }
-      if (['admin', 'developer', 'moderator'].includes(callerRole)) {
+      if (['admin', 'moderator'].includes(callerRole)) {
         Object.assign(payload, {
           isBanned: !!userData.isBanned,
           bannedReason: userData.bannedReason || '',
@@ -483,6 +483,7 @@ export function subscribeToDirectMessages(threadKey: string, onUpdate: (messages
   const messagesQuery = query(
     collection(db, 'directMessages'),
     where('threadKey', '==', threadKey),
+    where('participantUids', 'array-contains', currentUser.uid),
     limit(100)
   );
   return onSnapshot(messagesQuery, (snap) => {
