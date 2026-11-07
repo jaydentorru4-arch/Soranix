@@ -5000,7 +5000,21 @@
       }
     }
 
-    function continueAsGuest() {
+    async function continueAsGuest() {
+      stopCloudSync();
+      if (activeDMUnsubscribe) {
+        try { activeDMUnsubscribe(); } catch (error) {}
+        activeDMUnsubscribe = null;
+      }
+      activeDMFirestoreThreadKey = '';
+      if (auth.currentUser) {
+        try {
+          await signOutUser();
+        } catch (error) {
+          console.warn('Guest transition sign-out notice:', error);
+        }
+      }
+
       AppState.isGuest = true;
       AppState.currentUserKey = null;
       AppState.user = createInitialUser('Guest Explorer');
