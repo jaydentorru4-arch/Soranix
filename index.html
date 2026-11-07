@@ -4698,7 +4698,7 @@
 
     function hasStaffPanelAccess(u) {
       const signedIn = auth.currentUser;
-      return !!u && !!signedIn && !signedIn.isAnonymous && !!signedIn.emailVerified &&
+      return !!u && !!signedIn && !signedIn.isAnonymous &&
         (u.authUid || u.id) === signedIn.uid &&
         STAFF_PANEL_ROLES.includes(String(u.staffRole || '').toLowerCase());
     }
@@ -5043,6 +5043,10 @@
       }
 
       AppState.currentTab = tabName;
+      if (tabName === 'friends' && auth.currentUser && !auth.currentUser.isAnonymous) {
+        fetchAllUsers().then(refreshCloudDirectory)
+          .catch(error => console.warn('Friends directory refresh notice:', error));
+      }
 
       const tabs = [
         { name: 'home', el: $('tab-view-home') },
@@ -6561,7 +6565,45 @@
       stopCloudSync();
       cloudSyncUid = firebaseUser.uid;
 
-      cloudSyncUnsubscribers.push(subscribeToAllUsers(refreshCloudDirectory));
+      // Load the directory once; subscribing to every account document caused
+      // large repeated snapshots whenever any member updated their profile.
+      fetchAllUsers().then(refreshCloudDirectory)
+        .catch(error => console.warn('Cloud directory initial load notice:', error));
+      cloudSyncUnsubscribers.push(subscribeToUserProfile(firebaseUser.uid, profile => {
+        if (!profile || auth.currentUser?.uid !== firebaseUser.uid) return;
+        const username = String(profile.username || AppState.user?.username || '').toLowerCase();
+        if (!username) return;
+        const users = getUsersDB();
+        users[username] = {
+          ...(users[username] || {}),
+          ...profile,
+          authUid: firebaseUser.uid,
+          username: profile.username || AppState.user.username,
+          password: ''
+        };
+        saveUsersDB(users);
+
+        if (AppState.user?.authUid === firebaseUser.uid) {
+          const wasAdmin = canAccessAdminPanel(AppState.user);
+          AppState.user = { ...AppState.user, ...profile, authUid: firebaseUser.uid, password: '' };
+          const ownerIdentity = !!firebaseUser.emailVerified &&
+            (firebaseUser.email || '').trim().toLowerCase() === OWNER_EMAIL;
+          const role = String(profile.staffRole || '').toLowerCase();
+          AppState.user.isOwner = ownerIdentity;
+          AppState.user.isAdmin = ownerIdentity || STAFF_PANEL_ROLES.includes(role);
+          if (ownerIdentity) {
+            AppState.user.staffRole = 'owner';
+            AppState.user.role = 'owner';
+            AppState.user.title = 'System Administrator / Owner';
+          }
+          updateViewableProfileUI();
+          updateStatsCounters();
+          if (wasAdmin && !canAccessAdminPanel(AppState.user) && AppState.currentTab === 'admin') {
+            switchDashboardTab('home');
+            showToast('Your administrative role was removed. Admin access has been closed.', 'info');
+          }
+        }
+      }));
       cloudSyncUnsubscribers.push(subscribeToGlobalChat(messages => {
         saveGlobalChatMessages(messages || []);
         if (AppState.isGlobalChatOpen) renderGlobalChatMessages();
@@ -6585,10 +6627,26 @@
         return;
       }
       if (AppState.user?.authUid === firebaseUser.uid) {
+        const remote = await syncUserProfile(firebaseUser);
+        AppState.user = { ...AppState.user, ...remote, authUid: firebaseUser.uid, password: '' };
+        const ownerIdentity = !!firebaseUser.emailVerified &&
+          (firebaseUser.email || '').trim().toLowerCase() === OWNER_EMAIL;
+        const role = String(remote.staffRole || '').toLowerCase();
+        AppState.user.isOwner = ownerIdentity;
+        AppState.user.isAdmin = ownerIdentity || STAFF_PANEL_ROLES.includes(role);
+        if (ownerIdentity) {
+          AppState.user.staffRole = 'owner';
+          AppState.user.role = 'owner';
+          AppState.user.title = 'System Administrator / Owner';
+        }
+        const cached = getUsersDB();
+        cached[AppState.user.username.toLowerCase()] = { ...AppState.user };
+        saveUsersDB(cached);
         startCloudSync(firebaseUser);
+        updateViewableProfileUI();
+        updateMaintenanceGuardUI();
         if (navigate) {
           closeAuthModal();
-          updateViewableProfileUI();
           enterDashboard('profile');
         }
         return;
@@ -6641,6 +6699,7 @@
 
         users[username.toLowerCase()] = profile;
         saveUsersDB(users);
+        await saveUserToFirestore(profile);
         AppState.isGuest = false;
         AppState.currentUserKey = username.toLowerCase();
         AppState.user = profile;
@@ -6694,22 +6753,8 @@
         return;
       }
       if (AppState.user?.authUid === firebaseUser.uid) {
-        const currentRole = String(AppState.user.staffRole || '').toLowerCase();
-        const ownerIdentity = !firebaseUser.isAnonymous && !!firebaseUser.emailVerified &&
-          (firebaseUser.email || '').trim().toLowerCase() === OWNER_EMAIL;
-        AppState.user.isOwner = ownerIdentity;
-        AppState.user.isAdmin = ownerIdentity || STAFF_PANEL_ROLES.includes(currentRole);
-        if (ownerIdentity) {
-          AppState.user.staffRole = 'owner';
-          AppState.user.role = 'owner';
-          AppState.user.title = 'System Administrator / Owner';
-        }
-        startCloudSync(firebaseUser);
-        updateViewableProfileUI();
-        updateMaintenanceGuardUI();
-        if (AppState.currentTab === 'admin' && !canAccessAdminPanel(AppState.user)) {
-          switchDashboardTab('home');
-        }
+        processSuccessfulFirebaseAuth(firebaseUser, false)
+          .catch(error => console.warn('Firebase profile refresh notice:', error));
         return;
       }
 
