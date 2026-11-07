@@ -368,7 +368,7 @@ export async function saveUserToFirestore(userData: any): Promise<void> {
       authUid: targetUid,
       displayName: String(userData.displayName || username).slice(0, 80),
       username,
-      email: currentUser.email || '',
+      email: isSelf ? (currentUser.email || '') : String(userData.email || ''),
       avatarDataUrl: userData.avatarDataUrl || userData.photoURL || null,
       bannerDataUrl: userData.bannerDataUrl || null,
       stardust: typeof userData.stardust === 'number' ? userData.stardust : 0,
