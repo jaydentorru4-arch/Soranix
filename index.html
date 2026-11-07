@@ -660,19 +660,6 @@
 
       <!-- Right: Server Mirror Switcher, Stardust Tracker & Window Controls -->
       <div class="flex items-center gap-2 sm:gap-2.5 shrink-0">
-        <!-- Multi-Server Mirror Switcher -->
-        <div class="hidden sm:flex items-center gap-1.5">
-          <span class="hidden xl:inline text-[10px] font-mono uppercase tracking-wider text-slate-400">Server:</span>
-          <select 
-            id="player-server-select" 
-            onchange="handlePlayerServerChange(this.value)" 
-            class="px-2.5 py-1.5 text-xs bg-purple-950/80 border border-purple-500/40 rounded-xl text-purple-200 focus:outline-none focus:border-purple-400 cursor-pointer font-mono font-semibold"
-            title="Switch Stream Source Mirror"
-          >
-            <option value="anione">Ani-One Asia (Official YouTube)</option>
-          </select>
-        </div>
-
         <!-- Stardust Coins Reward Status Tracker -->
         <div 
           id="player-reward-tracker-status" 
@@ -735,12 +722,8 @@
                 <div class="w-14 h-14 rounded-full bg-purple-600/30 border border-purple-500/50 flex items-center justify-center text-purple-300 text-2xl shadow-accent-glow mb-1 animate-pulse">
                   <i class="fa-solid fa-server"></i>
                 </div>
-                <h3 id="player-fallback-title" class="text-base font-display font-extrabold text-white">Official episode link not configured</h3>
-                <p id="player-fallback-message" class="text-xs text-slate-300">Soranix only plays verified Ani-One Asia uploads. YouTube country and membership restrictions still apply.</p>
-                <a id="player-fallback-open-link" href="https://www.youtube.com/@AniOneAsia" target="_blank" rel="noopener noreferrer" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-xs font-extrabold uppercase tracking-wider text-white shadow-accent-strong cursor-pointer transition-all flex items-center gap-2">
-                  <i class="fa-brands fa-youtube text-xs"></i>
-                  <span>Browse Ani-One Asia</span>
-                </a>
+                <h3 id="player-fallback-title" class="text-base font-display font-extrabold text-white">Episode unavailable</h3>
+                <p id="player-fallback-message" class="text-xs text-slate-300">This episode is not currently available in the in-site player.</p>
               </div>
             </div>
 
@@ -751,11 +734,8 @@
             >
               <div class="flex items-center gap-2.5">
                 <i class="fa-solid fa-triangle-exclamation text-amber-400 shrink-0"></i>
-                <span id="player-server-status-text">The official YouTube player could not load this episode.</span>
+                <span id="player-server-status-text">The embedded video could not be loaded.</span>
               </div>
-              <a href="https://www.youtube.com/@AniOneAsia" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1 rounded-lg bg-purple-600 hover:bg-purple-500 text-white font-bold text-[10px] cursor-pointer">
-                Open Ani-One Asia
-              </a>
               <button onclick="$('player-server-status-banner')?.classList.add('hidden')" class="text-amber-400 hover:text-white text-xs cursor-pointer ml-1">
                 <i class="fa-solid fa-xmark"></i>
               </button>
@@ -925,16 +905,6 @@
 
               <!-- Right Group: Server, Quality, Sub/Dub, Gear, Theater, Fullscreen -->
               <div class="flex items-center gap-2 flex-wrap">
-                <!-- Server Selector -->
-                <select 
-                  id="player-server-select" 
-                  onchange="handlePlayerServerChange(this.value)" 
-                  class="px-2.5 py-1.5 text-xs bg-purple-950/80 border border-purple-500/40 rounded-xl text-purple-200 focus:outline-none focus:border-purple-400 cursor-pointer font-mono font-semibold"
-                  title="Switch Stream Mirror"
-                >
-                  <option value="anione">Ani-One Asia (Official YouTube)</option>
-                </select>
-
                 <!-- Quality Pills -->
                 <div class="hidden sm:flex items-center p-0.5 bg-black/60 border border-white/15 rounded-xl text-[10px] font-mono font-bold">
                   <button onclick="setPlayerQuality('1080p')" id="quality-btn-1080" class="px-2 py-0.5 rounded-lg bg-purple-600 text-white cursor-pointer">1080p</button>
@@ -10206,7 +10176,7 @@
     }
 
     function getServerLabel(serverKey) {
-      return 'Ani-One Asia (Official YouTube)';
+      return 'Integrated Player';
     }
 
     function setPlayerWatchState(isActive) {
@@ -10535,23 +10505,64 @@
       })[character]);
     }
 
-    // Add only verified full-episode video IDs from the official Ani-One Asia channel.
-    // Format: 'anime-title-slug': { 1: 'YouTubeVideoID', 2: 'YouTubeVideoID' }
-    // Trailers, re-uploads, mirror URLs, and guessed IDs are intentionally excluded.
-    const ANIONE_ASIA_EPISODES = Object.freeze({
-      // No IDs are pre-filled: each episode link must be checked against its
-      // official upload, membership status, and current licence territory.
+    // Verified full-episode playlist sources. The embedded player starts at the
+    // selected episode within the matching playlist range. YouTube still applies
+    // the original video's territory, availability, and membership requirements.
+    const OFFICIAL_EPISODE_PLAYLISTS = Object.freeze({
+      'jujutsu-kaisen': [
+        {
+          playlistId: 'PLxSscENEp7JisDU6GAJuyNpVwDvCm-f3J',
+          firstEpisode: 1,
+          lastEpisode: 24
+        }
+      ],
+      'jujutsu-kaisen-season-2': [
+        {
+          playlistId: 'PLxSscENEp7JjIe81K3Qd0l7PVaIiPi64r',
+          firstEpisode: 1,
+          lastEpisode: 23
+        }
+      ],
+      'chainsaw-man': [
+        {
+          playlistId: 'PLxSscENEp7JhfvHiWN-djJjCOjW8rxA6p',
+          firstEpisode: 1,
+          lastEpisode: 11
+        }
+      ],
+      'bleach-thousand-year-blood-war': [
+        {
+          playlistId: 'PLxSscENEp7Jg3pUga3XbHeMfWLXRMGVQY',
+          firstEpisode: 1,
+          lastEpisode: 13
+        },
+        {
+          playlistId: 'PLxSscENEp7JhrtC5M6EHH5g_rAh6LXEni',
+          firstEpisode: 14,
+          lastEpisode: 26
+        },
+        {
+          playlistId: 'PLxSscENEp7JgOSk5QmPX6aolSUsXgCMc-',
+          firstEpisode: 27,
+          lastEpisode: 40
+        }
+      ]
     });
 
-    function getAniOneAsiaEpisodeSource(anime, episodeNumber) {
+    function getConfiguredEpisodeSource(anime, episodeNumber) {
       const title = anime?.title?.english || anime?.title?.romaji || '';
       const slug = slugifyAnimeTitle(title);
-      const entry = ANIONE_ASIA_EPISODES[slug]?.[Number(episodeNumber)];
-      const videoId = typeof entry === 'string' ? entry : entry?.videoId;
-      if (!videoId || !/^[A-Za-z0-9_-]{11}$/.test(videoId)) return null;
+      const episode = Number(episodeNumber);
+      const ranges = OFFICIAL_EPISODE_PLAYLISTS[slug] || [];
+
+      const match = ranges.find(range =>
+        episode >= range.firstEpisode && episode <= range.lastEpisode
+      );
+      if (!match) return null;
+
       return {
-        videoId,
-        membershipRequired: typeof entry === 'object' && !!entry.membershipRequired
+        playlistId: match.playlistId,
+        playlistIndex: episode - match.firstEpisode + 1
       };
     }
 
@@ -10715,12 +10726,12 @@
         const isCurrent = n === currentEpisode;
         const isW = watchedList.includes(n);
         const safeTitle = escapeEpisodeTitle(meta.title);
-        const officialSource = getAniOneAsiaEpisodeSource(anime, n);
+        const configuredSource = getConfiguredEpisodeSource(anime, n);
         const episodeStatus = isW
           ? 'Completed'
-          : (officialSource
-            ? (isCurrent ? 'Now Playing' : 'Official video ready')
-            : 'Official link unavailable');
+          : (configuredSource
+            ? (isCurrent ? 'Now Playing' : 'Available')
+            : 'Not available');
         let borderCls = isCurrent 
           ? 'border-purple-400 bg-purple-950/40 shadow-[0_0_15px_rgba(168,85,247,0.35)] ring-1 ring-purple-400' 
           : 'border-white/10 bg-white/[0.02] hover:border-white/20 hover:bg-white/[0.05]';
@@ -10800,7 +10811,7 @@
       const slug = slugifyAnimeTitle(displayTitle);
       const anilistId = anime.id;
       
-      const server = serverOverride || (serverSelect ? serverSelect.value : 'anione');
+      const server = 'integrated';
       AppState.playerServer = server;
       AppState.activePlayerAnime = anime;
       AppState.activePlayerAnimeTitle = displayTitle;
@@ -10833,8 +10844,6 @@
       }
 
       if (epSelect) epSelect.value = episode;
-      if (serverSelect) serverSelect.value = server;
-
       // 2. RIGHT COLUMN: EPISODE CONTROL & INFO PANEL UPDATES
       const panelSeasonEp = $('player-panel-season-ep');
       const panelServerBadge = $('player-panel-server-badge');
@@ -10956,12 +10965,12 @@
       }
       clearTimeout(currentStreamTimeout);
 
-      // Only verified official Ani-One Asia episode IDs can be played here.
-      const officialSource = getAniOneAsiaEpisodeSource(anime, episode);
+      // Playback remains inside the Soranix player. No external channel links
+      // or source-switcher controls are shown to visitors.
+      const configuredSource = getConfiguredEpisodeSource(anime, episode);
       const fallback = $('player-fallback-backdrop');
       const fallbackTitle = $('player-fallback-title');
       const fallbackMessage = $('player-fallback-message');
-      const fallbackLink = $('player-fallback-open-link');
 
       if (html5Video) {
         html5Video.pause();
@@ -10981,36 +10990,34 @@
       if (statusBanner) statusBanner.classList.add('hidden');
       if (spinner) spinner.classList.add('hidden');
 
-      if (officialSource && embedIframe) {
+      if (configuredSource && embedIframe) {
         setPlayerWatchState(true);
         if (fallback) fallback.classList.add('hidden');
-        if (fallbackLink) {
-          fallbackLink.href = `https://www.youtube.com/watch?v=${officialSource.videoId}`;
-          fallbackLink.textContent = 'Open this episode on YouTube';
-        }
         embedIframe.classList.remove('hidden');
         if (spinner) spinner.classList.remove('hidden');
-        embedIframe.src = `https://www.youtube-nocookie.com/embed/${officialSource.videoId}?autoplay=1&rel=0&modestbranding=1`;
+
+        const playlistUrl = new URL('https://www.youtube-nocookie.com/embed/videoseries');
+        playlistUrl.searchParams.set('list', configuredSource.playlistId);
+        playlistUrl.searchParams.set('index', String(configuredSource.playlistIndex));
+        playlistUrl.searchParams.set('autoplay', '1');
+        playlistUrl.searchParams.set('rel', '0');
+        embedIframe.src = playlistUrl.toString();
         embedIframe.onload = () => {
           if (spinner) spinner.classList.add('hidden');
         };
         currentStreamTimeout = setTimeout(() => {
           if (spinner) spinner.classList.add('hidden');
         }, 5000);
-        showToast(`Opening official Ani-One Asia video: ${displayTitle} - Episode ${episode}`, 'success');
+        showToast(`Loading ${displayTitle} - Episode ${episode}`, 'info');
       } else {
         setPlayerWatchState(false);
-        if (fallbackTitle) fallbackTitle.textContent = 'Official episode link not configured';
+        if (fallbackTitle) fallbackTitle.textContent = 'Episode unavailable';
         if (fallbackMessage) {
           const episodeTitle = getEpisodeMeta(anime, episode).title;
-          fallbackMessage.textContent = `${displayTitle} - Episode ${episode}: ${episodeTitle}. Soranix only plays verified Ani-One Asia uploads. This episode will appear here when its official YouTube video ID has been checked and added. YouTube country and membership restrictions still apply.`;
-        }
-        if (fallbackLink) {
-          fallbackLink.href = 'https://www.youtube.com/@AniOneAsia';
-          fallbackLink.textContent = 'Browse the official Ani-One Asia channel';
+          fallbackMessage.textContent = `${displayTitle} - Episode ${episode}: ${episodeTitle}. This episode is not currently available in the in-site player.`;
         }
         if (fallback) fallback.classList.remove('hidden');
-        showToast('No verified Ani-One Asia video is mapped to this episode yet.', 'info');
+        showToast('This episode is not available in the in-site player yet.', 'info');
       }
 
     }
@@ -11029,7 +11036,7 @@
       const fallback = $('player-fallback-backdrop');
       if (spinner) spinner.classList.add('hidden');
       if (statusText) {
-        statusText.textContent = 'YouTube could not load this official video. It may be disabled for embedding or restricted in your country.';
+        statusText.textContent = 'The embedded video could not be loaded. It may be unavailable in your region or require an account entitlement.';
       }
       if (statusBanner) statusBanner.classList.remove('hidden');
       if (fallback) fallback.classList.remove('hidden');
