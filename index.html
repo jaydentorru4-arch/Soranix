@@ -1321,10 +1321,7 @@
         <button onclick="closeAdminAccessDeniedModal()" class="w-full sm:flex-1 py-2.5 rounded-xl text-xs font-semibold bg-white/10 hover:bg-white/20 text-white transition-all cursor-pointer">
           Return to Dashboard
         </button>
-        <button onclick="closeAdminAccessDeniedModal(); authenticateAsOwnerDirectly();" class="w-full sm:flex-1 py-2.5 rounded-xl text-xs font-bold text-white bg-red-600 hover:bg-red-500 shadow-md transition-all cursor-pointer flex items-center justify-center gap-1.5">
-          <i class="fa-brands fa-google text-[11px]"></i>
-          <span>Sign In with Owner Google</span>
-        </button>
+
       </div>
     </div>
   </div>
@@ -4260,82 +4257,6 @@
   </div>
 
   <!-- ========================================================== -->
-  <!-- MODAL: GOOGLE AUTHENTICATION & OWNER VERIFICATION          -->
-  <!-- ========================================================== -->
-  <div id="google-auth-options-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/85 backdrop-blur-xl">
-    <div class="w-full max-w-md glass-card rounded-3xl p-6 sm:p-8 relative shadow-2xl border border-glassBorder text-center space-y-4">
-      <button onclick="closeGoogleAuthOptionsModal()" class="absolute top-4 right-4 p-2 text-slate-400 hover:text-white transition-colors cursor-pointer" title="Close">
-        <i class="fa-solid fa-xmark text-sm"></i>
-      </button>
-
-      <div class="w-14 h-14 rounded-2xl bg-purple-950/70 border border-purple-500/50 flex items-center justify-center text-accent text-2xl mx-auto shadow-[0_0_25px_rgba(133,0,255,0.35)]">
-        <svg class="w-7 h-7 shrink-0" viewBox="0 0 24 24">
-          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
-          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
-        </svg>
-      </div>
-
-      <div>
-        <h3 class="text-xl font-display font-bold text-white">Google Account Verification</h3>
-        <p class="text-xs text-slate-300 mt-1">Authenticate with your Google email to synchronize cloud data</p>
-      </div>
-
-      <!-- Owner Quick Pass Option -->
-      <div class="p-4 rounded-2xl bg-purple-950/40 border border-purple-500/40 text-left space-y-2">
-        <div class="flex items-center justify-between">
-          <span class="text-xs font-bold text-white flex items-center gap-1.5">
-            <i class="fa-solid fa-crown text-amber-400"></i>
-            <span>Platform Owner Sign-In</span>
-          </span>
-          <span class="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-red-950 text-red-300 border border-red-500/40">OWNER</span>
-        </div>
-        <p class="text-[11px] text-slate-300">
-          Verify and sign in as the owner: <span class="text-purple-300 font-semibold font-mono">jaydentorru4@gmail.com</span>
-        </p>
-        <button 
-          type="button" 
-          onclick="authenticateAsOwnerDirectly()" 
-          class="w-full py-2.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 shadow-accent-glow cursor-pointer transition-all flex items-center justify-center gap-2"
-        >
-          <i class="fa-brands fa-google text-xs"></i>
-          <span>Authenticate as jaydentorru4@gmail.com</span>
-        </button>
-      </div>
-
-      <!-- Divider -->
-      <div class="relative my-2">
-        <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-white/10"></div></div>
-        <div class="relative flex justify-center text-[10px] uppercase tracking-widest"><span class="bg-[#100b21] px-3 text-slate-400">or sign in with other google email</span></div>
-      </div>
-
-      <!-- Other Google Email Input -->
-      <div class="space-y-2 text-left">
-        <label class="block text-xs font-bold uppercase tracking-wider text-slate-300">Enter Your Google Email</label>
-        <div class="relative">
-          <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-500">
-            <i class="fa-solid fa-envelope text-xs"></i>
-          </span>
-          <input 
-            id="input-other-google-email" 
-            type="email" 
-            placeholder="e.g. voyager@gmail.com" 
-            class="w-full pl-9 pr-4 py-2.5 text-xs bg-[#07050e] border border-purple-500/30 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-400 transition-all"
-          />
-        </div>
-        <button 
-          type="button" 
-          onclick="authenticateWithOtherGoogleEmail()" 
-          class="w-full py-2.5 rounded-xl text-xs font-bold text-slate-200 bg-white/10 hover:bg-white/20 border border-white/10 cursor-pointer transition-all"
-        >
-          Continue with this Google Account
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ========================================================== -->
   <!-- MODAL 2: EDIT PROFILE MODAL (With Username Uniqueness)     -->
   <!-- ========================================================== -->
   <div id="edit-profile-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-xl overflow-y-auto">
@@ -4669,14 +4590,17 @@
   </script>
   <script type="module">
     import { 
-      auth, 
-      signInWithGoogle, 
+      auth,
+      signInWithGoogle,
+      getGoogleRedirectResult,
+      createEmailAccount,
+      loginWithEmail,
       signInAnonymouslyUser,
-      signOutUser, 
-      syncUserProfile, 
+      signOutUser,
+      syncUserProfile,
       saveUserToFirestore,
       fetchAllUsers,
-      updateUserProfile, 
+      updateUserProfile,
       testConnection,
       app,
       db,
@@ -4688,6 +4612,12 @@
       purgeFirestoreChat,
       subscribeToDirectMessages,
       sendFirestoreDirectMessage,
+      sendFirestoreFriendRequest,
+      setFirestoreFriendRequestStatus,
+      subscribeToFriendActivity,
+      createFirestoreFriendship,
+      subscribeToFriendships,
+      deleteFirestoreFriendship,
       subscribeToAdminConfig,
       saveAdminConfigToFirestore
     } from '/src/firebase.ts';
@@ -4747,23 +4677,34 @@
     // Administrator & Owner Clearance (Strictly jaydentorru4@gmail.com upon Google Login or authenticated admin)
     const OWNER_EMAIL = 'jaydentorru4@gmail.com';
 
+    const STAFF_PANEL_ROLES = Object.freeze(['admin', 'developer', 'tester', 'moderator']);
+
     function isPlatformAdmin(u) {
-      if (!u) return false;
-      if (u.isGuest || u.username === 'Guest Explorer') return false;
-      const email = (u.email || '').trim().toLowerCase();
-      const uname = (u.username || '').trim().toLowerCase();
-      // Strictly Jayden Torru - the sole platform admin / owner
-      if (email === OWNER_EMAIL || uname === 'jaydentorru' || uname === 'jaydentorru4@gmail.com') return true;
-      if (u.isOwner === true && (email === OWNER_EMAIL || uname === 'jaydentorru')) return true;
-      return false;
+      const signedIn = auth.currentUser;
+      return !!u && !!signedIn && !signedIn.isAnonymous && !!signedIn.emailVerified &&
+        (signedIn.email || '').trim().toLowerCase() === OWNER_EMAIL &&
+        (u.authUid || u.id) === signedIn.uid &&
+        (u.email || '').trim().toLowerCase() === OWNER_EMAIL;
     }
 
     function isOwner(u) {
       return isPlatformAdmin(u);
     }
 
+    // This helper is for identifying protected staff records in owner tools.
     function checkIsAdmin(u) {
-      return isPlatformAdmin(u);
+      return !!u && (isOwner(u) || STAFF_PANEL_ROLES.includes(String(u.staffRole || '').toLowerCase()));
+    }
+
+    function hasStaffPanelAccess(u) {
+      const signedIn = auth.currentUser;
+      return !!u && !!signedIn && !signedIn.isAnonymous && !!signedIn.emailVerified &&
+        (u.authUid || u.id) === signedIn.uid &&
+        STAFF_PANEL_ROLES.includes(String(u.staffRole || '').toLowerCase());
+    }
+
+    function canAccessAdminPanel(u) {
+      return isPlatformAdmin(u) || hasStaffPanelAccess(u);
     }
 
     function getUsersDB() {
@@ -4776,15 +4717,10 @@
     }
 
     function saveUsersDB(db) {
+      // This is a local cache only. Cloud writes must be explicit and scoped to
+      // the authenticated UID; writing every cached user caused feedback loops.
       try {
-        localStorage.setItem(USERS_DB_KEY, JSON.stringify(db));
-        if (db && typeof db === 'object') {
-          Object.values(db).forEach(u => {
-            if (u && u.username && u.username !== 'Guest Explorer') {
-              saveUserToFirestore(u).catch(() => {});
-            }
-          });
-        }
+        localStorage.setItem(USERS_DB_KEY, JSON.stringify(db || {}));
       } catch (e) {
         console.warn('LocalStorage save error:', e);
       }
@@ -5114,7 +5050,7 @@
     // ----------------------------------------------------
     function switchDashboardTab(tabName) {
       // Access Guard: protect admin tab
-      if (tabName === 'admin' && (AppState.isGuest || !isPlatformAdmin(AppState.user))) {
+      if (tabName === 'admin' && (AppState.isGuest || !canAccessAdminPanel(AppState.user))) {
         openAdminTab();
         return;
       }
@@ -5164,7 +5100,7 @@
         admin: $('nav-tab-btn-admin')
       };
 
-      const hasAdminClearance = !AppState.isGuest && isPlatformAdmin(AppState.user);
+      const hasAdminClearance = !AppState.isGuest && canAccessAdminPanel(AppState.user);
 
       Object.entries(btnMap).forEach(([k, btn]) => {
         if (!btn) return;
@@ -5215,7 +5151,7 @@
     }
 
     function openAdminTab() {
-      if (AppState.isGuest || !isPlatformAdmin(AppState.user)) {
+      if (AppState.isGuest || !canAccessAdminPanel(AppState.user)) {
         // Show Access Denied Guard Modal!
         const deniedModal = $('admin-access-denied-modal');
         const userLabel = $('access-denied-current-user');
@@ -5301,7 +5237,7 @@
         reasonEl.textContent = cfg.maintenanceReason;
       }
 
-      const isAdmin = !AppState.isGuest && checkIsAdmin(AppState.user);
+      const isAdmin = !AppState.isGuest && canAccessAdminPanel(AppState.user);
       if (bypassBtn) {
         if (isAdmin) bypassBtn.classList.remove('hidden');
         else bypassBtn.classList.add('hidden');
@@ -5895,7 +5831,7 @@
       if (flyoutFavBadge) flyoutFavBadge.textContent = totalFavs;
 
       // Admin & Owner Authority Badges & Pulse (Strictly visible ONLY for owner / admin)
-      const isPlatformAdminUser = !AppState.isGuest && isPlatformAdmin(AppState.user);
+      const isPlatformAdminUser = !AppState.isGuest && canAccessAdminPanel(AppState.user);
       const navTabAdmin = $('nav-tab-btn-admin');
       const gearAdminBtn = $('gear-admin-btn');
       const headerAdminPill = $('header-admin-pill');
