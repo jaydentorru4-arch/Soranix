@@ -4146,7 +4146,7 @@
               type="text" 
               required 
               maxlength="20"
-              placeholder="e.g. StarVoyager" 
+              placeholder="Username or email address" 
               class="w-full pl-9 pr-8 py-2.5 text-xs bg-[#07050e]/90 border border-purple-500/30 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400 transition-all"
               oninput="validateAuthUsernameRealtime()"
             />
@@ -4918,32 +4918,6 @@
 
         const users = getUsersDB();
 
-        // Fetch all remote users from Firestore across devices & browsers on boot
-        fetchAllUsers().then(remoteUsers => {
-          if (remoteUsers && remoteUsers.length > 0) {
-            const usersDB = getUsersDB();
-            let changed = false;
-            remoteUsers.forEach(ru => {
-              if (ru && ru.username) {
-                const rKey = ru.username.toLowerCase();
-                const existing = usersDB[rKey] || {};
-                usersDB[rKey] = {
-                  ...createInitialUser(ru.username),
-                  ...existing,
-                  ...ru
-                };
-                changed = true;
-              }
-            });
-            if (changed) {
-              saveUsersDB(usersDB);
-              if (AppState.currentTab === 'friends') {
-                renderFriendsUI();
-              }
-            }
-          }
-        }).catch(err => console.warn('Boot remote users sync notice:', err));
-
         // Check active announcement banner & maintenance mode
         renderAnnouncementBannerUI();
         updateMaintenanceGuardUI();
@@ -5036,14 +5010,26 @@
       showToast('Continuing as Guest Explorer. Level 1 with 0 coins.', 'info');
     }
 
-    function handleLogout() {
+    async function handleLogout() {
+      stopCloudSync();
+      if (activeDMUnsubscribe) {
+        try { activeDMUnsubscribe(); } catch (error) {}
+        activeDMUnsubscribe = null;
+      }
+      activeDMFirestoreThreadKey = '';
+      try {
+        if (auth.currentUser) await signOutUser();
+      } catch (error) {
+        console.warn('Firebase sign-out notice:', error);
+      }
+
       setActiveSession(null);
       AppState.isGuest = true;
       AppState.currentUserKey = null;
       AppState.user = createInitialUser('Guest Explorer');
       updateViewableProfileUI();
       returnToSplash();
-      showToast('Logged out. Session cleared.', 'info');
+      showToast('Logged out. Firebase session cleared.', 'info');
     }
 
     // ----------------------------------------------------
@@ -6682,8 +6668,14 @@
       showToast('Connecting to Google securely...', 'info');
       try {
         const firebaseUser = await signInWithGoogle();
-        if (firebaseUser) await processSuccessfulFirebaseAuth(firebaseUser, true);
-        // A null result means redirect sign-in is taking over or the popup was closed.
+        if (firebaseUser) {
+          await processSuccessfulFirebaseAuth(firebaseUser, true);
+        } else if (auth.currentUser && !auth.currentUser.isAnonymous) {
+          await processSuccessfulFirebaseAuth(auth.currentUser, true);
+        } else {
+          showToast('Google sign-in was closed or cancelled. Try again when ready.', 'info');
+        }
+        // Redirect sign-in navigates away; Firebase restores the user after returning.
       } catch (error) {
         console.error('Google Sign-in Error:', error);
         const messages = {
@@ -6702,7 +6694,22 @@
         return;
       }
       if (AppState.user?.authUid === firebaseUser.uid) {
+        const currentRole = String(AppState.user.staffRole || '').toLowerCase();
+        const ownerIdentity = !firebaseUser.isAnonymous && !!firebaseUser.emailVerified &&
+          (firebaseUser.email || '').trim().toLowerCase() === OWNER_EMAIL;
+        AppState.user.isOwner = ownerIdentity;
+        AppState.user.isAdmin = ownerIdentity || STAFF_PANEL_ROLES.includes(currentRole);
+        if (ownerIdentity) {
+          AppState.user.staffRole = 'owner';
+          AppState.user.role = 'owner';
+          AppState.user.title = 'System Administrator / Owner';
+        }
         startCloudSync(firebaseUser);
+        updateViewableProfileUI();
+        updateMaintenanceGuardUI();
+        if (AppState.currentTab === 'admin' && !canAccessAdminPanel(AppState.user)) {
+          switchDashboardTab('home');
+        }
         return;
       }
 
@@ -9307,6 +9314,7 @@
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
       saveAdminConfig(cfg);
+      saveAdminConfigToFirestore(cfg).catch(error => console.warn('Admin config cloud sync notice:', error));
       renderAnnouncementBannerUI();
       initAdminBroadcastsUI();
       SoranixAudio.play('level_up');
@@ -9317,12 +9325,14 @@
       const cfg = getAdminConfig();
       cfg.announcementBanner = null;
       saveAdminConfig(cfg);
+      saveAdminConfigToFirestore(cfg).catch(error => console.warn('Admin config cloud sync notice:', error));
       renderAnnouncementBannerUI();
       initAdminBroadcastsUI();
       showToast('Announcement banner cleared.', 'info');
     }
 
     function adminSendChatBroadcast() {
+      if (!checkStaffActionPermission('admin')) return;
       const input = $('admin-chat-broadcast-input');
       if (!input) return;
       const text = input.value.trim();
@@ -9331,17 +9341,28 @@
         return;
       }
 
-      const msgs = getGlobalChatMessages();
-      msgs.push({
+      const isPlatformOwner = isOwner(AppState.user);
+      const newBroadcast = {
         id: `broadcast_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
         sender: 'SYSTEM BROADCAST',
-        senderTitle: 'System Administrator / Owner',
+        senderTitle: AppState.user.title || 'System Administrator',
+        senderStaffRole: AppState.user.staffRole || 'admin',
+        senderLevel: AppState.user.level || 1,
+        senderAvatar: AppState.user.avatarDataUrl || null,
+        senderFrame: AppState.user.equippedFrame || 'galaxy',
+        senderGlow: AppState.user.equippedNameGlow || null,
         isSystemAdmin: true,
+        isAdmin: true,
+        isOwner: isPlatformOwner,
         message: text,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         time: Date.now()
-      });
+      };
+      const msgs = getGlobalChatMessages();
+      msgs.push(newBroadcast);
       saveGlobalChatMessages(msgs);
+      sendFirestoreChatMessage(newBroadcast)
+        .catch(error => console.warn('System broadcast cloud sync notice:', error));
 
       input.value = '';
       SoranixAudio.play('level_up');
@@ -9396,6 +9417,7 @@
         cfg.maintenanceReason = reasonInput.value.trim();
       }
       saveAdminConfig(cfg);
+      saveAdminConfigToFirestore(cfg).catch(error => console.warn('Admin config cloud sync notice:', error));
       updateMaintenanceGuardUI();
       initAdminPlatformUI();
       showToast(`Maintenance Mode ${cfg.maintenanceMode ? 'ENABLED (Platform guarded for non-admins)' : 'DISABLED (Platform restored)'}`, cfg.maintenanceMode ? 'error' : 'success');
@@ -9405,6 +9427,7 @@
       const cfg = getAdminConfig();
       cfg.watchMultiplier = mult;
       saveAdminConfig(cfg);
+      saveAdminConfigToFirestore(cfg).catch(error => console.warn('Admin config cloud sync notice:', error));
       AppState.watch.multiplier = mult;
       initAdminPlatformUI();
       const multDisplay = $('admin-stat-multiplier');
