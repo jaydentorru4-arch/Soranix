@@ -1,26 +1,34 @@
 import { initializeApp } from 'firebase/app';
-import { 
-  getAuth, 
-  GoogleAuthProvider, 
-  signInWithPopup, 
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  fetchSignInMethodsForEmail,
+  updateProfile,
   signInAnonymously,
-  signOut as fbSignOut, 
+  signOut as fbSignOut,
   onAuthStateChanged,
-  type User 
+  type User
 } from 'firebase/auth';
-import { 
-  getFirestore, 
-  doc, 
-  getDoc, 
-  setDoc, 
-  updateDoc, 
-  onSnapshot, 
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+  onSnapshot,
   getDocFromServer,
   collection,
   getDocs,
   query,
   orderBy,
+  where,
   limit,
+  deleteDoc,
   type Unsubscribe
 } from 'firebase/firestore';
 import firebaseConfig from '../firebase-applet-config.json';
@@ -94,14 +102,18 @@ export async function testConnection(): Promise<boolean> {
   }
 }
 
-// Sign in with Google Popup
+// Sign in with Google. If the browser blocks popups, safely fall back to redirect.
 export async function signInWithGoogle(): Promise<User | null> {
   try {
     const result = await signInWithPopup(auth, googleProvider);
     return result.user;
   } catch (error: any) {
-    if (error?.code === 'auth/popup-closed-by-user' || error?.code === 'auth/cancelled-popup-request') {
-      console.log('Google Sign-in popup closed by user.');
+    const code = error?.code || '';
+    if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') {
+      return null;
+    }
+    if (code === 'auth/popup-blocked' || code === 'auth/operation-not-supported-in-this-environment') {
+      await signInWithRedirect(auth, googleProvider);
       return null;
     }
     console.error('Google Sign-in Error:', error);
@@ -109,7 +121,27 @@ export async function signInWithGoogle(): Promise<User | null> {
   }
 }
 
-// Sign in anonymously for local accounts to link with Firestore
+export async function getGoogleRedirectResult(): Promise<User | null> {
+  const result = await getRedirectResult(auth);
+  return result?.user || null;
+}
+
+export async function createEmailAccount(email: string, password: string, displayName: string): Promise<User> {
+  const credential = await createUserWithEmailAndPassword(auth, email.trim().toLowerCase(), password);
+  if (displayName.trim()) await updateProfile(credential.user, { displayName: displayName.trim() });
+  return credential.user;
+}
+
+export async function loginWithEmail(email: string, password: string): Promise<User> {
+  const credential = await signInWithEmailAndPassword(auth, email.trim().toLowerCase(), password);
+  return credential.user;
+}
+
+export async function getEmailSignInMethods(email: string): Promise<string[]> {
+  return fetchSignInMethodsForEmail(auth, email.trim().toLowerCase());
+}
+
+
 export async function signInAnonymouslyUser(): Promise<User | null> {
   try {
     if (auth.currentUser) return auth.currentUser;
@@ -137,6 +169,7 @@ export interface UserProfileData {
   displayName: string;
   username?: string;
   email: string;
+  authUid?: string;
   avatarDataUrl?: string | null;
   bannerDataUrl?: string | null;
   stardust: number;
@@ -168,69 +201,104 @@ export interface UserProfileData {
   updatedAt?: string;
 }
 
-// Sync or initialize user profile in Firestore
+// Store profiles under immutable Firebase Auth UIDs, not editable usernames.
 export async function syncUserProfile(user: User): Promise<UserProfileData> {
-  const isOwner = (user.email || '').trim().toLowerCase() === 'jaydentorru4@gmail.com';
-  const cleanUsername = (user.displayName || (isOwner ? 'JaydenTorru' : 'Voyager')).replace(/\s+/g, '');
-  const userRef = doc(db, 'users', cleanUsername.toLowerCase());
+  const uid = user.uid;
+  const isOwner = !user.isAnonymous && !!user.emailVerified &&
+    (user.email || '').trim().toLowerCase() === 'jaydentorru4@gmail.com';
+  const fallbackName = isOwner ? 'JaydenTorru' : 'Voyager';
+  const cleanUsername = (user.displayName || fallbackName).replace(/\s+/g, '').slice(0, 24);
+  const userRef = doc(db, 'users', uid);
+
   try {
     const snap = await getDoc(userRef);
-    if (snap.exists()) {
-      return snap.data() as UserProfileData;
-    } else {
-      const newProfile: UserProfileData = {
-        id: cleanUsername.toLowerCase(),
-        displayName: user.displayName || (isOwner ? 'JaydenTorru' : 'Starlight Voyager'),
-        username: cleanUsername,
-        email: user.email || '',
-        avatarDataUrl: user.photoURL || null,
-        stardust: isOwner ? 999999 : 100,
-        streak: isOwner ? 99 : 1,
-        level: isOwner ? 999 : 1,
-        xp: isOwner ? 99900 : 0,
-        title: isOwner ? 'System Administrator / Owner' : 'Novice Voyager',
-        staffRole: isOwner ? 'owner' : '',
-        isAdmin: isOwner,
-        isOwner: isOwner,
-        lastClaimedDate: '',
-        equippedBorder: isOwner ? 'void' : 'Standard Voyager Frame',
-        equippedFrame: isOwner ? 'void' : 'galaxy',
-        bio: isOwner ? 'System Administrator & Soranix Platform Owner.' : 'Stargazing through infinite space, collecting rare celestial soundtracks, and indexing deep universe cyberpunk archives.',
-        inventory: ['frame_galaxy', 'theme_violet', 'audio_coin'],
-        friends: [],
-        incomingRequests: [],
-        outgoingRequests: [],
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
-      await setDoc(userRef, newProfile, { merge: true });
-      return newProfile;
+    if (snap.exists()) return { ...(snap.data() as UserProfileData), id: uid, authUid: uid };
+
+    let legacyProfile: Partial<UserProfileData> = {};
+    if (user.email) {
+      try {
+        const legacyQuery = query(collection(db, 'users'), where('email', '==', user.email), limit(5));
+        const legacySnap = await getDocs(legacyQuery);
+        const legacyDoc = legacySnap.docs.find(item =>
+          item.id !== uid && (!item.data().authUid || item.data().authUid === uid)
+        );
+        if (legacyDoc) legacyProfile = legacyDoc.data() as Partial<UserProfileData>;
+      } catch (legacyError) {
+        console.warn('Legacy profile migration lookup notice:', legacyError);
+      }
     }
+
+    const profile: UserProfileData = {
+      ...legacyProfile,
+      id: uid,
+      authUid: uid,
+      displayName: user.displayName || legacyProfile.displayName || cleanUsername,
+      username: legacyProfile.username || cleanUsername,
+      email: user.email || '',
+      avatarDataUrl: user.photoURL || legacyProfile.avatarDataUrl || null,
+      stardust: isOwner ? Math.max(Number(legacyProfile.stardust) || 0, 999999) : (Number(legacyProfile.stardust) || 100),
+      streak: isOwner ? Math.max(Number(legacyProfile.streak) || 0, 99) : (Number(legacyProfile.streak) || 1),
+      level: isOwner ? Math.max(Number(legacyProfile.level) || 0, 999) : (Number(legacyProfile.level) || 1),
+      xp: isOwner ? Math.max(Number(legacyProfile.xp) || 0, 99900) : (Number(legacyProfile.xp) || 0),
+      title: isOwner ? 'System Administrator / Owner' : (legacyProfile.title || 'Novice Voyager'),
+      equippedBorder: legacyProfile.equippedBorder || (isOwner ? 'void' : 'Standard Voyager Frame'),
+      equippedFrame: legacyProfile.equippedFrame || (isOwner ? 'void' : 'galaxy'),
+      equippedNameGlow: legacyProfile.equippedNameGlow || null,
+      equippedChatBadge: legacyProfile.equippedChatBadge || null,
+      bio: legacyProfile.bio || 'Stargazing through infinite space, collecting rare celestial soundtracks, and indexing anime classics.',
+      inventory: Array.isArray(legacyProfile.inventory) ? legacyProfile.inventory : ['frame_galaxy', 'theme_violet', 'audio_coin'],
+      friends: Array.isArray(legacyProfile.friends) ? legacyProfile.friends : [],
+      incomingRequests: [],
+      outgoingRequests: [],
+      createdAt: legacyProfile.createdAt || new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+    if (isOwner) {
+      profile.staffRole = 'owner';
+      profile.role = 'owner';
+      profile.isAdmin = true;
+      profile.isOwner = true;
+    }
+    await setDoc(userRef, profile, { merge: true });
+    return profile;
   } catch (error) {
     console.warn('Sync profile notice:', error);
     return {
-      id: cleanUsername.toLowerCase(),
-      displayName: user.displayName || 'Voyager',
+      id: uid,
+      authUid: uid,
+      displayName: user.displayName || cleanUsername,
       username: cleanUsername,
       email: user.email || '',
-      stardust: 100,
-      streak: 1
+      stardust: isOwner ? 999999 : 100,
+      streak: isOwner ? 99 : 1,
+      level: isOwner ? 999 : 1,
+      ...(isOwner ? { staffRole: 'owner', role: 'owner', isAdmin: true, isOwner: true } : {})
     };
   }
 }
 
-// Save any user profile to Firestore so all users and admins sync across all devices
+// Save the signed-in user's own profile, or another profile only for the verified owner.
 export async function saveUserToFirestore(userData: any): Promise<void> {
   try {
-    const cleanUsername = (userData.username || userData.displayName || 'user').trim().toLowerCase().replace(/[^a-zA-Z0-9_-]/g, '_');
-    const docId = cleanUsername;
-    const userRef = doc(db, 'users', docId);
+    const currentUser = auth.currentUser;
+    const targetUid = String(userData?.authUid || userData?.uid || currentUser?.uid || '');
+    if (!currentUser || !targetUid) return;
 
-    const payload: UserProfileData = {
-      id: docId,
-      displayName: userData.displayName || userData.username || 'Voyager',
-      username: userData.username || userData.displayName || 'Voyager',
-      email: userData.email || '',
+    const isVerifiedOwner = !currentUser.isAnonymous && !!currentUser.emailVerified &&
+      (currentUser.email || '').trim().toLowerCase() === 'jaydentorru4@gmail.com';
+    const isSelf = targetUid === currentUser.uid;
+    if (!isSelf && !isVerifiedOwner) {
+      console.warn('Blocked cross-account profile write.');
+      return;
+    }
+
+    const username = String(userData.username || userData.displayName || 'Voyager').trim().slice(0, 24);
+    const payload: Record<string, any> = {
+      id: targetUid,
+      authUid: targetUid,
+      displayName: String(userData.displayName || username).slice(0, 80),
+      username,
+      email: isSelf ? (currentUser.email || '') : String(userData.email || ''),
       avatarDataUrl: userData.avatarDataUrl || userData.photoURL || null,
       bannerDataUrl: userData.bannerDataUrl || null,
       stardust: typeof userData.stardust === 'number' ? userData.stardust : 0,
@@ -238,52 +306,55 @@ export async function saveUserToFirestore(userData: any): Promise<void> {
       level: userData.level || 1,
       xp: userData.xp || 0,
       title: userData.title || 'Novice Voyager',
-      role: userData.role || userData.staffRole || '',
-      staffRole: userData.staffRole || userData.role || '',
-      isAdmin: !!userData.isAdmin,
-      isOwner: !!userData.isOwner,
       equippedBorder: userData.equippedFrame || 'galaxy',
       equippedFrame: userData.equippedFrame || 'galaxy',
       equippedNameGlow: userData.equippedNameGlow || null,
       equippedChatBadge: userData.equippedChatBadge || null,
       inventory: Array.isArray(userData.inventory) ? userData.inventory : ['frame_galaxy', 'theme_violet', 'audio_coin'],
-      bio: (userData.bio || '').slice(0, 500),
+      bio: String(userData.bio || '').slice(0, 500),
       friends: Array.isArray(userData.friends) ? userData.friends : [],
-      incomingRequests: Array.isArray(userData.incomingRequests) ? userData.incomingRequests : [],
-      outgoingRequests: Array.isArray(userData.outgoingRequests) ? userData.outgoingRequests : [],
-      isBanned: !!userData.isBanned,
-      bannedReason: userData.bannedReason || '',
-      appealMessage: userData.appealMessage || '',
-      appealStatus: userData.appealStatus || '',
-      mutedUntil: userData.mutedUntil || 0,
-      ipSessionLog: userData.ipSessionLog || 'Web Session • Active',
+      lastClaimedDate: userData.lastClaimedDate || '',
       createdAt: userData.createdAt || new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
 
-    await setDoc(userRef, payload, { merge: true });
+    if (isVerifiedOwner) {
+      Object.assign(payload, {
+        role: userData.role || userData.staffRole || '',
+        staffRole: userData.staffRole || userData.role || '',
+        isAdmin: !!userData.isAdmin,
+        isOwner: isSelf,
+        isBanned: !!userData.isBanned,
+        bannedReason: userData.bannedReason || '',
+        mutedUntil: userData.mutedUntil || 0,
+        appealMessage: userData.appealMessage || '',
+        appealStatus: userData.appealStatus || '',
+        ipSessionLog: userData.ipSessionLog || 'Web Session • Active'
+      });
+    }
+    await setDoc(doc(db, 'users', targetUid), payload, { merge: true });
   } catch (error) {
     console.warn('saveUserToFirestore notice:', error);
   }
 }
 
-// Fetch all registered users from Firestore
+// Read Firebase-authenticated user profiles.
 export async function fetchAllUsers(): Promise<UserProfileData[]> {
   try {
-    const usersCol = collection(db, 'users');
-    const snap = await getDocs(usersCol);
-    const users: UserProfileData[] = [];
-    snap.forEach((d) => {
-      users.push(d.data() as UserProfileData);
+    const snap = await getDocs(collection(db, 'users'));
+    const profiles: UserProfileData[] = [];
+    snap.forEach((item) => {
+      const data = item.data() as UserProfileData;
+      if (data.authUid && data.username) profiles.push({ ...data, id: item.id, authUid: data.authUid });
     });
-    return users;
+    return profiles;
   } catch (error) {
     console.warn('fetchAllUsers notice:', error);
     return [];
   }
 }
 
-// Update profile data in Firestore
+
 export async function updateUserProfile(userId: string, data: Partial<UserProfileData>): Promise<void> {
   const userRef = doc(db, 'users', userId);
   try {
@@ -310,11 +381,11 @@ export function subscribeToUserProfile(userId: string, onUpdate: (data: UserProf
 
 // Listen to real-time updates for ALL users across devices & browsers
 export function subscribeToAllUsers(onUpdate: (users: UserProfileData[]) => void): Unsubscribe {
-  const usersCol = collection(db, 'users');
-  return onSnapshot(usersCol, (snap) => {
+  return onSnapshot(collection(db, 'users'), (snap) => {
     const users: UserProfileData[] = [];
-    snap.forEach((d) => {
-      users.push(d.data() as UserProfileData);
+    snap.forEach((item) => {
+      const data = item.data() as UserProfileData;
+      if (data.authUid && data.username) users.push({ ...data, id: item.id, authUid: data.authUid });
     });
     onUpdate(users);
   }, (error) => {
@@ -345,17 +416,15 @@ export function subscribeToGlobalChat(onUpdate: (messages: any[]) => void): Unsu
 
 // Send real-time Global Chat message to Firestore
 export async function sendFirestoreChatMessage(msgData: any): Promise<void> {
-  try {
-    const msgId = msgData.id || `msg_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`;
-    const msgRef = doc(db, 'globalChat', msgId);
-    await setDoc(msgRef, {
-      ...msgData,
-      id: msgId,
-      time: msgData.time || Date.now()
-    });
-  } catch (error) {
-    console.warn('sendFirestoreChatMessage notice:', error);
-  }
+  const currentUser = auth.currentUser;
+  if (!currentUser) throw new Error('Sign in is required to send a global chat message.');
+  const msgId = msgData.id || `msg_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+  await setDoc(doc(db, 'globalChat', msgId), {
+    ...msgData,
+    id: msgId,
+    senderUid: currentUser.uid,
+    time: Number(msgData.time) || Date.now()
+  });
 }
 
 // Purge all Global Chat messages from Firestore
@@ -371,37 +440,127 @@ export async function purgeFirestoreChat(): Promise<void> {
   }
 }
 
-// Listen to real-time updates for Direct Messages across devices & browsers
-export function subscribeToDirectMessages(onUpdate: (messages: any[]) => void): Unsubscribe {
-  const dmCol = collection(db, 'directMessages');
-  return onSnapshot(dmCol, (snap) => {
-    const msgs: any[] = [];
-    snap.forEach((d) => {
-      msgs.push({ id: d.id, ...d.data() });
-    });
-    msgs.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
-    onUpdate(msgs);
+// Listen to one authenticated direct-message thread across devices.
+export function subscribeToDirectMessages(threadKey: string, onUpdate: (messages: any[]) => void): Unsubscribe {
+  const currentUser = auth.currentUser;
+  if (!currentUser || !threadKey) return () => undefined;
+  const messagesQuery = query(
+    collection(db, 'directMessages'),
+    where('threadKey', '==', threadKey),
+    limit(100)
+  );
+  return onSnapshot(messagesQuery, (snap) => {
+    const messages = snap.docs
+      .map((item) => ({ id: item.id, ...item.data() }))
+      .sort((a: any, b: any) => (a.time || 0) - (b.time || 0));
+    onUpdate(messages);
   }, (error) => {
     console.warn('subscribeToDirectMessages notice:', error);
   });
 }
 
-// Send Direct Message to Firestore
 export async function sendFirestoreDirectMessage(dmData: any): Promise<void> {
-  try {
-    const msgId = dmData.id || `dm_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`;
-    const dmRef = doc(db, 'directMessages', msgId);
-    await setDoc(dmRef, {
-      ...dmData,
-      id: msgId,
-      timestamp: dmData.timestamp || Date.now()
+  const currentUser = auth.currentUser;
+  if (!currentUser) throw new Error('Sign in is required to send a direct message.');
+  const participants = Array.isArray(dmData.participantUids)
+    ? dmData.participantUids.filter((uid: unknown) => typeof uid === 'string')
+    : [];
+  if (!participants.includes(currentUser.uid) || participants.length !== 2) {
+    throw new Error('This direct-message thread does not belong to the signed-in account.');
+  }
+  const msgId = dmData.id || `dm_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+  await setDoc(doc(db, 'directMessages', msgId), {
+    ...dmData,
+    id: msgId,
+    senderUid: currentUser.uid,
+    participantUids: participants,
+    timestamp: Date.now(),
+    time: Date.now()
+  });
+}
+
+export async function sendFirestoreFriendRequest(requestData: any): Promise<string> {
+  const currentUser = auth.currentUser;
+  if (!currentUser) throw new Error('Sign in is required to add friends.');
+  if (requestData.senderUid !== currentUser.uid || !requestData.recipientUid ||
+      requestData.recipientUid === currentUser.uid) throw new Error('Invalid friend-request participants.');
+
+  const requestId = `${currentUser.uid}_${requestData.recipientUid}`;
+  const requestRef = doc(db, 'friendRequests', requestId);
+  const existing = await getDoc(requestRef);
+  if (existing.exists() && existing.data().status === 'pending') {
+    throw new Error('A friend request is already pending.');
+  }
+  await setDoc(requestRef, {
+    id: requestId,
+    senderUid: currentUser.uid,
+    recipientUid: requestData.recipientUid,
+    senderUsername: requestData.senderUsername,
+    recipientUsername: requestData.recipientUsername,
+    participantUids: [currentUser.uid, requestData.recipientUid],
+    status: 'pending',
+    createdAt: Date.now(),
+    updatedAt: Date.now()
+  });
+  return requestId;
+}
+
+export async function setFirestoreFriendRequestStatus(requestId: string, status: 'accepted' | 'declined'): Promise<void> {
+  if (!auth.currentUser) throw new Error('Sign in is required to respond to friend requests.');
+  if (!['accepted', 'declined'].includes(status)) throw new Error('Invalid friend-request response.');
+  await updateDoc(doc(db, 'friendRequests', requestId), { status, updatedAt: Date.now() });
+}
+
+export function subscribeToFriendActivity(uid: string, onUpdate: (requests: any[]) => void): Unsubscribe {
+  if (!auth.currentUser || auth.currentUser.uid !== uid) return () => undefined;
+  const activityQuery = query(
+    collection(db, 'friendRequests'),
+    where('participantUids', 'array-contains', uid),
+    limit(100)
+  );
+  return onSnapshot(activityQuery, (snap) => {
+    onUpdate(snap.docs.map(item => ({ id: item.id, ...item.data() })));
+  }, (error) => console.warn('subscribeToFriendActivity notice:', error));
+}
+
+export async function createFirestoreFriendship(friendshipData: any): Promise<void> {
+  const currentUser = auth.currentUser;
+  const memberUids = Array.isArray(friendshipData.memberUids) ? friendshipData.memberUids : [];
+  if (!currentUser || !memberUids.includes(currentUser.uid) || memberUids.length !== 2) {
+    throw new Error('Invalid friendship participants.');
+  }
+  const friendshipId = [...memberUids].sort().join('_');
+  const friendshipRef = doc(db, 'friendships', friendshipId);
+  const existing = await getDoc(friendshipRef);
+  if (!existing.exists()) {
+    await setDoc(friendshipRef, {
+      ...friendshipData,
+      id: friendshipId,
+      memberUids: [...memberUids].sort(),
+      createdAt: Date.now()
     });
-  } catch (error) {
-    console.warn('sendFirestoreDirectMessage notice:', error);
   }
 }
 
-// Listen to Admin Platform Config updates (announcements & maintenance mode)
+export function subscribeToFriendships(uid: string, onUpdate: (friendships: any[]) => void): Unsubscribe {
+  if (!auth.currentUser || auth.currentUser.uid !== uid) return () => undefined;
+  const friendshipsQuery = query(
+    collection(db, 'friendships'),
+    where('memberUids', 'array-contains', uid),
+    limit(100)
+  );
+  return onSnapshot(friendshipsQuery, (snap) => {
+    onUpdate(snap.docs.map(item => ({ id: item.id, ...item.data() })));
+  }, (error) => console.warn('subscribeToFriendships notice:', error));
+}
+
+export async function deleteFirestoreFriendship(friendUid: string): Promise<void> {
+  const currentUser = auth.currentUser;
+  if (!currentUser || !friendUid) throw new Error('Sign in is required to remove friends.');
+  await deleteDoc(doc(db, 'friendships', [currentUser.uid, friendUid].sort().join('_')));
+}
+
+
 export function subscribeToAdminConfig(onUpdate: (config: any) => void): Unsubscribe {
   const configRef = doc(db, 'adminConfig', 'main');
   return onSnapshot(configRef, (docSnap) => {
