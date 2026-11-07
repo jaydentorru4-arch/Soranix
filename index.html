@@ -10562,7 +10562,7 @@
 
       return {
         playlistId: match.playlistId,
-        playlistIndex: episode - match.firstEpisode + 1
+        playlistIndex: episode - match.firstEpisode
       };
     }
 
@@ -10996,7 +10996,8 @@
         embedIframe.classList.remove('hidden');
         if (spinner) spinner.classList.remove('hidden');
 
-        const playlistUrl = new URL('https://www.youtube-nocookie.com/embed/videoseries');
+        const playlistUrl = new URL('https://www.youtube-nocookie.com/embed');
+        playlistUrl.searchParams.set('listType', 'playlist');
         playlistUrl.searchParams.set('list', configuredSource.playlistId);
         playlistUrl.searchParams.set('index', String(configuredSource.playlistIndex));
         playlistUrl.searchParams.set('autoplay', '1');
