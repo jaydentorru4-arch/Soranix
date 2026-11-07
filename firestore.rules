@@ -24,16 +24,16 @@ service cloud.firestore {
         get(userProfilePath(request.auth.uid)).data.staffRole in roles;
     }
 
-    function canOpenStaffPanel() {
-      return owner() || hasStaffRole(['admin', 'developer', 'tester', 'moderator']);
-    }
-
     function canManageProfiles() {
       return owner() || hasStaffRole(['admin']);
     }
 
     function canModerateProfiles() {
       return owner() || hasStaffRole(['admin', 'moderator']);
+    }
+
+    function canReadPrivateRegistry() {
+      return owner() || hasStaffRole(['admin', 'developer', 'tester', 'moderator']);
     }
 
     function isOwnProfile(uid) {
@@ -99,9 +99,12 @@ service cloud.firestore {
         ]);
     }
 
-    // Account data is keyed by immutable Firebase Auth UID.
+    // Private account data is stored under immutable Firebase Auth UIDs.
+    // Members can read only their own account; staff can access the registry
+    // according to their assigned role.
     match /users/{uid} {
-      allow get, list: if signedIn();
+      allow get: if owner() || (signedIn() && request.auth.uid == uid) || canReadPrivateRegistry();
+      allow list: if canReadPrivateRegistry();
       allow create: if owner() || validOwnProfileCreate(uid);
       allow update: if owner() ||
         isOwnProfile(uid) ||
@@ -115,8 +118,39 @@ service cloud.firestore {
       }
     }
 
-    // Global chat is readable by signed-in members; message authors cannot
-    // set privileged moderation flags for themselves.
+    // Member directory contains no private email, moderation or account fields.
+    match /publicProfiles/{uid} {
+      allow get, list: if signedIn();
+      allow create: if owner() || (
+        signedIn() &&
+        request.auth.uid == uid &&
+        request.resource.data.authUid == uid &&
+        request.resource.data.username is string &&
+        request.resource.data.username.size() >= 3 &&
+        request.resource.data.username.size() <= 24
+      );
+      allow update: if owner() || canManageProfiles() || (
+        signedIn() &&
+        request.auth.uid == uid &&
+        resource.data.authUid == uid &&
+        request.resource.data.authUid == uid &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'username',
+          'displayName',
+          'avatarDataUrl',
+          'equippedFrame',
+          'equippedNameGlow',
+          'equippedChatBadge',
+          'level',
+          'title',
+          'updatedAt'
+        ])
+      );
+      allow delete: if owner();
+    }
+
+    // Global chat is visible to authenticated members; message authors cannot
+    // forge owner or staff badges.
     match /globalChat/{messageId} {
       allow get, list: if signedIn();
       allow create: if signedIn() &&
@@ -132,7 +166,7 @@ service cloud.firestore {
       allow delete: if owner() || hasStaffRole(['admin', 'developer', 'moderator']);
     }
 
-    // A direct message is visible only to its two declared participants.
+    // Only the sender and the intended recipient can read this thread.
     match /directMessages/{messageId} {
       allow get, list: if signedIn() &&
         resource.data.participantUids is list &&
@@ -151,8 +185,8 @@ service cloud.firestore {
         resource.data.participantUids.hasAny([request.auth.uid]);
     }
 
-    // Friend requests can be created by the sender, read by either participant,
-    // and accepted/declined only by the recipient.
+    // Requests are private to their two participants. Only their recipient
+    // can accept or decline a pending request.
     match /friendRequests/{requestId} {
       allow get, list: if signedIn() &&
         resource.data.participantUids is list &&
@@ -180,7 +214,7 @@ service cloud.firestore {
         (signedIn() && resource.data.participantUids.hasAny([request.auth.uid]));
     }
 
-    // Friendships are created only after their associated request is accepted.
+    // A friendship is created only after its request is accepted by recipient.
     match /friendships/{friendshipId} {
       allow get, list: if signedIn() &&
         resource.data.memberUids is list &&
@@ -201,15 +235,14 @@ service cloud.firestore {
         resource.data.memberUids.hasAny([request.auth.uid]);
     }
 
-    // Announcements are visible to signed-in members; only owner and assigned
-    // platform administrators/developers can change platform configuration.
+    // Shared announcements and platform settings are writable only by Owner
+    // and assigned Administrators.
     match /adminConfig/{configId} {
       allow get, list: if signedIn();
-      allow create, update: if owner() || hasStaffRole(['admin', 'developer']);
+      allow create, update: if owner() || hasStaffRole(['admin']);
       allow delete: if owner();
     }
 
-    // Minimal public read-only connection probe.
     match /test/connection {
       allow get: if true;
       allow create, update, delete: if false;
