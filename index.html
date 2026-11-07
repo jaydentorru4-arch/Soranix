@@ -12299,8 +12299,8 @@
     }
 
     function checkStaffActionPermission(requiredRole = 'moderator') {
-      if (AppState.isGuest) {
-        showToast('Guest users cannot perform administrative actions.', 'error');
+      if (AppState.isGuest || !canAccessAdminPanel(AppState.user)) {
+        showToast('This action requires a verified owner or assigned staff account.', 'error');
         return false;
       }
       if (isOwner(AppState.user)) return true; // Owner can do everything
