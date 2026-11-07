@@ -201,6 +201,26 @@ export interface UserProfileData {
   updatedAt?: string;
 }
 
+function buildPublicProfile(uid: string, profile: any): Record<string, any> {
+  return {
+    id: uid,
+    authUid: uid,
+    username: String(profile.username || profile.displayName || 'Voyager').slice(0, 24),
+    displayName: String(profile.displayName || profile.username || 'Voyager').slice(0, 80),
+    avatarDataUrl: profile.avatarDataUrl || null,
+    equippedFrame: profile.equippedFrame || 'galaxy',
+    equippedNameGlow: profile.equippedNameGlow || null,
+    equippedChatBadge: profile.equippedChatBadge || null,
+    level: Number(profile.level) || 1,
+    title: String(profile.title || 'Novice Voyager').slice(0, 80),
+    updatedAt: new Date().toISOString()
+  };
+}
+
+async function writePublicProfile(uid: string, profile: any): Promise<void> {
+  await setDoc(doc(db, 'publicProfiles', uid), buildPublicProfile(uid, profile), { merge: true });
+}
+
 // Store profiles under immutable Firebase Auth UIDs, not editable usernames.
 export async function syncUserProfile(user: User): Promise<UserProfileData> {
   const uid = user.uid;
@@ -212,21 +232,15 @@ export async function syncUserProfile(user: User): Promise<UserProfileData> {
 
   try {
     const snap = await getDoc(userRef);
-    if (snap.exists()) return { ...(snap.data() as UserProfileData), id: uid, authUid: uid };
-
-    let legacyProfile: Partial<UserProfileData> = {};
-    if (user.email) {
-      try {
-        const legacyQuery = query(collection(db, 'users'), where('email', '==', user.email), limit(5));
-        const legacySnap = await getDocs(legacyQuery);
-        const legacyDoc = legacySnap.docs.find(item =>
-          item.id !== uid && (!item.data().authUid || item.data().authUid === uid)
-        );
-        if (legacyDoc) legacyProfile = legacyDoc.data() as Partial<UserProfileData>;
-      } catch (legacyError) {
-        console.warn('Legacy profile migration lookup notice:', legacyError);
-      }
+    if (snap.exists()) {
+      const existingProfile = { ...(snap.data() as UserProfileData), id: uid, authUid: uid };
+      await writePublicProfile(uid, existingProfile);
+      return existingProfile;
     }
+
+    // Profile migration from legacy username-keyed localStorage data happens
+    // in the application after this secure UID identity is established.
+    const legacyProfile: Partial<UserProfileData> = {};
 
     const profile: UserProfileData = {
       ...legacyProfile,
@@ -270,6 +284,7 @@ export async function syncUserProfile(user: User): Promise<UserProfileData> {
       profile.mutedUntil = 0;
     }
     await setDoc(userRef, profile, { merge: true });
+    await writePublicProfile(uid, profile);
     return profile;
   } catch (error) {
     console.warn('Sync profile notice:', error);
@@ -291,7 +306,7 @@ export async function syncUserProfile(user: User): Promise<UserProfileData> {
 export async function saveUserToFirestore(userData: any): Promise<void> {
   try {
     const currentUser = auth.currentUser;
-    const targetUid = String(userData?.authUid || userData?.uid || currentUser?.uid || '');
+    const targetUid = String(userData?.authUid || userData?.uid || '');
     if (!currentUser || !targetUid) return;
 
     const isVerifiedOwner = !currentUser.isAnonymous && !!currentUser.emailVerified &&
@@ -369,15 +384,31 @@ export async function saveUserToFirestore(userData: any): Promise<void> {
     }
 
     await setDoc(doc(db, 'users', targetUid), payload, { merge: true });
+    if (isSelf || isVerifiedOwner || callerRole === 'admin') {
+      await writePublicProfile(targetUid, payload);
+    }
   } catch (error) {
     console.warn('saveUserToFirestore notice:', error);
   }
 }
 
-// Read Firebase-authenticated user profiles.
+// Read the public directory for members; trusted staff can read the private registry.
 export async function fetchAllUsers(): Promise<UserProfileData[]> {
   try {
-    const snap = await getDocs(collection(db, 'users'));
+    const currentUser = auth.currentUser;
+    if (!currentUser || currentUser.isAnonymous) return [];
+
+    const isOwner = !!currentUser.emailVerified &&
+      (currentUser.email || '').trim().toLowerCase() === 'jaydentorru4@gmail.com';
+    let staffRole = '';
+    if (!isOwner) {
+      const ownProfile = await getDoc(doc(db, 'users', currentUser.uid));
+      staffRole = String(ownProfile.data()?.staffRole || '').toLowerCase();
+    }
+
+    const canReadRegistry = isOwner || ['admin', 'developer', 'tester', 'moderator'].includes(staffRole);
+    const sourceCollection = canReadRegistry ? 'users' : 'publicProfiles';
+    const snap = await getDocs(collection(db, sourceCollection));
     const profiles: UserProfileData[] = [];
     snap.forEach((item) => {
       const data = item.data() as UserProfileData;
@@ -389,7 +420,6 @@ export async function fetchAllUsers(): Promise<UserProfileData[]> {
     return [];
   }
 }
-
 
 export async function updateUserProfile(userId: string, data: Partial<UserProfileData>): Promise<void> {
   const userRef = doc(db, 'users', userId);
@@ -417,7 +447,7 @@ export function subscribeToUserProfile(userId: string, onUpdate: (data: UserProf
 
 // Listen to real-time updates for ALL users across devices & browsers
 export function subscribeToAllUsers(onUpdate: (users: UserProfileData[]) => void): Unsubscribe {
-  return onSnapshot(collection(db, 'users'), (snap) => {
+  return onSnapshot(collection(db, 'publicProfiles'), (snap) => {
     const users: UserProfileData[] = [];
     snap.forEach((item) => {
       const data = item.data() as UserProfileData;
