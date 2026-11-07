@@ -297,9 +297,15 @@ export async function saveUserToFirestore(userData: any): Promise<void> {
     const isVerifiedOwner = !currentUser.isAnonymous && !!currentUser.emailVerified &&
       (currentUser.email || '').trim().toLowerCase() === 'jaydentorru4@gmail.com';
     const isSelf = targetUid === currentUser.uid;
-    if (!isSelf && !isVerifiedOwner) {
-      console.warn('Blocked cross-account profile write.');
-      return;
+
+    let callerRole = '';
+    if (!isVerifiedOwner && !isSelf) {
+      const callerProfile = await getDoc(doc(db, 'users', currentUser.uid));
+      callerRole = String(callerProfile.data()?.staffRole || '').toLowerCase();
+      if (!['admin', 'developer', 'moderator'].includes(callerRole)) {
+        console.warn('Blocked cross-account profile write.');
+        return;
+      }
     }
 
     const username = String(userData.username || userData.displayName || 'Voyager').trim().slice(0, 24);
@@ -341,7 +347,27 @@ export async function saveUserToFirestore(userData: any): Promise<void> {
         appealStatus: userData.appealStatus || '',
         ipSessionLog: userData.ipSessionLog || 'Web Session • Active'
       });
+    } else if (!isSelf) {
+      // The rules also restrict the affected fields, but only include the
+      // fields this staff role is authorised to change in the client payload.
+      if (['admin', 'developer'].includes(callerRole)) {
+        Object.assign(payload, {
+          stardust: typeof userData.stardust === 'number' ? userData.stardust : 0,
+          level: userData.level || 1,
+          xp: userData.xp || 0,
+          title: userData.title || 'Novice Voyager',
+          inventory: Array.isArray(userData.inventory) ? userData.inventory : []
+        });
+      }
+      if (['admin', 'developer', 'moderator'].includes(callerRole)) {
+        Object.assign(payload, {
+          isBanned: !!userData.isBanned,
+          bannedReason: userData.bannedReason || '',
+          mutedUntil: userData.mutedUntil || 0
+        });
+      }
     }
+
     await setDoc(doc(db, 'users', targetUid), payload, { merge: true });
   } catch (error) {
     console.warn('saveUserToFirestore notice:', error);
