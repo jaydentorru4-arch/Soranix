@@ -258,6 +258,16 @@ export async function syncUserProfile(user: User): Promise<UserProfileData> {
       profile.role = 'owner';
       profile.isAdmin = true;
       profile.isOwner = true;
+    } else {
+      // Old username-keyed documents were writable by any visitor under the
+      // former Firestore rules. Never carry their unverified privilege flags.
+      profile.staffRole = '';
+      profile.role = '';
+      profile.isAdmin = false;
+      profile.isOwner = false;
+      profile.isBanned = false;
+      profile.bannedReason = '';
+      profile.mutedUntil = 0;
     }
     await setDoc(userRef, profile, { merge: true });
     return profile;
@@ -526,17 +536,24 @@ export function subscribeToFriendActivity(uid: string, onUpdate: (requests: any[
 export async function createFirestoreFriendship(friendshipData: any): Promise<void> {
   const currentUser = auth.currentUser;
   const memberUids = Array.isArray(friendshipData.memberUids) ? friendshipData.memberUids : [];
-  if (!currentUser || !memberUids.includes(currentUser.uid) || memberUids.length !== 2) {
-    throw new Error('Invalid friendship participants.');
+  const memberUsernames = Array.isArray(friendshipData.memberUsernames) ? friendshipData.memberUsernames : [];
+  if (!currentUser || !memberUids.includes(currentUser.uid) || memberUids.length !== 2 || !friendshipData.requestId) {
+    throw new Error('Invalid friendship participants or accepted request.');
   }
-  const friendshipId = [...memberUids].sort().join('_');
+
+  const orderedMembers = memberUids
+    .map((uid: string, index: number) => ({ uid, username: String(memberUsernames[index] || '') }))
+    .sort((a: any, b: any) => a.uid.localeCompare(b.uid));
+  const sortedUids = orderedMembers.map((member: any) => member.uid);
+  const friendshipId = sortedUids.join('_');
   const friendshipRef = doc(db, 'friendships', friendshipId);
   const existing = await getDoc(friendshipRef);
   if (!existing.exists()) {
     await setDoc(friendshipRef, {
-      ...friendshipData,
       id: friendshipId,
-      memberUids: [...memberUids].sort(),
+      memberUids: sortedUids,
+      memberUsernames: orderedMembers.map((member: any) => member.username),
+      requestId: friendshipData.requestId,
       createdAt: Date.now()
     });
   }
