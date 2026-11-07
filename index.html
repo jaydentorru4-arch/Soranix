@@ -5878,7 +5878,9 @@
           headerAdminPill.style.removeProperty('display');
           headerAdminPill.style.display = 'flex';
           const pillText = headerAdminPill.querySelector('span');
-          if (pillText) pillText.textContent = 'Owner';
+          if (pillText) pillText.textContent = isOwner(AppState.user)
+            ? 'Owner'
+            : String(AppState.user.staffRole || 'Staff').toUpperCase();
         } else {
           headerAdminPill.classList.remove('flex');
           headerAdminPill.classList.add('hidden');
@@ -5896,7 +5898,9 @@
 
       if (gearAdminBadge) {
         if (isPlatformAdminUser) {
-          gearAdminBadge.textContent = 'OWNER';
+          gearAdminBadge.textContent = isOwner(AppState.user)
+            ? 'OWNER'
+            : String(AppState.user.staffRole || 'STAFF').toUpperCase();
           gearAdminBadge.className = 'ml-auto text-[9px] px-2 py-0.5 rounded-full bg-red-950/80 text-red-300 border border-red-500/40 font-mono font-bold';
         } else {
           gearAdminBadge.textContent = '';
@@ -8659,10 +8663,13 @@
       if (!targetUser) return;
 
       targetUser.staffRole = '';
+      targetUser.role = '';
       targetUser.title = 'Novice Voyager';
       targetUser.isAdmin = false;
+      targetUser.isOwner = false;
       users[targetUser.username.toLowerCase()] = targetUser;
       saveUsersDB(users);
+      saveUserToFirestore(targetUser).catch(error => console.warn('Role revoke Firestore sync notice:', error));
 
       addNotification(targetUser.username, {
         title: 'Staff Role Revoked',
@@ -8975,6 +8982,7 @@
       u.mutedUntil = Date.now() + (minutes * 60 * 1000);
       users[key] = u;
       saveUsersDB(users);
+      saveUserToFirestore(u).catch(error => console.warn('Mute Firestore sync notice:', error));
       
       addNotification(u.username, {
         title: 'Chat Timeout Issued',
@@ -8998,6 +9006,7 @@
       u.mutedUntil = 0;
       users[key] = u;
       saveUsersDB(users);
+      saveUserToFirestore(u).catch(error => console.warn('Unmute Firestore sync notice:', error));
       renderAdminUsersList();
       showToast(`${username} timeout cleared. Transmission restored.`, 'success');
     }
@@ -9090,6 +9099,7 @@
     }
 
     function adminModifyCoins(action) {
+      if (!checkStaffActionPermission('admin')) return;
       const select = $('admin-editor-user-select');
       const targetKey = select?.value || AppState.adminSelectedEditorUserKey || 'jaydentorru';
       const amountInput = $('admin-coin-amount-input');
@@ -9135,6 +9145,7 @@
     }
 
     function adminOverrideLevel() {
+      if (!checkStaffActionPermission('admin')) return;
       const select = $('admin-editor-user-select');
       const targetKey = select?.value || AppState.adminSelectedEditorUserKey || 'jaydentorru';
       const lvlInput = $('admin-level-override-input');
@@ -9179,6 +9190,7 @@
     }
 
     function adminAddXP() {
+      if (!checkStaffActionPermission('admin')) return;
       const select = $('admin-editor-user-select');
       const targetKey = select?.value || AppState.adminSelectedEditorUserKey || 'jaydentorru';
       const xpInput = $('admin-xp-add-input');
@@ -9222,6 +9234,7 @@
     }
 
     function adminGrantSelectedItem() {
+      if (!checkStaffActionPermission('admin')) return;
       const select = $('admin-editor-user-select');
       const targetKey = select?.value || AppState.adminSelectedEditorUserKey || 'jaydentorru';
       const itemSelect = $('admin-grant-item-select');
@@ -9244,6 +9257,7 @@
       targetUser.inventory.push(itemId);
       users[targetKey] = targetUser;
       saveUsersDB(users);
+      saveUserToFirestore(targetUser).catch(error => console.warn('Item grant Firestore sync notice:', error));
 
       if (!AppState.isGuest && AppState.currentUserKey === targetKey) {
         AppState.user.inventory = targetUser.inventory;
