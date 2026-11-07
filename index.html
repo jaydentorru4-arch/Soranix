@@ -9341,6 +9341,7 @@
     }
 
     function adminPublishAnnouncement() {
+      if (!checkStaffActionPermission('admin')) return;
       const input = $('admin-announcement-input');
       const select = $('admin-announcement-type-select');
       const text = input?.value.trim();
@@ -9367,6 +9368,7 @@
     }
 
     function adminClearAnnouncement() {
+      if (!checkStaffActionPermission('admin')) return;
       const cfg = getAdminConfig();
       cfg.announcementBanner = null;
       saveAdminConfig(cfg);
@@ -9455,6 +9457,10 @@
     }
 
     function adminToggleMaintenanceMode() {
+      if (!isOwner(AppState.user)) {
+        showToast('Only the Platform Owner can change maintenance mode.', 'error');
+        return;
+      }
       const cfg = getAdminConfig();
       cfg.maintenanceMode = !cfg.maintenanceMode;
       const reasonInput = $('admin-maintenance-reason-input');
@@ -9469,6 +9475,10 @@
     }
 
     function adminSetMultiplier(mult) {
+      if (!isOwner(AppState.user)) {
+        showToast('Only the Platform Owner can change platform reward settings.', 'error');
+        return;
+      }
       const cfg = getAdminConfig();
       cfg.watchMultiplier = mult;
       saveAdminConfig(cfg);
@@ -9482,10 +9492,7 @@
     }
 
     function adminPurgeGlobalChat() {
-      if (!isOwner(AppState.user) && !checkIsAdmin(AppState.user)) {
-        showToast('Permission Denied: Only Admins and Staff can purge Global Chat.', 'error');
-        return;
-      }
+      if (!checkStaffActionPermission('moderator')) return;
       if (!confirm('Are you sure you want to permanently purge all Global Chat history? This will clear the chatroom for everyone immediately.')) {
         return;
       }
@@ -12372,7 +12379,9 @@
       if (userKey && users[userKey]) {
         users[userKey].isBanned = false;
         users[userKey].bannedReason = '';
+        users[userKey].mutedUntil = 0;
         saveUsersDB(users);
+        saveUserToFirestore(users[userKey]).catch(error => console.warn('Appeal unban cloud sync notice:', error));
       }
 
       const appeals = getBanAppealsList();
