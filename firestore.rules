@@ -127,7 +127,20 @@ service cloud.firestore {
         request.resource.data.authUid == uid &&
         request.resource.data.username is string &&
         request.resource.data.username.size() >= 3 &&
-        request.resource.data.username.size() <= 24
+        request.resource.data.username.size() <= 24 &&
+        request.resource.data.keys().hasOnly([
+          'id',
+          'authUid',
+          'username',
+          'displayName',
+          'avatarDataUrl',
+          'equippedFrame',
+          'equippedNameGlow',
+          'equippedChatBadge',
+          'level',
+          'title',
+          'updatedAt'
+        ])
       );
       allow update: if owner() || canManageProfiles() || (
         signedIn() &&
@@ -161,7 +174,8 @@ service cloud.firestore {
         request.resource.data.message.size() <= 2000 &&
         request.resource.data.time is number &&
         request.resource.data.isAdmin == (owner() || hasStaffRole(['admin', 'developer', 'tester', 'moderator'])) &&
-        request.resource.data.isOwner == owner();
+        request.resource.data.isOwner == owner() &&
+        (!request.resource.data.get('isSystemAdmin', false) || owner() || hasStaffRole(['admin']));
       allow update: if owner() || hasStaffRole(['admin', 'moderator']);
       allow delete: if owner() || hasStaffRole(['admin', 'moderator']);
     }
