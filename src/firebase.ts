@@ -464,7 +464,7 @@ export function subscribeToUserProfile(userId: string, onUpdate: (data: UserProf
 }
 
 // Listen to real-time updates for ALL users across devices & browsers
-export function subscribeToAllUsers(onUpdate: (users: UserProfileData[]) => void): Unsubscribe {
+export function subscribeToAllUsers(onUpdate: (users: UserProfileData[]) => void, onError?: (error: unknown) => void): Unsubscribe {
   return onSnapshot(collection(db, 'publicProfiles'), (snap) => {
     const users: UserProfileData[] = [];
     snap.forEach((item) => {
@@ -474,11 +474,12 @@ export function subscribeToAllUsers(onUpdate: (users: UserProfileData[]) => void
     onUpdate(users);
   }, (error) => {
     console.warn('subscribeToAllUsers notice:', error);
+    onError?.(error);
   });
 }
 
 // Listen to real-time updates for Global Chat across devices & browsers
-export function subscribeToGlobalChat(onUpdate: (messages: any[]) => void): Unsubscribe {
+export function subscribeToGlobalChat(onUpdate: (messages: any[]) => void, onError?: (error: unknown) => void): Unsubscribe {
   // Keep a bounded live window so chat snapshots do not download the entire
   // conversation history every time a new message arrives.
   const chatCol = query(
@@ -495,6 +496,7 @@ export function subscribeToGlobalChat(onUpdate: (messages: any[]) => void): Unsu
     onUpdate(msgs);
   }, (error) => {
     console.warn('subscribeToGlobalChat notice:', error);
+    onError?.(error);
   });
 }
 
@@ -525,7 +527,7 @@ export async function purgeFirestoreChat(): Promise<void> {
 }
 
 // Listen to one authenticated direct-message thread across devices.
-export function subscribeToDirectMessages(threadKey: string, onUpdate: (messages: any[]) => void): Unsubscribe {
+export function subscribeToDirectMessages(threadKey: string, onUpdate: (messages: any[]) => void, onError?: (error: unknown) => void): Unsubscribe {
   const currentUser = auth.currentUser;
   if (!currentUser || !threadKey) return () => undefined;
   const messagesQuery = query(
@@ -541,6 +543,7 @@ export function subscribeToDirectMessages(threadKey: string, onUpdate: (messages
     onUpdate(messages);
   }, (error) => {
     console.warn('subscribeToDirectMessages notice:', error);
+    onError?.(error);
   });
 }
 
@@ -604,7 +607,7 @@ export async function setFirestoreFriendRequestStatus(requestId: string, status:
   await updateDoc(doc(db, 'friendRequests', requestId), { status, updatedAt: Date.now() });
 }
 
-export function subscribeToFriendActivity(uid: string, onUpdate: (requests: any[]) => void): Unsubscribe {
+export function subscribeToFriendActivity(uid: string, onUpdate: (requests: any[]) => void, onError?: (error: unknown) => void): Unsubscribe {
   if (!auth.currentUser || auth.currentUser.uid !== uid) return () => undefined;
   const activityQuery = query(
     collection(db, 'friendRequests'),
@@ -613,7 +616,10 @@ export function subscribeToFriendActivity(uid: string, onUpdate: (requests: any[
   );
   return onSnapshot(activityQuery, (snap) => {
     onUpdate(snap.docs.map(item => ({ id: item.id, ...item.data() })));
-  }, (error) => console.warn('subscribeToFriendActivity notice:', error));
+  }, (error) => {
+    console.warn('subscribeToFriendActivity notice:', error);
+    onError?.(error);
+  });
 }
 
 export async function createFirestoreFriendship(friendshipData: any): Promise<void> {
@@ -639,7 +645,7 @@ export async function createFirestoreFriendship(friendshipData: any): Promise<vo
   });
 }
 
-export function subscribeToFriendships(uid: string, onUpdate: (friendships: any[]) => void): Unsubscribe {
+export function subscribeToFriendships(uid: string, onUpdate: (friendships: any[]) => void, onError?: (error: unknown) => void): Unsubscribe {
   if (!auth.currentUser || auth.currentUser.uid !== uid) return () => undefined;
   const friendshipsQuery = query(
     collection(db, 'friendships'),
@@ -648,7 +654,10 @@ export function subscribeToFriendships(uid: string, onUpdate: (friendships: any[
   );
   return onSnapshot(friendshipsQuery, (snap) => {
     onUpdate(snap.docs.map(item => ({ id: item.id, ...item.data() })));
-  }, (error) => console.warn('subscribeToFriendships notice:', error));
+  }, (error) => {
+    console.warn('subscribeToFriendships notice:', error);
+    onError?.(error);
+  });
 }
 
 export async function deleteFirestoreFriendship(friendUid: string): Promise<void> {
