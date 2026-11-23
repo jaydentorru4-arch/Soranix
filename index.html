@@ -6553,6 +6553,9 @@
         users[AppState.user.username.toLowerCase()] = { ...AppState.user };
         saveUsersDB(users);
         if (AppState.currentTab === 'friends') renderFriendsUI();
+      }, error => {
+        console.warn('Friend request listener error:', error);
+        showToast('Friend requests could not sync. Check your Firestore rules and connection.', 'error');
       }));
 
       socialSyncUnsubscribers.push(subscribeToFriendships(firebaseUser.uid, friendships => {
@@ -6571,6 +6574,9 @@
         users[AppState.user.username.toLowerCase()] = { ...AppState.user };
         saveUsersDB(users);
         if (AppState.currentTab === 'friends') renderFriendsUI();
+      }, error => {
+        console.warn('Friendship listener error:', error);
+        showToast('Your friends list could not sync. Check your Firestore rules and connection.', 'error');
       }));
     }
 
@@ -6579,10 +6585,14 @@
       stopCloudSync();
       cloudSyncUid = firebaseUser.uid;
 
-      // Load the directory once; subscribing to every account document caused
-      // large repeated snapshots whenever any member updated their profile.
+      // Keep the initial staff-aware directory load and subscribe to live public profiles.
+      // New members then appear in Add Friends without requiring a page refresh.
       fetchAllUsers().then(refreshCloudDirectory)
         .catch(error => console.warn('Cloud directory initial load notice:', error));
+      cloudSyncUnsubscribers.push(subscribeToAllUsers(refreshCloudDirectory, error => {
+        console.warn('Live member directory sync error:', error);
+        showToast('The member directory could not sync. Check your connection and Firestore access.', 'error');
+      }));
       cloudSyncUnsubscribers.push(subscribeToUserProfile(firebaseUser.uid, profile => {
         if (!profile || auth.currentUser?.uid !== firebaseUser.uid) return;
         const username = String(profile.username || AppState.user?.username || '').toLowerCase();
@@ -6621,6 +6631,9 @@
       cloudSyncUnsubscribers.push(subscribeToGlobalChat(messages => {
         saveGlobalChatMessages(messages || []);
         if (AppState.isGlobalChatOpen) renderGlobalChatMessages();
+      }, error => {
+        console.warn('Global Chat listener error:', error);
+        showToast('Global Chat could not load. Check your Firestore rules and connection.', 'error');
       }));
       cloudSyncUnsubscribers.push(subscribeToAdminConfig(config => {
         saveAdminConfig({ ...getAdminConfig(), ...config });
@@ -8306,6 +8319,9 @@
         }));
         saveDMThreads(allThreads);
         if (AppState.activeDMFriend === friendUsername) renderDMConversation();
+      }, error => {
+        console.warn('Direct message listener error:', error);
+        showToast('This conversation could not load. Make sure you are friends and Firestore rules are deployed.', 'error');
       });
 
       const drawer = $('dm-chat-drawer');
