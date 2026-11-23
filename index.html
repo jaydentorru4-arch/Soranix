@@ -7657,10 +7657,10 @@
       container.scrollTop = container.scrollHeight;
     }
 
-    function sendGlobalChatMessage() {
-      if (AppState.isGuest) {
-        showToast('Transmissions Locked: Sign Up or Log In to chat with fellow cosmic voyagers!', 'info');
-        openAuthModal('signup');
+    async function sendGlobalChatMessage() {
+      if (AppState.isGuest || !auth.currentUser || auth.currentUser.isAnonymous) {
+        showToast('Please sign in to use Global Chat.', 'info');
+        openAuthModal('login');
         return;
       }
 
@@ -7671,19 +7671,25 @@
 
       if (AppState.user.mutedUntil && AppState.user.mutedUntil > Date.now()) {
         const remainingMin = Math.ceil((AppState.user.mutedUntil - Date.now()) / 60000);
-        showToast(`Chat Muted: You are timed out by Administrator. (${remainingMin}m remaining)`, 'error');
+        showToast('Chat Muted: You are timed out by Administrator. (' + remainingMin + 'm remaining)', 'error');
         return;
       }
 
       const input = $('global-chat-input');
       if (!input) return;
-      const text = input.value.trim();
-      if (!text) return;
+      const messageText = input.value.trim();
+      if (!messageText) return;
+      if (messageText.length > 2000) {
+        showToast('Global Chat messages must be 2,000 characters or fewer.', 'error');
+        return;
+      }
+      if (input.dataset.sending === 'true') return;
 
       const isPlatformOwner = isOwner(AppState.user);
-      const msgs = getGlobalChatMessages();
+      const staffRole = String(AppState.user.staffRole || '').toLowerCase();
+      const trustedStaff = STAFF_PANEL_ROLES.includes(staffRole);
       const newMsg = {
-        id: `msg_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
+        id: 'msg_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6),
         sender: AppState.user.username,
         senderTitle: AppState.user.title || (isPlatformOwner ? 'System Administrator / Owner' : 'Novice Voyager'),
         senderStaffRole: AppState.user.staffRole || null,
@@ -7691,26 +7697,29 @@
         senderAvatar: AppState.user.avatarDataUrl || null,
         senderFrame: AppState.user.equippedFrame || 'galaxy',
         senderGlow: AppState.user.equippedNameGlow || null,
-        isAdmin: isPlatformOwner || !!AppState.user.staffRole,
+        isAdmin: isPlatformOwner || trustedStaff,
         isOwner: isPlatformOwner,
-        message: text,
+        message: messageText,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         time: Date.now()
       };
 
-      msgs.push(newMsg);
-      saveGlobalChatMessages(msgs);
-
-      // Transmit to Firestore real-time collection
+      input.dataset.sending = 'true';
       try {
-        sendFirestoreChatMessage(newMsg).catch(err => console.warn('sendFirestoreChatMessage notice:', err));
-      } catch (e) {
-        console.warn('sendFirestoreChatMessage error:', e);
+        // Do not show a message as sent until Firestore confirms the write.
+        await sendFirestoreChatMessage(newMsg);
+        const latestMessages = getGlobalChatMessages();
+        if (!latestMessages.some(message => message.id === newMsg.id)) latestMessages.push(newMsg);
+        saveGlobalChatMessages(latestMessages.slice(-100));
+        if (input.value.trim() === messageText) input.value = '';
+        SoranixAudio.play('laser');
+        renderGlobalChatMessages();
+      } catch (error) {
+        console.warn('Global Chat send error:', error);
+        showToast(error?.message || 'Global Chat could not send your message. Please try again.', 'error');
+      } finally {
+        input.dataset.sending = 'false';
       }
-
-      input.value = '';
-      SoranixAudio.play('laser');
-      renderGlobalChatMessages();
     }
 
     function insertGlobalEmoji(emoji) {
@@ -8418,22 +8427,27 @@
       }
       if (AppState.user.mutedUntil && AppState.user.mutedUntil > Date.now()) {
         const remaining = Math.ceil((AppState.user.mutedUntil - Date.now()) / 60000);
-        showToast(`Messaging is muted for another ${remaining} minute(s).`, 'error');
+        showToast('Messaging is muted for another ' + remaining + ' minute(s).', 'error');
         return;
       }
 
       const input = $('dm-chat-input');
       const friend = getUsersDB()[AppState.activeDMFriend.toLowerCase()];
-      if (!input || !friend?.authUid || !activeDMFirestoreThreadKey) {
+      if (!input || !friend || !friend.authUid || !activeDMFirestoreThreadKey) {
         showToast('This conversation is not connected to a cloud account.', 'error');
         return;
       }
       const messageText = input.value.trim();
       if (!messageText) return;
+      if (messageText.length > 2000) {
+        showToast('Direct messages must be 2,000 characters or fewer.', 'error');
+        return;
+      }
+      if (input.dataset.sending === 'true') return;
 
       const sentAt = Date.now();
       const message = {
-        id: `dm_${sentAt}_${Math.random().toString(36).slice(2, 8)}`,
+        id: 'dm_' + sentAt + '_' + Math.random().toString(36).slice(2, 8),
         threadKey: activeDMFirestoreThreadKey,
         participantUids: [auth.currentUser.uid, friend.authUid].sort(),
         senderUid: auth.currentUser.uid,
@@ -8445,19 +8459,22 @@
         timestampLabel: new Date(sentAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
 
-      const threadKey = getThreadKey(AppState.user.username, friend.username);
-      const localThreads = getDMThreads();
-      if (!localThreads[threadKey]) localThreads[threadKey] = [];
-      localThreads[threadKey].push(message);
-      saveDMThreads(localThreads);
-      input.value = '';
-      renderDMConversation();
+      input.dataset.sending = 'true';
       try {
         await sendFirestoreDirectMessage(message);
+        const threadKey = getThreadKey(AppState.user.username, friend.username);
+        const localThreads = getDMThreads();
+        if (!localThreads[threadKey]) localThreads[threadKey] = [];
+        if (!localThreads[threadKey].some(item => item.id === message.id)) localThreads[threadKey].push(message);
+        saveDMThreads(localThreads);
+        if (input.value.trim() === messageText) input.value = '';
         SoranixAudio.play('laser');
+        renderDMConversation();
       } catch (error) {
         console.warn('Direct message send error:', error);
-        showToast(error?.message || 'Message could not be sent.', 'error');
+        showToast(error?.message || 'Message could not be sent. Check that you are friends and Firestore rules are deployed.', 'error');
+      } finally {
+        input.dataset.sending = 'false';
       }
     }
 
@@ -8484,20 +8501,20 @@
         timestampLabel: new Date(sentAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
 
-      const threadKey = getThreadKey(AppState.user.username, friend.username);
-      const localThreads = getDMThreads();
-      if (!localThreads[threadKey]) localThreads[threadKey] = [];
-      localThreads[threadKey].push(message);
-      saveDMThreads(localThreads);
-      const menu = $('dm-recommend-menu');
-      if (menu) menu.classList.add('hidden');
-      renderDMConversation();
       try {
         await sendFirestoreDirectMessage(message);
-        showToast(`Recommended "${title}" to ${friend.username}.`, 'success');
+        const threadKey = getThreadKey(AppState.user.username, friend.username);
+        const localThreads = getDMThreads();
+        if (!localThreads[threadKey]) localThreads[threadKey] = [];
+        if (!localThreads[threadKey].some(item => item.id === message.id)) localThreads[threadKey].push(message);
+        saveDMThreads(localThreads);
+        const menu = $('dm-recommend-menu');
+        if (menu) menu.classList.add('hidden');
+        renderDMConversation();
+        showToast('Recommended "' + title + '" to ' + friend.username + '.', 'success');
       } catch (error) {
         console.warn('Anime recommendation send error:', error);
-        showToast(error?.message || 'Could not send this recommendation.', 'error');
+        showToast(error?.message || 'Could not send this recommendation. Check that you are friends and Firestore rules are deployed.', 'error');
       }
     }
 
