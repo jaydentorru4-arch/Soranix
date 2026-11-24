@@ -182,9 +182,11 @@ service cloud.firestore {
 
     // Only the sender and the intended recipient can read this thread.
     match /directMessages/{messageId} {
+      // Queries filter participantUids with array-contains for the signed-in UID.
+      // Use the equivalent direct membership check so Firestore can prove the query.
       allow get, list: if signedIn() &&
         resource.data.participantUids is list &&
-        resource.data.participantUids.hasAny([request.auth.uid]);
+        request.auth.uid in resource.data.participantUids;
       allow create: if signedIn() &&
         request.resource.data.senderUid == request.auth.uid &&
         request.resource.data.participantUids is list &&
@@ -205,9 +207,11 @@ service cloud.firestore {
     // Requests are private to their two participants. Only their recipient
     // can accept or decline a pending request.
     match /friendRequests/{requestId} {
+      // Queries filter participantUids with array-contains for the signed-in UID.
+      // Use the equivalent direct membership check so Firestore can prove the query.
       allow get, list: if signedIn() &&
         resource.data.participantUids is list &&
-        resource.data.participantUids.hasAny([request.auth.uid]);
+        request.auth.uid in resource.data.participantUids;
       allow create: if signedIn() &&
         request.resource.data.senderUid == request.auth.uid &&
         request.resource.data.recipientUid is string &&
@@ -228,14 +232,17 @@ service cloud.firestore {
           'updatedAt'
         ]);
       allow delete: if owner() ||
-        (signedIn() && resource.data.participantUids.hasAny([request.auth.uid]));
+        (signedIn() && resource.data.participantUids is list &&
+          request.auth.uid in resource.data.participantUids);
     }
 
     // A friendship is created only after its request is accepted by recipient.
     match /friendships/{friendshipId} {
+      // The client queries memberUids with array-contains for the signed-in UID.
+      // Use the equivalent direct membership check so Firestore can prove the query.
       allow get, list: if signedIn() &&
         resource.data.memberUids is list &&
-        resource.data.memberUids.hasAny([request.auth.uid]);
+        request.auth.uid in resource.data.memberUids;
       allow create: if signedIn() &&
         request.resource.data.memberUids is list &&
         request.resource.data.memberUids.size() == 2 &&
@@ -249,7 +256,8 @@ service cloud.firestore {
         );
       allow update: if false;
       allow delete: if signedIn() &&
-        resource.data.memberUids.hasAny([request.auth.uid]);
+        resource.data.memberUids is list &&
+        request.auth.uid in resource.data.memberUids;
     }
 
     // Shared announcements and platform settings are writable only by Owner
